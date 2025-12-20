@@ -10,6 +10,7 @@ import ScreenTime from './pages/ScreenTime';
 import Rewards from './pages/Rewards';
 import Calendar from './pages/Calendar';
 import Leaderboard from './pages/Leaderboard';
+import ScreenTimeManager from './pages/ScreenTimeManager';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "Rewards": Rewards,
     "Calendar": Calendar,
     "Leaderboard": Leaderboard,
+    "ScreenTimeManager": ScreenTimeManager,
 }
 
 export const pagesConfig = {
