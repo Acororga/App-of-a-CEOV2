@@ -3,8 +3,20 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { RANK_TIERS, getAverageScreenTime, getOrCreateWinStreak, calculateRank } from '../functions/businessLogic';
+import { RANK_TIERS as IMPORTED_RANK_TIERS, getAverageScreenTime, getOrCreateWinStreak, calculateRank } from '../functions/businessLogic';
 import { ArrowLeft, Crown, TrendingUp } from 'lucide-react';
+
+const RANK_TIERS = IMPORTED_RANK_TIERS || [
+  { level: 1, name: 'Panda', icon: '🐼', minScreenTimeMinutes: 999999, maxScreenTimeMinutes: 999999 },
+  { level: 2, name: 'Soldier', icon: '🪖', minScreenTimeMinutes: 480, maxScreenTimeMinutes: 999999 },
+  { level: 3, name: 'Warrior', icon: '⚔️', minScreenTimeMinutes: 360, maxScreenTimeMinutes: 479 },
+  { level: 4, name: 'Knight', icon: '🛡️', minScreenTimeMinutes: 300, maxScreenTimeMinutes: 359 },
+  { level: 5, name: 'Captain', icon: '🎖️', minScreenTimeMinutes: 240, maxScreenTimeMinutes: 299 },
+  { level: 6, name: 'Commander', icon: '⭐', minScreenTimeMinutes: 180, maxScreenTimeMinutes: 239 },
+  { level: 7, name: 'General', icon: '🎯', minScreenTimeMinutes: 120, maxScreenTimeMinutes: 179 },
+  { level: 8, name: 'Sigma', icon: '💎', minScreenTimeMinutes: 60, maxScreenTimeMinutes: 119 },
+  { level: 9, name: 'CEO', icon: '👑', minScreenTimeMinutes: 0, maxScreenTimeMinutes: 59 }
+];
 
 export default function Rank() {
   const { data: rankData } = useQuery({
@@ -32,8 +44,8 @@ export default function Rank() {
     enabled: !!avgScreenTime && !!streak
   });
 
-  const currentTier = RANK_TIERS?.find(t => t.level === (rankData?.rank_level || 1)) || RANK_TIERS?.[0];
-  const nextTier = RANK_TIERS?.find(t => t.level === (rankData?.rank_level || 1) + 1);
+  const currentTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1)) || RANK_TIERS[0];
+  const nextTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1) + 1);
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -117,7 +129,7 @@ export default function Rank() {
         </div>
 
         <div className="space-y-2">
-          {(RANK_TIERS ? [...RANK_TIERS] : []).reverse().map(tier => (
+          {[...RANK_TIERS].reverse().map(tier => (
             <div
               key={tier.level}
               className={`p-4 rounded-lg border transition-all ${
