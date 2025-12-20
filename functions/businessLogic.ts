@@ -1,146 +1,97 @@
 import { base44 } from '@/api/base44Client';
-import { format, startOfWeek, endOfWeek, addDays, differenceInMinutes, parseISO, differenceInDays, isAfter, isBefore, addHours, startOfDay } from 'date-fns';
-
-/**
- * RANK SYSTEM LOGIC
- * Ranks: Panda (1) → Soldier (2) → Warrior (3) → Knight (4) → Captain (5) → Commander (6) → General (7) → Sigma (8) → CEO (9)
- * 
- * Rank calculation based on:
- * - Average daily screen time (lower is better)
- * - Win streak consistency (bonus points)
- */
+import { format, startOfDay, endOfDay, subDays, differenceInMinutes, parseISO, addMinutes, startOfWeek, endOfWeek, addDays } from 'date-fns';
 
 export const RANK_TIERS = [
-  { level: 1, name: 'Panda', icon: '🐼', maxScreenTimeMinutes: Infinity, minScreenTimeMinutes: 360 },
-  { level: 2, name: 'Soldier', icon: '🪖', maxScreenTimeMinutes: 360, minScreenTimeMinutes: 300 },
-  { level: 3, name: 'Warrior', icon: '⚔️', maxScreenTimeMinutes: 300, minScreenTimeMinutes: 240 },
-  { level: 4, name: 'Knight', icon: '🛡️', maxScreenTimeMinutes: 240, minScreenTimeMinutes: 180 },
-  { level: 5, name: 'Captain', icon: '👨‍✈️', maxScreenTimeMinutes: 180, minScreenTimeMinutes: 120 },
-  { level: 6, name: 'Commander', icon: '🎖️', maxScreenTimeMinutes: 120, minScreenTimeMinutes: 90 },
-  { level: 7, name: 'General', icon: '⭐', maxScreenTimeMinutes: 90, minScreenTimeMinutes: 60 },
-  { level: 8, name: 'Sigma', icon: '💎', maxScreenTimeMinutes: 60, minScreenTimeMinutes: 30 },
-  { level: 9, name: 'CEO', icon: '👑', maxScreenTimeMinutes: 30, minScreenTimeMinutes: 0 }
+  { level: 1, name: 'Panda', icon: '🐼', minScreenTimeMinutes: 999999, maxScreenTimeMinutes: 999999 },
+  { level: 2, name: 'Soldier', icon: '🪖', minScreenTimeMinutes: 480, maxScreenTimeMinutes: 999999 },
+  { level: 3, name: 'Warrior', icon: '⚔️', minScreenTimeMinutes: 360, maxScreenTimeMinutes: 479 },
+  { level: 4, name: 'Knight', icon: '🛡️', minScreenTimeMinutes: 300, maxScreenTimeMinutes: 359 },
+  { level: 5, name: 'Captain', icon: '🎖️', minScreenTimeMinutes: 240, maxScreenTimeMinutes: 299 },
+  { level: 6, name: 'Commander', icon: '⭐', minScreenTimeMinutes: 180, maxScreenTimeMinutes: 239 },
+  { level: 7, name: 'General', icon: '🎯', minScreenTimeMinutes: 120, maxScreenTimeMinutes: 179 },
+  { level: 8, name: 'Sigma', icon: '💎', minScreenTimeMinutes: 60, maxScreenTimeMinutes: 119 },
+  { level: 9, name: 'CEO', icon: '👑', minScreenTimeMinutes: 0, maxScreenTimeMinutes: 59 }
 ];
 
-/**
- * Calculate rank based on screen time and win streak
- */
-export async function calculateRank(avgScreenTimeMinutes, winStreak) {
-  let baseRank = RANK_TIERS[0];
-  for (const tier of RANK_TIERS) {
-    if (avgScreenTimeMinutes <= tier.maxScreenTimeMinutes && avgScreenTimeMinutes > tier.minScreenTimeMinutes) {
-      baseRank = tier;
-      break;
-    }
-  }
-
-  const streakBonus = Math.floor(winStreak / 10);
-  let finalRankLevel = Math.min(baseRank.level + streakBonus, 9);
-  
-  const finalRank = RANK_TIERS.find(r => r.level === finalRankLevel) || baseRank;
-
-  let progressToNext = 0;
-  const nextRank = RANK_TIERS.find(r => r.level === finalRankLevel + 1);
-  if (nextRank) {
-    const currentMax = finalRank.maxScreenTimeMinutes;
-    const nextMin = nextRank.minScreenTimeMinutes;
-    const range = currentMax - nextMin;
-    const position = currentMax - avgScreenTimeMinutes;
-    progressToNext = Math.max(0, Math.min(100, (position / range) * 100));
-  } else {
-    progressToNext = 100;
-  }
-
-  return {
-    level: finalRankLevel,
-    name: finalRank.name,
-    icon: finalRank.icon,
-    progressToNext: Math.round(progressToNext),
-    nextRank: nextRank || null,
-    streakBonus
-  };
-}
-
-/**
- * Update user's rank in database
- */
-export async function updateUserRank() {
-  const user = await base44.auth.me();
-  
-  const avgScreenTime = await getAverageScreenTime(7);
-  
-  const streakData = await getOrCreateWinStreak();
-  
-  const rankData = await calculateRank(avgScreenTime, streakData.current_streak);
-  
-  const existingRanks = await base44.entities.UserRank.filter({ created_by: user.email });
-  let userRank;
-  
-  if (existingRanks.length > 0) {
-    userRank = existingRanks[0];
-    const previousRankName = userRank.rank_name;
-    const daysAtRank = userRank.rank_name === rankData.name ? (userRank.days_at_current_rank || 0) + 1 : 0;
-    
-    await base44.entities.UserRank.update(userRank.id, {
-      rank_level: rankData.level,
-      rank_name: rankData.name,
-      screen_time_avg_minutes: avgScreenTime,
-      win_streak_bonus: rankData.streakBonus,
-      total_rank_points: rankData.level * 100 + rankData.streakBonus * 10,
-      days_at_current_rank: daysAtRank,
-      previous_rank_name: previousRankName !== rankData.name ? previousRankName : userRank.previous_rank_name,
-      last_rank_change_date: previousRankName !== rankData.name ? format(new Date(), 'yyyy-MM-dd') : userRank.last_rank_change_date
-    });
-  } else {
-    userRank = await base44.entities.UserRank.create({
-      rank_level: rankData.level,
-      rank_name: rankData.name,
-      screen_time_avg_minutes: avgScreenTime,
-      win_streak_bonus: rankData.streakBonus,
-      total_rank_points: rankData.level * 100 + rankData.streakBonus * 10,
-      days_at_current_rank: 0,
-      last_rank_change_date: format(new Date(), 'yyyy-MM-dd')
-    });
-  }
-  
-  return { ...rankData, userRank };
-}
-
-/**
- * Get average screen time for last N days
- */
-export async function getAverageScreenTime(days = 7) {
-  const user = await base44.auth.me();
-  const logs = await base44.entities.ScreenTimeLog.filter({ created_by: user.email });
-  
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
-  const relevantLogs = logs.filter(log => {
-    const logDate = new Date(log.date);
-    return logDate >= startDate && logDate <= endDate;
-  });
-  
-  const totalMinutes = relevantLogs.reduce((sum, log) => sum + (log.duration_seconds / 60), 0);
-  return days > 0 ? totalMinutes / days : 0;
-}
-
-/**
- * Get today's total screen time
- */
 export async function getTodayScreenTime() {
   const user = await base44.auth.me();
   const today = format(new Date(), 'yyyy-MM-dd');
-  const logs = await base44.entities.ScreenTimeLog.filter({ created_by: user.email, date: today });
+  
+  const logs = await base44.entities.ScreenTimeLog.filter({
+    created_by: user.email,
+    date: today
+  });
   
   const totalSeconds = logs.reduce((sum, log) => sum + (log.duration_seconds || 0), 0);
-  return Math.round(totalSeconds / 60);
+  return totalSeconds / 60;
 }
 
-/**
- * Get or create win streak record for current user
- */
+export async function getAverageScreenTime(days) {
+  const user = await base44.auth.me();
+  const startDate = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
+  
+  const logs = await base44.entities.ScreenTimeLog.filter({
+    created_by: user.email
+  });
+  
+  const recentLogs = logs.filter(log => log.date >= startDate);
+  
+  const dailyTotals = {};
+  recentLogs.forEach(log => {
+    if (!dailyTotals[log.date]) {
+      dailyTotals[log.date] = 0;
+    }
+    dailyTotals[log.date] += log.duration_seconds || 0;
+  });
+  
+  const daysWithData = Object.keys(dailyTotals).length;
+  if (daysWithData === 0) return 0;
+  
+  const totalSeconds = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
+  return (totalSeconds / 60) / daysWithData;
+}
+
+export async function logScreenTimeSession(entityType, entityName, startTime, endTime, isSocialMedia = false) {
+  const user = await base44.auth.me();
+  const start = typeof startTime === 'string' ? parseISO(startTime) : startTime;
+  const end = typeof endTime === 'string' ? parseISO(endTime) : endTime;
+  const durationSeconds = differenceInMinutes(end, start) * 60;
+  
+  const activeFocusSessions = await base44.entities.FocusSession.filter({
+    created_by: user.email,
+    completed: false,
+    early_exit: false
+  });
+  
+  if (activeFocusSessions.length > 0) {
+    const session = activeFocusSessions[0];
+    const sessionStart = parseISO(session.start_time);
+    const sessionEnd = addMinutes(sessionStart, session.duration_minutes);
+    
+    if (start >= sessionStart && end <= sessionEnd) {
+      return null;
+    }
+  }
+  
+  let awarenessCount = 0;
+  if (isSocialMedia) {
+    const durationMinutes = durationSeconds / 60;
+    awarenessCount = Math.floor(durationMinutes / 5);
+  }
+  
+  const log = await base44.entities.ScreenTimeLog.create({
+    entity_type: entityType,
+    entity_name: entityName,
+    start_time: start.toISOString(),
+    end_time: end.toISOString(),
+    duration_seconds: durationSeconds,
+    date: format(start, 'yyyy-MM-dd'),
+    awareness_notifications_shown: awarenessCount
+  });
+  
+  return log;
+}
+
 export async function getOrCreateWinStreak() {
   const user = await base44.auth.me();
   const streaks = await base44.entities.WinStreak.filter({ created_by: user.email });
@@ -149,54 +100,47 @@ export async function getOrCreateWinStreak() {
     return streaks[0];
   }
   
-  return await base44.entities.WinStreak.create({
+  const newStreak = await base44.entities.WinStreak.create({
     current_streak: 0,
     longest_streak: 0,
     total_completed_sessions: 0,
     total_failed_sessions: 0
   });
-}
-
-/**
- * Increment win streak after successful focus session
- */
-export async function incrementWinStreak() {
-  const streakData = await getOrCreateWinStreak();
-  const newStreak = streakData.current_streak + 1;
-  const newLongest = Math.max(newStreak, streakData.longest_streak);
-  
-  await base44.entities.WinStreak.update(streakData.id, {
-    current_streak: newStreak,
-    longest_streak: newLongest,
-    last_session_date: format(new Date(), 'yyyy-MM-dd'),
-    total_completed_sessions: (streakData.total_completed_sessions || 0) + 1
-  });
-  
-  await updateUserRank();
   
   return newStreak;
 }
 
-/**
- * Reset win streak to zero (when focus mode exited early)
- */
-export async function resetWinStreak() {
-  const streakData = await getOrCreateWinStreak();
+export async function incrementWinStreak() {
+  const streak = await getOrCreateWinStreak();
+  const newCurrent = (streak.current_streak || 0) + 1;
+  const newLongest = Math.max(newCurrent, streak.longest_streak || 0);
   
-  await base44.entities.WinStreak.update(streakData.id, {
-    current_streak: 0,
-    total_failed_sessions: (streakData.total_failed_sessions || 0) + 1
+  await base44.entities.WinStreak.update(streak.id, {
+    current_streak: newCurrent,
+    longest_streak: newLongest,
+    last_session_date: format(new Date(), 'yyyy-MM-dd'),
+    total_completed_sessions: (streak.total_completed_sessions || 0) + 1
   });
   
   await updateUserRank();
-  
-  return 0;
+  await syncLeaderboardEntry();
 }
 
-/**
- * Start a focus session
- */
+export async function resetWinStreak() {
+  const streak = await getOrCreateWinStreak();
+  
+  await base44.entities.WinStreak.update(streak.id, {
+    current_streak: 0,
+    total_failed_sessions: (streak.total_failed_sessions || 0) + 1
+  });
+  
+  await updateUserRank();
+  await syncLeaderboardEntry();
+}
+
 export async function startFocusSession(durationMinutes) {
+  const user = await base44.auth.me();
+  
   const session = await base44.entities.FocusSession.create({
     start_time: new Date().toISOString(),
     duration_minutes: durationMinutes,
@@ -207,96 +151,169 @@ export async function startFocusSession(durationMinutes) {
   return session;
 }
 
-/**
- * Complete focus session successfully
- */
 export async function completeFocusSession(sessionId) {
   const session = await base44.entities.FocusSession.filter({ id: sessionId });
-  if (session.length === 0) return null;
+  if (session.length === 0) throw new Error('Session not found');
   
   const sessionData = session[0];
-  const actualDuration = differenceInMinutes(new Date(), parseISO(sessionData.start_time));
+  const startTime = parseISO(sessionData.start_time);
+  const actualDuration = differenceInMinutes(new Date(), startTime);
   
   await base44.entities.FocusSession.update(sessionId, {
     end_time: new Date().toISOString(),
     completed: true,
-    early_exit: false,
     actual_duration_minutes: actualDuration
   });
   
-  const newStreak = await incrementWinStreak();
+  await incrementWinStreak();
   
-  return { success: true, newStreak, actualDuration };
+  return { success: true, streakIncremented: true };
 }
 
-/**
- * Exit focus session early (breaks streak)
- */
 export async function exitFocusSessionEarly(sessionId) {
   const session = await base44.entities.FocusSession.filter({ id: sessionId });
-  if (session.length === 0) return null;
+  if (session.length === 0) throw new Error('Session not found');
   
   const sessionData = session[0];
-  const actualDuration = differenceInMinutes(new Date(), parseISO(sessionData.start_time));
+  const startTime = parseISO(sessionData.start_time);
+  const actualDuration = differenceInMinutes(new Date(), startTime);
   
   await base44.entities.FocusSession.update(sessionId, {
     end_time: new Date().toISOString(),
-    completed: false,
     early_exit: true,
+    completed: false,
     actual_duration_minutes: actualDuration
   });
   
   await resetWinStreak();
   
-  return { success: false, streakBroken: true, actualDuration };
+  return { success: true, streakReset: true };
 }
 
-/**
- * Get habits scheduled for a specific date
- */
+export function calculateRank(avgScreenTimeMinutes, winStreak) {
+  const streakBonus = Math.min(winStreak * 10, 100);
+  
+  let baseTier = RANK_TIERS[0];
+  for (let i = RANK_TIERS.length - 1; i >= 0; i--) {
+    if (avgScreenTimeMinutes <= RANK_TIERS[i].minScreenTimeMinutes) {
+      baseTier = RANK_TIERS[i];
+      break;
+    }
+  }
+  
+  const totalPoints = baseTier.level * 100 + streakBonus;
+  
+  let finalTier = baseTier;
+  for (let i = RANK_TIERS.length - 1; i >= 0; i--) {
+    const tierMinPoints = RANK_TIERS[i].level * 100;
+    if (totalPoints >= tierMinPoints) {
+      finalTier = RANK_TIERS[i];
+      break;
+    }
+  }
+  
+  const nextTier = RANK_TIERS.find(t => t.level === finalTier.level + 1);
+  let progressToNext = 0;
+  if (nextTier) {
+    const currentTierPoints = finalTier.level * 100;
+    const nextTierPoints = nextTier.level * 100;
+    const progress = totalPoints - currentTierPoints;
+    const required = nextTierPoints - currentTierPoints;
+    progressToNext = Math.min(Math.round((progress / required) * 100), 100);
+  }
+  
+  return {
+    rank_level: finalTier.level,
+    rank_name: finalTier.name,
+    total_points: totalPoints,
+    streak_bonus: streakBonus,
+    progressToNext
+  };
+}
+
+export async function updateUserRank() {
+  const user = await base44.auth.me();
+  const avgScreenTime = await getAverageScreenTime(7);
+  const streak = await getOrCreateWinStreak();
+  
+  const calculated = calculateRank(avgScreenTime, streak.current_streak || 0);
+  
+  const existingRanks = await base44.entities.UserRank.filter({ created_by: user.email });
+  
+  if (existingRanks.length > 0) {
+    const currentRank = existingRanks[0];
+    const daysAtRank = currentRank.rank_level === calculated.rank_level 
+      ? (currentRank.days_at_current_rank || 0) + 1 
+      : 0;
+    
+    await base44.entities.UserRank.update(currentRank.id, {
+      rank_level: calculated.rank_level,
+      rank_name: calculated.rank_name,
+      screen_time_avg_minutes: avgScreenTime,
+      win_streak_bonus: calculated.streak_bonus,
+      total_rank_points: calculated.total_points,
+      days_at_current_rank: daysAtRank,
+      previous_rank_name: currentRank.rank_name,
+      last_rank_change_date: currentRank.rank_level !== calculated.rank_level 
+        ? format(new Date(), 'yyyy-MM-dd')
+        : currentRank.last_rank_change_date
+    });
+  } else {
+    await base44.entities.UserRank.create({
+      rank_level: calculated.rank_level,
+      rank_name: calculated.rank_name,
+      screen_time_avg_minutes: avgScreenTime,
+      win_streak_bonus: calculated.streak_bonus,
+      total_rank_points: calculated.total_points,
+      days_at_current_rank: 0,
+      last_rank_change_date: format(new Date(), 'yyyy-MM-dd')
+    });
+  }
+  
+  await syncLeaderboardEntry();
+}
+
 export async function getHabitsForDate(date) {
   const user = await base44.auth.me();
-  const allHabits = await base44.entities.Habit.filter({ created_by: user.email, archived: false });
+  const dayOfWeek = date.getDay();
   
-  const dayOfWeek = new Date(date).getDay();
+  const allHabits = await base44.entities.Habit.filter({
+    created_by: user.email,
+    archived: false
+  });
   
-  const scheduledHabits = allHabits.filter(habit => {
-    if (habit.is_daily) {
-      return true;
-    }
-    if (habit.specific_days && Array.isArray(habit.specific_days)) {
-      return habit.specific_days.includes(dayOfWeek);
-    }
+  const habitsForDate = allHabits.filter(habit => {
+    if (habit.is_daily) return true;
+    if (habit.specific_days && habit.specific_days.includes(dayOfWeek)) return true;
     return false;
   });
   
-  return scheduledHabits;
+  return habitsForDate;
 }
 
-/**
- * Get habit completions for a specific date
- */
 export async function getHabitCompletionsForDate(date) {
   const user = await base44.auth.me();
-  const dateStr = format(new Date(date), 'yyyy-MM-dd');
-  const completions = await base44.entities.HabitCompletion.filter({ 
-    created_by: user.email, 
-    date: dateStr 
+  const dateStr = format(date, 'yyyy-MM-dd');
+  
+  const completions = await base44.entities.HabitCompletion.filter({
+    created_by: user.email,
+    date: dateStr
   });
   
   return completions;
 }
 
-/**
- * Check if date has unchecked habits
- */
 export async function hasUncheckedHabits(date) {
   const habits = await getHabitsForDate(date);
+  if (habits.length === 0) return false;
+  
   const completions = await getHabitCompletionsForDate(date);
+  
+  if (completions.length === 0) return true;
   
   const completionMap = {};
   completions.forEach(c => {
-    completionMap[c.habit_id] = c;
+    completionMap[c.habit_id] = true;
   });
   
   for (const habit of habits) {
@@ -308,49 +325,47 @@ export async function hasUncheckedHabits(date) {
   return false;
 }
 
-/**
- * Check in habit for a date
- */
 export async function checkInHabit(habitId, date, completed) {
   const user = await base44.auth.me();
-  const dateStr = format(new Date(date), 'yyyy-MM-dd');
+  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
   
-  const existingCompletions = await base44.entities.HabitCompletion.filter({
+  const existing = await base44.entities.HabitCompletion.filter({
     created_by: user.email,
     habit_id: habitId,
     date: dateStr
   });
   
-  if (existingCompletions.length > 0) {
-    await base44.entities.HabitCompletion.update(existingCompletions[0].id, {
+  if (existing.length > 0) {
+    await base44.entities.HabitCompletion.update(existing[0].id, {
       completed,
       checked_in_date: new Date().toISOString()
     });
+    return existing[0];
   } else {
-    await base44.entities.HabitCompletion.create({
+    const completion = await base44.entities.HabitCompletion.create({
       habit_id: habitId,
       date: dateStr,
       completed,
       checked_in_date: new Date().toISOString()
     });
+    return completion;
   }
 }
 
-/**
- * Calculate weekly habit score
- */
 export async function calculateWeeklyHabitScore(weekStartDate) {
   const user = await base44.auth.me();
-  const weekStart = startOfWeek(new Date(weekStartDate), { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(new Date(weekStartDate), { weekStartsOn: 1 });
+  const weekStart = typeof weekStartDate === 'string' ? parseISO(weekStartDate) : weekStartDate;
+  const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
   
   let totalExpected = 0;
   let totalCompleted = 0;
   
-  for (let d = 0; d < 7; d++) {
-    const currentDate = addDays(weekStart, d);
-    const habits = await getHabitsForDate(currentDate);
-    const completions = await getHabitCompletionsForDate(currentDate);
+  for (let i = 0; i < 7; i++) {
+    const currentDay = addDays(weekStart, i);
+    const habits = await getHabitsForDate(currentDay);
+    const completions = await getHabitCompletionsForDate(currentDay);
+    
+    totalExpected += habits.length;
     
     const completionMap = {};
     completions.forEach(c => {
@@ -358,14 +373,18 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
     });
     
     habits.forEach(habit => {
-      totalExpected++;
       if (completionMap[habit.id]) {
         totalCompleted++;
       }
     });
   }
   
-  const successPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
+  const successPercentage = totalExpected > 0 
+    ? Math.round((totalCompleted / totalExpected) * 100)
+    : 0;
+  
+  const threshold = 90;
+  const thresholdMet = successPercentage >= threshold;
   
   const existingScores = await base44.entities.WeeklyHabitScore.filter({
     created_by: user.email,
@@ -378,23 +397,20 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
     total_expected: totalExpected,
     total_completed: totalCompleted,
     success_percentage: successPercentage,
-    threshold_percentage: 90,
-    threshold_met: successPercentage >= 90,
+    threshold_percentage: threshold,
+    threshold_met: thresholdMet,
     calculated_date: new Date().toISOString()
   };
   
   if (existingScores.length > 0) {
     await base44.entities.WeeklyHabitScore.update(existingScores[0].id, scoreData);
+    return { ...scoreData, id: existingScores[0].id };
   } else {
-    await base44.entities.WeeklyHabitScore.create(scoreData);
+    const score = await base44.entities.WeeklyHabitScore.create(scoreData);
+    return score;
   }
-  
-  return scoreData;
 }
 
-/**
- * Get current week's contract
- */
 export async function getCurrentWeekContract() {
   const user = await base44.auth.me();
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -408,12 +424,10 @@ export async function getCurrentWeekContract() {
   return contracts.length > 0 ? contracts[0] : null;
 }
 
-/**
- * Create weekly contract
- */
 export async function createWeeklyContract(rewardText, sanctionText, thresholdPercentage = 90) {
+  const user = await base44.auth.me();
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
   
   const contract = await base44.entities.WeeklyContract.create({
     week_start_date: format(weekStart, 'yyyy-MM-dd'),
@@ -429,149 +443,339 @@ export async function createWeeklyContract(rewardText, sanctionText, thresholdPe
   return contract;
 }
 
-/**
- * Commit to contract
- */
 export async function commitToContract(contractId) {
   await base44.entities.WeeklyContract.update(contractId, {
     committed: true
   });
+  
+  const contracts = await base44.entities.WeeklyContract.filter({ id: contractId });
+  return contracts[0];
 }
 
-/**
- * Evaluate weekly contract (called at week end)
- */
 export async function evaluateWeeklyContract(contractId) {
   const contracts = await base44.entities.WeeklyContract.filter({ id: contractId });
-  if (contracts.length === 0) return null;
+  if (contracts.length === 0) throw new Error('Contract not found');
   
   const contract = contracts[0];
+  const weekStart = parseISO(contract.week_start_date);
+  const weeklyScore = await calculateWeeklyHabitScore(weekStart);
   
-  const weekScore = await calculateWeeklyHabitScore(contract.week_start_date);
+  const percentage = weeklyScore.success_percentage;
+  let outcomeGrade;
   
-  let outcomeGrade = 'full_sanction';
-  if (weekScore.success_percentage >= contract.success_threshold_percentage) {
+  if (percentage >= 90) {
     outcomeGrade = 'full_reward';
-  } else if (weekScore.success_percentage >= 70) {
+  } else if (percentage >= 80) {
     outcomeGrade = 'partial_reward';
-  } else if (weekScore.success_percentage >= 50) {
+  } else if (percentage >= 70) {
     outcomeGrade = 'partial_sanction';
+  } else {
+    outcomeGrade = 'full_sanction';
   }
   
   await base44.entities.WeeklyContract.update(contractId, {
-    actual_success_percentage: weekScore.success_percentage,
+    actual_success_percentage: percentage,
     outcome_grade: outcomeGrade,
     evaluated: true,
     evaluated_date: new Date().toISOString()
   });
   
-  return { ...contract, actual_success_percentage: weekScore.success_percentage, outcome_grade: outcomeGrade };
+  return { outcomeGrade, percentage };
 }
 
-/**
- * Get top N high-impact incomplete tasks
- */
-export async function getTopParetoTasks(limit = 3) {
+export async function getTopParetoTasks(limit = 5) {
   const user = await base44.auth.me();
+  
   const tasks = await base44.entities.ParetoTask.filter({
     created_by: user.email,
-    impact_level: 'high',
     completed: false
-  }, 'sort_order', limit);
+  }, 'sort_order');
   
-  return tasks;
+  const highImpact = tasks.filter(t => t.impact_level === 'high');
+  const mediumImpact = tasks.filter(t => t.impact_level === 'medium');
+  const lowImpact = tasks.filter(t => t.impact_level === 'low');
+  
+  const prioritized = [...highImpact, ...mediumImpact, ...lowImpact];
+  
+  return prioritized.slice(0, limit);
 }
 
-/**
- * Get upcoming events (next 7 days)
- */
-export async function getUpcomingEvents(days = 7) {
+export async function getNextEvent() {
   const user = await base44.auth.me();
-  const allEvents = await base44.entities.CalendarEvent.filter({ created_by: user.email });
-  
   const now = new Date();
-  const futureDate = addDays(now, days);
   
-  const upcomingEvents = allEvents.filter(event => {
+  const events = await base44.entities.CalendarEvent.filter({
+    created_by: user.email
+  });
+  
+  const upcomingEvents = events.filter(event => {
     const eventDateTime = parseISO(`${event.event_date}T${event.event_time}`);
-    return isAfter(eventDateTime, now) && isBefore(eventDateTime, futureDate);
+    return eventDateTime > now;
   }).sort((a, b) => {
-    const dateA = parseISO(`${a.event_date}T${a.event_time}`);
-    const dateB = parseISO(`${b.event_date}T${b.event_time}`);
-    return dateA - dateB;
+    const aTime = parseISO(`${a.event_date}T${a.event_time}`);
+    const bTime = parseISO(`${b.event_date}T${b.event_time}`);
+    return aTime - bTime;
+  });
+  
+  return upcomingEvents.length > 0 ? upcomingEvents[0] : null;
+}
+
+export async function getUpcomingEvents(daysAhead = 30) {
+  const user = await base44.auth.me();
+  const now = new Date();
+  const maxDate = format(addDays(now, daysAhead), 'yyyy-MM-dd');
+  
+  const events = await base44.entities.CalendarEvent.filter({
+    created_by: user.email
+  });
+  
+  const upcomingEvents = events.filter(event => {
+    const eventDateTime = parseISO(`${event.event_date}T${event.event_time}`);
+    return eventDateTime > now && event.event_date <= maxDate;
+  }).sort((a, b) => {
+    const aTime = parseISO(`${a.event_date}T${a.event_time}`);
+    const bTime = parseISO(`${b.event_date}T${b.event_time}`);
+    return aTime - bTime;
   });
   
   return upcomingEvents;
 }
 
-/**
- * Get next event (soonest upcoming)
- */
-export async function getNextEvent() {
-  const events = await getUpcomingEvents(30);
-  return events.length > 0 ? events[0] : null;
+export async function scheduleEventNotifications(eventId) {
+  const events = await base44.entities.CalendarEvent.filter({ id: eventId });
+  if (events.length === 0) throw new Error('Event not found');
+  
+  const event = events[0];
+  const eventDateTime = parseISO(`${event.event_date}T${event.event_time}`);
+  
+  const notification24h = new Date(eventDateTime.getTime() - 24 * 60 * 60 * 1000);
+  const notification2h = new Date(eventDateTime.getTime() - 2 * 60 * 60 * 1000);
+  
+  await base44.entities.CalendarEvent.update(eventId, {
+    notification_24h_time: notification24h.toISOString(),
+    notification_2h_time: notification2h.toISOString(),
+    notification_24h_sent: false,
+    notification_2h_sent: false
+  });
+  
+  return { notification24h, notification2h };
 }
 
-/**
- * Start CEO Mode session
- */
+export async function checkAndSendEventNotifications() {
+  const user = await base44.auth.me();
+  const now = new Date();
+  
+  const events = await base44.entities.CalendarEvent.filter({
+    created_by: user.email
+  });
+  
+  for (const event of events) {
+    if (event.notification_24h_time && !event.notification_24h_sent) {
+      const notifTime = parseISO(event.notification_24h_time);
+      if (now >= notifTime) {
+        await base44.entities.CalendarEvent.update(event.id, {
+          notification_24h_sent: true
+        });
+      }
+    }
+    
+    if (event.notification_2h_time && !event.notification_2h_sent) {
+      const notifTime = parseISO(event.notification_2h_time);
+      if (now >= notifTime) {
+        await base44.entities.CalendarEvent.update(event.id, {
+          notification_2h_sent: true
+        });
+      }
+    }
+  }
+}
+
+export async function getApprovedApps() {
+  const user = await base44.auth.me();
+  
+  const apps = await base44.entities.ApprovedApp.filter({
+    created_by: user.email,
+    approved: true
+  });
+  
+  if (apps.length === 0) {
+    const essentialApps = [
+      { app_name: 'Phone', approved: true, essential: true, icon: '📞' },
+      { app_name: 'Messages', approved: true, essential: true, icon: '💬' },
+      { app_name: 'Calendar', approved: true, essential: true, icon: '📅' }
+    ];
+    
+    for (const app of essentialApps) {
+      await base44.entities.ApprovedApp.create(app);
+    }
+    
+    return essentialApps;
+  }
+  
+  return apps;
+}
+
 export async function startCEOModeSession() {
+  const user = await base44.auth.me();
+  
   const session = await base44.entities.CEOModeSession.create({
-    start_time: new Date().toISOString()
+    start_time: new Date().toISOString(),
+    approved_apps_count: 3
   });
   
   return session;
 }
 
-/**
- * End CEO Mode session
- */
 export async function endCEOModeSession(sessionId) {
   const sessions = await base44.entities.CEOModeSession.filter({ id: sessionId });
-  if (sessions.length === 0) return null;
+  if (sessions.length === 0) throw new Error('Session not found');
   
   const session = sessions[0];
-  const duration = differenceInMinutes(new Date(), parseISO(session.start_time));
+  const startTime = parseISO(session.start_time);
+  const duration = differenceInMinutes(new Date(), startTime);
   
   await base44.entities.CEOModeSession.update(sessionId, {
     end_time: new Date().toISOString(),
     duration_minutes: duration
   });
   
-  return { ...session, duration_minutes: duration };
+  return { duration };
 }
 
-/**
- * Get approved apps for CEO Mode
- */
-export async function getApprovedApps() {
+export async function syncLeaderboardEntry() {
   const user = await base44.auth.me();
-  const apps = await base44.entities.ApprovedApp.filter({ 
-    created_by: user.email, 
-    approved: true 
+  
+  const rankData = await base44.entities.UserRank.filter({ created_by: user.email });
+  const streakData = await getOrCreateWinStreak();
+  
+  if (rankData.length === 0) return;
+  
+  const rank = rankData[0];
+  
+  const allEntries = await base44.entities.LeaderboardEntry.list();
+  const sortedByRank = allEntries.sort((a, b) => b.rank_level - a.rank_level);
+  const userPosition = sortedByRank.findIndex(e => e.created_by === user.email);
+  const percentile = userPosition >= 0 
+    ? Math.round(((sortedByRank.length - userPosition) / sortedByRank.length) * 100)
+    : 50;
+  
+  const existingEntries = await base44.entities.LeaderboardEntry.filter({
+    created_by: user.email
   });
   
-  return apps;
+  const entryData = {
+    rank_level: rank.rank_level,
+    rank_name: rank.rank_name,
+    win_streak: streakData.current_streak || 0,
+    screen_time_avg_minutes: rank.screen_time_avg_minutes,
+    percentile,
+    opted_in: true,
+    last_sync_date: new Date().toISOString()
+  };
+  
+  if (existingEntries.length > 0) {
+    await base44.entities.LeaderboardEntry.update(existingEntries[0].id, entryData);
+  } else {
+    await base44.entities.LeaderboardEntry.create(entryData);
+  }
 }
 
-export function getCurrentWeekBoundaries() {
-  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
+export async function updateFriendStats(friendEmail) {
+  const friends = await base44.entities.User.filter({ email: friendEmail });
+  if (friends.length === 0) return null;
   
-  return {
-    start: weekStart,
-    end: weekEnd,
-    startStr: format(weekStart, 'yyyy-MM-dd'),
-    endStr: format(weekEnd, 'yyyy-MM-dd')
+  const friendUser = friends[0];
+  
+  const friendRank = await base44.entities.UserRank.filter({ created_by: friendEmail });
+  const friendStreak = await base44.entities.WinStreak.filter({ created_by: friendEmail });
+  
+  if (friendRank.length === 0) return null;
+  
+  const user = await base44.auth.me();
+  const connections = await base44.entities.FriendConnection.filter({
+    created_by: user.email,
+    friend_email: friendEmail
+  });
+  
+  if (connections.length > 0) {
+    await base44.entities.FriendConnection.update(connections[0].id, {
+      friend_name: friendUser.full_name,
+      friend_rank_level: friendRank[0].rank_level,
+      friend_rank_name: friendRank[0].rank_name,
+      friend_win_streak: friendStreak.length > 0 ? friendStreak[0].current_streak : 0,
+      last_updated: new Date().toISOString()
+    });
+  }
+  
+  return connections.length > 0 ? connections[0] : null;
+}
+
+export async function enforceAppBlocking(appName) {
+  const user = await base44.auth.me();
+  
+  const blockedApps = await base44.entities.BlockedApp.filter({
+    created_by: user.email,
+    app_name: appName
+  });
+  
+  if (blockedApps.length === 0) {
+    return { blocked: false, timeLimit: null };
+  }
+  
+  const blockedApp = blockedApps[0];
+  
+  if (blockedApp.time_limit_minutes === 0) {
+    return { blocked: true, timeLimit: 0, message: 'This app is fully blocked.' };
+  }
+  
+  const todayUsage = await getTodayScreenTime();
+  
+  if (todayUsage >= blockedApp.time_limit_minutes) {
+    return { 
+      blocked: true, 
+      timeLimit: blockedApp.time_limit_minutes,
+      message: `Daily limit of ${blockedApp.time_limit_minutes} minutes reached.`
+    };
+  }
+  
+  return { 
+    blocked: false, 
+    timeLimit: blockedApp.time_limit_minutes,
+    remainingMinutes: blockedApp.time_limit_minutes - todayUsage
   };
 }
 
-export function formatTimeRemaining(minutes) {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+export async function enforceWebsiteBlocking(urlDomain) {
+  const user = await base44.auth.me();
   
-  if (hours > 0) {
-    return `${hours}h ${mins}m`;
+  const blockedSites = await base44.entities.BlockedWebsite.filter({
+    created_by: user.email,
+    url_domain: urlDomain
+  });
+  
+  if (blockedSites.length === 0) {
+    return { blocked: false, timeLimit: null };
   }
-  return `${mins}m`;
+  
+  const blockedSite = blockedSites[0];
+  
+  if (blockedSite.time_limit_minutes === 0) {
+    return { blocked: true, timeLimit: 0, message: 'This website is fully blocked.' };
+  }
+  
+  const todayUsage = await getTodayScreenTime();
+  
+  if (todayUsage >= blockedSite.time_limit_minutes) {
+    return { 
+      blocked: true, 
+      timeLimit: blockedSite.time_limit_minutes,
+      message: `Daily limit of ${blockedSite.time_limit_minutes} minutes reached.`
+    };
+  }
+  
+  return { 
+    blocked: false, 
+    timeLimit: blockedSite.time_limit_minutes,
+    remainingMinutes: blockedSite.time_limit_minutes - todayUsage
+  };
 }
