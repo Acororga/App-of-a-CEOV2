@@ -32,8 +32,8 @@ export default function Rank() {
     enabled: !!avgScreenTime && !!streak
   });
 
-  const currentTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1));
-  const nextTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1) + 1);
+  const currentTier = RANK_TIERS?.find(t => t.level === (rankData?.rank_level || 1)) || RANK_TIERS?.[0];
+  const nextTier = RANK_TIERS?.find(t => t.level === (rankData?.rank_level || 1) + 1);
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -117,7 +117,7 @@ export default function Rank() {
         </div>
 
         <div className="space-y-2">
-          {[...RANK_TIERS].reverse().map(tier => (
+          {(RANK_TIERS ? [...RANK_TIERS] : []).reverse().map(tier => (
             <div
               key={tier.level}
               className={`p-4 rounded-lg border transition-all ${
