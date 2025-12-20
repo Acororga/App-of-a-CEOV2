@@ -4,6 +4,12 @@ import FocusMode from './pages/FocusMode';
 import WinStreak from './pages/WinStreak';
 import Rank from './pages/Rank';
 import CEOMode from './pages/CEOMode';
+import Habits from './pages/Habits';
+import Pareto from './pages/Pareto';
+import ScreenTime from './pages/ScreenTime';
+import Rewards from './pages/Rewards';
+import Calendar from './pages/Calendar';
+import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +20,12 @@ export const PAGES = {
     "WinStreak": WinStreak,
     "Rank": Rank,
     "CEOMode": CEOMode,
+    "Habits": Habits,
+    "Pareto": Pareto,
+    "ScreenTime": ScreenTime,
+    "Rewards": Rewards,
+    "Calendar": Calendar,
+    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {
