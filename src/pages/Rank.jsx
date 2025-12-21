@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { calculateUserRank, getNextRankRequirements } from '../functions/calculateRankLogic';
+import { differenceInDays } from 'date-fns';
 import { ArrowLeft, Crown, TrendingUp, Zap } from 'lucide-react';
 
 const RANK_TIERS = [
@@ -16,6 +16,144 @@ const RANK_TIERS = [
   { level: 7, name: 'CEO', icon: '👑', description: '500 day streak + 250h Focus + 250h CEO' }
 ];
 
+async function calculateUserRank() {
+  const user = await base44.auth.me();
+  const daysInApp = differenceInDays(new Date(), new Date(user.created_date));
+  
+  const streaks = await base44.entities.WinStreak.filter({ created_by: user.email });
+  const streak = streaks[0];
+  const currentStreak = streak?.current_streak || 0;
+  
+  const focusSessions = await base44.entities.FocusSession.filter({ 
+    created_by: user.email,
+    completed: true
+  });
+  const totalFocusHours = focusSessions.reduce((sum, s) => sum + (s.duration_minutes / 60), 0);
+  
+  const ceoSessions = await base44.entities.CEOModeSession.filter({ 
+    created_by: user.email
+  });
+  const completedCEO = ceoSessions.filter(s => s.end_time && !s.early_exit);
+  const totalCEOHours = completedCEO.reduce((sum, s) => sum + (s.duration_minutes / 60), 0);
+  
+  let rankLevel = 1;
+  let rankName = 'Bronze';
+  
+  if (currentStreak >= 500 && totalFocusHours >= 250 && totalCEOHours >= 250) {
+    rankLevel = 7;
+    rankName = 'CEO';
+  } else if (currentStreak >= 365 && totalFocusHours >= 200 && totalCEOHours >= 100) {
+    rankLevel = 6;
+    rankName = 'Batman';
+  } else if (currentStreak >= 180 && totalFocusHours >= 200) {
+    rankLevel = 5;
+    rankName = 'Diamond';
+  } else if (currentStreak >= 90 && totalFocusHours >= 60) {
+    rankLevel = 4;
+    rankName = 'Platinum';
+  } else if (currentStreak >= 50) {
+    rankLevel = 3;
+    rankName = 'Gold';
+  } else if (daysInApp >= 15 && currentStreak >= 10) {
+    rankLevel = 2;
+    rankName = 'Silver';
+  }
+  
+  const ranks = await base44.entities.UserRank.filter({ created_by: user.email });
+  const currentRank = ranks[0];
+  
+  if (currentRank) {
+    if (currentRank.rank_level !== rankLevel) {
+      await base44.entities.UserRank.update(currentRank.id, {
+        rank_level: rankLevel,
+        rank_name: rankName,
+        days_in_app: daysInApp,
+        win_streak_current: currentStreak,
+        total_focus_hours: Math.round(totalFocusHours),
+        total_ceo_hours: Math.round(totalCEOHours),
+        last_rank_change_date: new Date().toISOString().split('T')[0]
+      });
+    } else {
+      await base44.entities.UserRank.update(currentRank.id, {
+        days_in_app: daysInApp,
+        win_streak_current: currentStreak,
+        total_focus_hours: Math.round(totalFocusHours),
+        total_ceo_hours: Math.round(totalCEOHours)
+      });
+    }
+  } else {
+    await base44.entities.UserRank.create({
+      rank_level: rankLevel,
+      rank_name: rankName,
+      days_in_app: daysInApp,
+      win_streak_current: currentStreak,
+      total_focus_hours: Math.round(totalFocusHours),
+      total_ceo_hours: Math.round(totalCEOHours),
+      created_by: user.email
+    });
+  }
+  
+  return { 
+    rankLevel, 
+    rankName, 
+    currentStreak, 
+    totalFocusHours: Math.round(totalFocusHours), 
+    totalCEOHours: Math.round(totalCEOHours), 
+    daysInApp 
+  };
+}
+
+function getNextRankRequirements(currentRankLevel, currentStats) {
+  const { currentStreak, totalFocusHours, totalCEOHours, daysInApp } = currentStats;
+  
+  const requirements = {
+    1: {
+      name: 'Silver',
+      needs: [
+        daysInApp < 15 ? `${15 - daysInApp} more days in app` : null,
+        currentStreak < 10 ? `${10 - currentStreak} day win streak` : null
+      ].filter(Boolean)
+    },
+    2: {
+      name: 'Gold',
+      needs: [
+        currentStreak < 50 ? `${50 - currentStreak} day win streak` : null
+      ].filter(Boolean)
+    },
+    3: {
+      name: 'Platinum',
+      needs: [
+        currentStreak < 90 ? `${90 - currentStreak} day win streak` : null,
+        totalFocusHours < 60 ? `${Math.round(60 - totalFocusHours)} more Focus hours` : null
+      ].filter(Boolean)
+    },
+    4: {
+      name: 'Diamond',
+      needs: [
+        currentStreak < 180 ? `${180 - currentStreak} day win streak` : null,
+        totalFocusHours < 200 ? `${Math.round(200 - totalFocusHours)} more Focus hours` : null
+      ].filter(Boolean)
+    },
+    5: {
+      name: 'Batman',
+      needs: [
+        currentStreak < 365 ? `${365 - currentStreak} day win streak` : null,
+        totalCEOHours < 100 ? `${Math.round(100 - totalCEOHours)} more CEO Mode hours` : null
+      ].filter(Boolean)
+    },
+    6: {
+      name: 'CEO',
+      needs: [
+        currentStreak < 500 ? `${500 - currentStreak} day win streak` : null,
+        totalFocusHours < 250 ? `${Math.round(250 - totalFocusHours)} more Focus hours` : null,
+        totalCEOHours < 250 ? `${Math.round(250 - totalCEOHours)} more CEO Mode hours` : null
+      ].filter(Boolean)
+    }
+  };
+  
+  return requirements[currentRankLevel] || null;
+}
+
 export default function Rank() {
   const { data: rankData, refetch } = useQuery({
     queryKey: ['userRank'],
@@ -23,7 +161,6 @@ export default function Rank() {
   });
 
   useEffect(() => {
-    // Recalculate rank on mount
     refetch();
   }, []);
 
@@ -51,7 +188,7 @@ export default function Rank() {
           <div className="text-sm text-gray-500">Level {rankData?.rankLevel || 1} / 7</div>
         </div>
 
-        {nextRequirements && nextRequirements.needs.length > 0 && (
+        {nextRequirements && nextRequirements.needs && nextRequirements.needs.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-yellow-500" />
