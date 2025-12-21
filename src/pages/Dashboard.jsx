@@ -1,111 +1,106 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   getHabitsForDate, 
-  getHabitCompletionsForDate, 
-  hasUncheckedHabits,
-  checkInHabit,
-  getTopParetoTasks,
-  getNextEvent,
-  getOrCreateWinStreak
+  getHabitCompletionsForDate,
+  checkInHabit
 } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { format, subDays, differenceInMinutes, parseISO } from 'date-fns';
-import { ArrowLeft, Target, CheckCircle2, Circle, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { format, subDays } from 'date-fns';
+import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const [checkInMode, setCheckInMode] = useState(false);
-  const [checkInDate, setCheckInDate] = useState(null);
-  const [habitStates, setHabitStates] = useState({});
+  const [yesterdayStates, setYesterdayStates] = useState({});
 
-  const yesterday = subDays(new Date(), 1);
+  const today = new Date();
+  const yesterday = subDays(today, 1);
 
-  const { data: hasUnchecked } = useQuery({
-    queryKey: ['hasUnchecked', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => hasUncheckedHabits(yesterday)
+  // Today's habits
+  const { data: todayHabits } = useQuery({
+    queryKey: ['habits', format(today, 'yyyy-MM-dd')],
+    queryFn: () => getHabitsForDate(today)
   });
 
+  const { data: todayCompletions } = useQuery({
+    queryKey: ['completions', format(today, 'yyyy-MM-dd')],
+    queryFn: () => getHabitCompletionsForDate(today)
+  });
+
+  // Yesterday's habits
   const { data: yesterdayHabits } = useQuery({
     queryKey: ['habits', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(yesterday),
-    enabled: checkInMode
+    queryFn: () => getHabitsForDate(yesterday)
   });
 
   const { data: yesterdayCompletions } = useQuery({
     queryKey: ['completions', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(yesterday),
-    enabled: checkInMode
+    queryFn: () => getHabitCompletionsForDate(yesterday)
   });
 
-  const { data: todayHabits } = useQuery({
-    queryKey: ['habits', format(new Date(), 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(new Date()),
-    enabled: !checkInMode
-  });
-
-  const { data: todayCompletions } = useQuery({
-    queryKey: ['completions', format(new Date(), 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(new Date()),
-    enabled: !checkInMode
-  });
-
+  // Top Pareto tasks
   const { data: topTasks } = useQuery({
     queryKey: ['topTasks'],
-    queryFn: () => getTopParetoTasks(3)
-  });
-
-  const { data: nextEvent } = useQuery({
-    queryKey: ['nextEvent'],
-    queryFn: getNextEvent
-  });
-
-  const { data: streak } = useQuery({
-    queryKey: ['winStreak'],
-    queryFn: getOrCreateWinStreak
-  });
-
-  useEffect(() => {
-    if (hasUnchecked && !checkInMode) {
-      setCheckInMode(true);
-      setCheckInDate(yesterday);
-    }
-  }, [hasUnchecked]);
-
-  useEffect(() => {
-    if (yesterdayCompletions && yesterdayHabits) {
-      const states = {};
-      yesterdayCompletions.forEach(c => {
-        states[c.habit_id] = c.completed;
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const tasks = await base44.entities.ParetoTask.filter({ 
+        created_by: user.email,
+        completed: false
       });
-      setHabitStates(states);
-    }
-  }, [yesterdayCompletions, yesterdayHabits]);
-
-  const checkInMutation = useMutation({
-    mutationFn: async () => {
-      for (const habitId in habitStates) {
-        await checkInHabit(habitId, checkInDate, habitStates[habitId]);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['hasUnchecked']);
-      setCheckInMode(false);
+      
+      // Sort by importance (crucial highest) and time (less time = higher priority)
+      const importanceWeight = { crucial: 4, essential: 3, average: 2, low: 1 };
+      const timeWeight = { 
+        less_than_30min: 6, 
+        '1_hour': 5, 
+        '2_hours': 4, 
+        half_day: 3, 
+        '1_day': 2, 
+        several_days: 1 
+      };
+      
+      return tasks.sort((a, b) => {
+        const scoreA = (importanceWeight[a.importance_level] || 0) * 10 + (timeWeight[a.time_duration] || 0);
+        const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
+        return scoreB - scoreA;
+      }).slice(0, 5);
     }
   });
 
-  const toggleHabitMutation = useMutation({
+  const toggleTodayHabitMutation = useMutation({
     mutationFn: async ({ habitId, completed }) => {
-      await checkInHabit(habitId, new Date(), completed);
+      await checkInHabit(habitId, today, completed);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['completions']);
+      queryClient.invalidateQueries(['completions', format(today, 'yyyy-MM-dd')]);
     }
   });
 
+  const toggleYesterdayHabitMutation = useMutation({
+    mutationFn: async ({ habitId, completed }) => {
+      await checkInHabit(habitId, yesterday, completed);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['completions', format(yesterday, 'yyyy-MM-dd')]);
+    }
+  });
+
+  const completeTaskMutation = useMutation({
+    mutationFn: async (taskId) => {
+      await base44.entities.ParetoTask.update(taskId, {
+        completed: true,
+        completed_date: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['topTasks']);
+      queryClient.invalidateQueries(['paretoTasks']);
+    }
+  });
+
+  // Create completion maps
   const todayCompletionMap = {};
   if (todayCompletions) {
     todayCompletions.forEach(c => {
@@ -113,159 +108,176 @@ export default function Dashboard() {
     });
   }
 
-  const getTimeUntilEvent = () => {
-    if (!nextEvent) return null;
-    const eventTime = parseISO(`${nextEvent.event_date}T${nextEvent.event_time}`);
-    const mins = differenceInMinutes(eventTime, new Date());
-    const hours = Math.floor(mins / 60);
-    const minutes = mins % 60;
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  };
-
-  if (checkInMode && yesterdayHabits) {
-    return (
-      <div className="min-h-screen bg-black text-white p-6">
-        <div className="max-w-md mx-auto">
-          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Home</span>
-          </Link>
-
-          <div className="mb-8">
-            <div className="text-sm text-gray-500 mb-2">YESTERDAY</div>
-            <h1 className="text-2xl font-bold">Complete Check-in</h1>
-          </div>
-
-          <div className="space-y-3 mb-8">
-            {yesterdayHabits.map(habit => (
-              <button
-                key={habit.id}
-                onClick={() => setHabitStates(prev => ({ ...prev, [habit.id]: !prev[habit.id] }))}
-                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-900 border border-gray-800 hover:border-gray-700 transition-all"
-              >
-                {habitStates[habit.id] ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                ) : (
-                  <Circle className="w-5 h-5 text-gray-600 flex-shrink-0" />
-                )}
-                <span className={habitStates[habit.id] ? 'text-white' : 'text-gray-400'}>
-                  {habit.title}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <Button
-            onClick={() => checkInMutation.mutate()}
-            disabled={checkInMutation.isPending}
-            className="w-full bg-white text-black hover:bg-gray-200 h-12 text-base font-semibold"
-          >
-            {checkInMutation.isPending ? 'Validating...' : '✓ Validate Check-in'}
-          </Button>
-        </div>
-      </div>
-    );
+  const yesterdayCompletionMap = {};
+  if (yesterdayCompletions) {
+    yesterdayCompletions.forEach(c => {
+      yesterdayCompletionMap[c.habit_id] = c.completed;
+    });
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
+      <div className="max-w-6xl mx-auto">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
+          <span className="text-sm font-medium">Home</span>
         </Link>
 
         <div className="mb-8">
-          <div className="text-sm text-gray-500 mb-2">TODAY</div>
-          <h1 className="text-2xl font-bold">Daily Dashboard</h1>
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            Daily Dashboard
+          </h1>
+          <p className="text-sm text-zinc-500 font-medium">Today's habits & priority actions</p>
         </div>
 
-        {/* Today's Habits */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-300">HABITS</h2>
-            <div className="text-sm text-gray-500">
-              {todayHabits && todayCompletions && `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
-            </div>
-          </div>
-          <div className="space-y-2">
-            {todayHabits?.map(habit => (
-              <button
-                key={habit.id}
-                onClick={() => toggleHabitMutation.mutate({ 
-                  habitId: habit.id, 
-                  completed: !todayCompletionMap[habit.id] 
-                })}
-                className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-900 border border-gray-800 hover:border-gray-700 transition-all"
-              >
-                {todayCompletionMap[habit.id] ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+        {/* Two Column Layout */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* LEFT COLUMN: HABITS */}
+          <div className="space-y-6">
+            {/* Yesterday's Habits to Check Off */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-zinc-300">YESTERDAY</h2>
+                <div className="text-xs text-zinc-600 font-medium">Check off what you did</div>
+              </div>
+              <div className="space-y-2">
+                {yesterdayHabits && yesterdayHabits.length > 0 ? (
+                  yesterdayHabits.map(habit => (
+                    <button
+                      key={habit.id}
+                      onClick={() => toggleYesterdayHabitMutation.mutate({ 
+                        habitId: habit.id, 
+                        completed: !yesterdayCompletionMap[habit.id] 
+                      })}
+                      className="w-full group relative"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-600/5 to-red-600/5 rounded-xl blur-lg" />
+                      <div className="relative flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
+                        {yesterdayCompletionMap[habit.id] ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        ) : (
+                          <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
+                        )}
+                        <span className={`text-sm ${yesterdayCompletionMap[habit.id] ? 'text-zinc-400 line-through' : 'text-white'}`}>
+                          {habit.title}
+                        </span>
+                      </div>
+                    </button>
+                  ))
                 ) : (
-                  <Circle className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                  <div className="text-center py-8 text-zinc-600 text-sm">
+                    No habits yesterday
+                  </div>
                 )}
-                <span className={`text-sm ${todayCompletionMap[habit.id] ? 'text-gray-400 line-through' : 'text-white'}`}>
-                  {habit.title}
-                </span>
-              </button>
-            ))}
-            {(!todayHabits || todayHabits.length === 0) && (
-              <div className="text-center py-8 text-gray-600 text-sm">
-                No habits scheduled today
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Top Priorities */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="w-5 h-5 text-red-500" />
-            <h2 className="text-lg font-semibold text-gray-300">TOP PRIORITIES</h2>
-          </div>
-          <div className="space-y-2">
-            {topTasks?.slice(0, 3).map((task, index) => (
-              <Link
-                key={task.id}
-                to={createPageUrl('Pareto')}
-                className="block p-3 rounded-lg bg-gray-900 border border-gray-800 hover:border-red-900 transition-all"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-red-500 font-bold text-sm">{index + 1}.</span>
-                  <span className="text-sm text-white">{task.title}</span>
-                </div>
-              </Link>
-            ))}
-            {(!topTasks || topTasks.length === 0) && (
-              <div className="text-center py-8 text-gray-600 text-sm">
-                No priorities set
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Next Event */}
-        {nextEvent && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-blue-500" />
-              <h2 className="text-lg font-semibold text-gray-300">NEXT EVENT</h2>
             </div>
-            <Link
-              to={createPageUrl('Calendar')}
-              className="block p-4 rounded-lg bg-gray-900 border border-gray-800 hover:border-blue-900 transition-all"
-            >
-              <div className="text-white font-medium mb-1">{nextEvent.title}</div>
-              <div className="text-sm text-gray-500">{getTimeUntilEvent()}</div>
-            </Link>
-          </div>
-        )}
 
-        {/* Quick Action */}
-        <Link to={createPageUrl('FocusMode')}>
-          <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 h-12 text-base font-semibold">
-            🎯 Start Focus Mode
-          </Button>
-        </Link>
+            {/* Today's Habits */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-zinc-300">TODAY</h2>
+                <div className="text-xs text-zinc-600 font-medium">
+                  {todayHabits && todayCompletions && 
+                    `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
+                </div>
+              </div>
+              <div className="space-y-2">
+                {todayHabits && todayHabits.length > 0 ? (
+                  todayHabits.map(habit => (
+                    <button
+                      key={habit.id}
+                      onClick={() => toggleTodayHabitMutation.mutate({ 
+                        habitId: habit.id, 
+                        completed: !todayCompletionMap[habit.id] 
+                      })}
+                      className="w-full group relative"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-xl blur-lg" />
+                      <div className="relative flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
+                        {todayCompletionMap[habit.id] ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        ) : (
+                          <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
+                        )}
+                        <span className={`text-sm ${todayCompletionMap[habit.id] ? 'text-zinc-400 line-through' : 'text-white'}`}>
+                          {habit.title}
+                        </span>
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-zinc-600 text-sm">
+                    No habits today
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: PARETO PRIORITY TASKS */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-zinc-300">PRIORITY ACTIONS</h2>
+              <Link 
+                to={createPageUrl('Pareto')}
+                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                View All →
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {topTasks && topTasks.length > 0 ? (
+                topTasks.map((task, index) => {
+                  const importanceColors = {
+                    crucial: 'from-red-600/10 to-orange-600/10',
+                    essential: 'from-yellow-600/10 to-amber-600/10',
+                    average: 'from-blue-600/10 to-cyan-600/10',
+                    low: 'from-zinc-600/10 to-zinc-500/10'
+                  };
+                  
+                  const importanceBadge = {
+                    crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
+                    essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
+                    average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
+                    low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
+                  };
+
+                  return (
+                    <div key={task.id} className="group relative">
+                      <div className={`absolute inset-0 bg-gradient-to-r ${importanceColors[task.importance_level]} rounded-xl blur-lg`} />
+                      <div className="relative flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
+                        <div className="flex items-center gap-3 flex-1">
+                          <span className="text-lg font-bold text-zinc-600">{index + 1}</span>
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-white mb-1">{task.title}</div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${importanceBadge[task.importance_level].color}`}>
+                                {importanceBadge[task.importance_level].text}
+                              </span>
+                              <span className="text-[10px] text-zinc-600">
+                                {task.time_duration.replace(/_/g, ' ')}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => completeTaskMutation.mutate(task.id)}
+                          className="p-2 hover:bg-zinc-700/50 rounded-lg transition-all"
+                        >
+                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-12 text-zinc-600 text-sm">
+                  No priority tasks yet
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
