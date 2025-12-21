@@ -2,17 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { startCEOModeSession, endCEOModeSession, getApprovedApps } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Circle, Phone, MessageSquare, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { ArrowLeft, Circle, Phone, MessageSquare, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { differenceInSeconds, parseISO } from 'date-fns';
 
 export default function CEOMode() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [duration, setDuration] = useState(60);
-  const [timeRemaining, setTimeRemaining] = useState(0);
-  const [activeSession, setActiveSession] = useState(null);
+  const [activeSessionId, setActiveSessionId] = useState(null);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const { data: activeSessions } = useQuery({
     queryKey: ['ceoModeSessions'],
@@ -29,218 +28,168 @@ export default function CEOMode() {
     }
   });
 
+  const { data: approvedApps } = useQuery({
+    queryKey: ['approvedApps'],
+    queryFn: getApprovedApps
+  });
+
   useEffect(() => {
     if (activeSessions) {
-      setActiveSession(activeSessions);
+      setActiveSessionId(activeSessions.id);
     }
   }, [activeSessions]);
 
-  useEffect(() => {
-    if (activeSession) {
-      const interval = setInterval(() => {
-        const elapsed = differenceInSeconds(new Date(), parseISO(activeSession.start_time));
-        const total = activeSession.duration_minutes * 60;
-        const remaining = Math.max(0, total - elapsed);
-        
-        setTimeRemaining(remaining);
-        
-        if (remaining === 0) {
-          endMutation.mutate(activeSession.id);
-        }
-      }, 1000);
-      
-      return () => clearInterval(interval);
-    }
-  }, [activeSession]);
-
   const startMutation = useMutation({
-    mutationFn: async (durationMins) => {
-      const user = await base44.auth.me();
-      return await base44.entities.CEOModeSession.create({
-        start_time: new Date().toISOString(),
-        duration_minutes: durationMins,
-        created_by: user.email
-      });
-    },
+    mutationFn: startCEOModeSession,
     onSuccess: (session) => {
-      setActiveSession(session);
+      setActiveSessionId(session.id);
       queryClient.invalidateQueries(['ceoModeSessions']);
     }
   });
 
   const endMutation = useMutation({
-    mutationFn: async (sessionId) => {
-      await base44.entities.CEOModeSession.update(sessionId, {
-        end_time: new Date().toISOString()
-      });
-    },
+    mutationFn: () => endCEOModeSession(activeSessionId),
     onSuccess: () => {
-      setActiveSession(null);
+      setActiveSessionId(null);
       queryClient.invalidateQueries(['ceoModeSessions']);
       navigate(createPageUrl('Home'));
     }
   });
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const handleActivate = () => {
+    startMutation.mutate();
   };
 
-  const getProgress = () => {
-    if (!activeSession) return 0;
-    const total = activeSession.duration_minutes * 60;
-    const elapsed = total - timeRemaining;
-    return (elapsed / total) * 100;
+  const handleExit = () => {
+    setShowExitConfirm(true);
   };
 
-  // Session complete state
-  if (endMutation.isSuccess) {
+  const confirmExit = () => {
+    endMutation.mutate();
+  };
+
+  // Active CEO Mode state
+  if (activeSessionId) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold mb-4">SESSION COMPLETE</h1>
-          <div className="text-gray-400 mb-8">CEO Mode has ended</div>
-          <div className="text-sm text-gray-500">Returning to home...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // Active CEO Mode state - Cannot exit until timer ends
-  if (activeSession && timeRemaining > 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-black to-zinc-950 text-white flex flex-col items-center justify-center p-6">
-        <Circle className="w-20 h-20 mb-8 text-white" />
-        <h1 className="text-3xl font-bold mb-4">CEO MODE ACTIVE</h1>
-        <p className="text-zinc-500 mb-12 text-center">Stay focused. Timer must complete.</p>
-        
-        <div className="text-8xl font-bold mb-8 tabular-nums">
-          {formatTime(timeRemaining)}
-        </div>
-        
-        <div className="w-full max-w-md mb-8">
-          <div className="h-2 bg-zinc-900 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-zinc-600 to-zinc-400 transition-all duration-1000"
-              style={{ width: `${getProgress()}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="w-full max-w-md mb-16">
-          <div className="text-sm text-zinc-600 text-center mb-6">AVAILABLE APPS</div>
-          <div className="flex justify-center gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-2">
-                <Phone className="w-8 h-8 text-white" />
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
+        {showExitConfirm ? (
+          <div className="max-w-md w-full">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+              <h2 className="text-2xl font-bold text-center mb-4">EXIT CEO MODE?</h2>
+              <p className="text-gray-400 text-center mb-8">
+                This will restore full access to all apps and features.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setShowExitConfirm(false)}
+                  variant="outline"
+                  className="flex-1 bg-transparent border-gray-700 hover:bg-gray-800"
+                >
+                  Stay in CEO Mode
+                </Button>
+                <Button
+                  onClick={confirmExit}
+                  className="flex-1 bg-white text-black hover:bg-gray-200"
+                >
+                  Exit
+                </Button>
               </div>
-              <div className="text-xs text-zinc-600">Phone</div>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-2">
-                <MessageSquare className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-xs text-zinc-600">Messages</div>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-2">
-                <CalendarIcon className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-xs text-zinc-600">Calendar</div>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <Circle className="w-20 h-20 mb-8 text-white" />
+            <h1 className="text-3xl font-bold mb-12">CEO MODE ACTIVE</h1>
+            
+            <div className="w-full max-w-md mb-16">
+              <div className="text-sm text-gray-500 text-center mb-6">AVAILABLE APPS</div>
+              <div className="flex justify-center gap-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center mb-2">
+                    <Phone className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-xs text-gray-500">Phone</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center mb-2">
+                    <MessageSquare className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-xs text-gray-500">Messages</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center mb-2">
+                    <CalendarIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-xs text-gray-500">Calendar</div>
+                </div>
+              </div>
+            </div>
 
-        <div className="text-center p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 max-w-md">
-          <div className="text-sm text-zinc-500">
-            🔒 CEO Mode cannot be exited until the timer completes. Stay focused.
-          </div>
-        </div>
+            <button
+              onClick={handleExit}
+              className="px-6 py-3 rounded-lg border border-gray-800 hover:border-gray-700 text-sm font-medium transition-colors"
+            >
+              EXIT CEO MODE
+            </button>
+          </>
+        )}
       </div>
     );
   }
 
   // Setup state
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
+    <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-md mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
+          <span className="text-sm">Home</span>
         </Link>
 
         <div className="text-center mb-12">
           <Circle className="w-16 h-16 mx-auto mb-6 text-white" />
-          <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            CEO MODE
-          </h1>
-          <p className="text-zinc-500">
-            Ultimate focus. Zero distractions. Lock yourself in.
+          <h1 className="text-3xl font-bold mb-4">CEO MODE</h1>
+          <p className="text-gray-400">
+            Ultimate focus. Zero distractions. Only approved apps accessible.
           </p>
         </div>
 
         <div className="mb-8">
-          <label className="block text-sm text-zinc-400 mb-4 font-medium">Select Duration</label>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            {[30, 60, 90, 120, 180, 240].map(mins => (
-              <button
-                key={mins}
-                onClick={() => setDuration(mins)}
-                className={`p-4 rounded-xl border transition-all ${
-                  duration === mins
-                    ? 'bg-zinc-700 border-zinc-600'
-                    : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-                }`}
-              >
-                <div className="text-2xl font-bold">{mins}</div>
-                <div className="text-xs text-zinc-500">min</div>
-              </button>
-            ))}
-          </div>
-          <div className="relative">
-            <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
-            <input
-              type="number"
-              value={duration}
-              onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 pl-12 text-white focus:outline-none focus:border-zinc-600"
-              placeholder="Custom duration"
-            />
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="text-sm text-zinc-500 mb-4">APPROVED APPS (3)</div>
+          <div className="text-sm text-gray-500 mb-4">APPROVED APPS ({approvedApps?.length || 3})</div>
           <div className="space-y-2">
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
-              <Phone className="w-5 h-5 text-zinc-600" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900">
+              <Phone className="w-5 h-5 text-gray-400" />
               <span className="text-sm">Phone</span>
             </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
-              <MessageSquare className="w-5 h-5 text-zinc-600" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900">
+              <MessageSquare className="w-5 h-5 text-gray-400" />
               <span className="text-sm">Messages</span>
             </div>
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
-              <CalendarIcon className="w-5 h-5 text-zinc-600" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900">
+              <CalendarIcon className="w-5 h-5 text-gray-400" />
               <span className="text-sm">Calendar</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-red-950/20 border border-red-900/30 rounded-xl p-4 mb-8">
-          <div className="text-sm text-red-400">
-            ⚠️ <span className="font-semibold">WARNING:</span> CEO Mode cannot be exited until the timer completes. You will be locked in for the full duration.
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-8">
+          <div className="text-sm text-gray-400">
+            ⚠️ CEO Mode blocks all other apps and websites until you explicitly exit.
+          </div>
+        </div>
+
+        <div className="bg-gray-900 border border-yellow-900 rounded-xl p-4 mb-8">
+          <div className="text-sm text-yellow-400">
+            🔒 Platform Limitation: Full app blocking requires native OS permissions. This mode provides a minimal UI overlay.
           </div>
         </div>
 
         <Button
-          onClick={() => startMutation.mutate(duration)}
+          onClick={handleActivate}
           disabled={startMutation.isPending}
-          className="w-full bg-white text-black hover:bg-zinc-200 h-12 text-base font-semibold"
+          className="w-full bg-white text-black hover:bg-gray-200 h-12 text-base font-semibold"
         >
-          {startMutation.isPending ? 'Activating...' : `🔒 ACTIVATE CEO MODE (${duration}m)`}
+          {startMutation.isPending ? 'Activating...' : 'ACTIVATE CEO MODE'}
         </Button>
       </div>
     </div>
