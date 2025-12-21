@@ -178,7 +178,22 @@ export default function Home() {
             </div>
           </div>
         </Link>
-      </div>
+        </div>
+
+        {/* 6-Month Report - Full Width */}
+        <Link to={createPageUrl('BiannualReport')} className="block group relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
+        <div className="relative h-20 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.98]">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-600/10 to-pink-600/10 rounded-full blur-3xl" />
+          <div className="relative flex items-center gap-4 h-full">
+            <div className="text-3xl">📊</div>
+            <div>
+              <div className="text-base font-bold">6-Month Report</div>
+              <div className="text-[10px] text-zinc-500 font-medium uppercase tracking-wide">View Your Progress</div>
+            </div>
+          </div>
+        </div>
+        </Link>
 
       {/* CEO Mode - Rectangular Black */}
       <Link to={createPageUrl('CEOMode')} className="block group relative">

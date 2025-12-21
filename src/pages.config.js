@@ -11,6 +11,7 @@ import Rewards from './pages/Rewards';
 import Calendar from './pages/Calendar';
 import Leaderboard from './pages/Leaderboard';
 import ScreenTimeManager from './pages/ScreenTimeManager';
+import BiannualReport from './pages/BiannualReport';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Calendar": Calendar,
     "Leaderboard": Leaderboard,
     "ScreenTimeManager": ScreenTimeManager,
+    "BiannualReport": BiannualReport,
 }
 
 export const pagesConfig = {
