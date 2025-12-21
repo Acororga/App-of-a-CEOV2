@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUpcomingEvents } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { format, parseISO, differenceInMinutes } from 'date-fns';
 import { ArrowLeft, Calendar as CalendarIcon, Clock, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import EventModal from '../components/calendar/EventModal';
 
 export default function Calendar() {
+  const queryClient = useQueryClient();
+  const [showEventModal, setShowEventModal] = useState(false);
+  
   const { data: events } = useQuery({
     queryKey: ['upcomingEvents'],
     queryFn: () => getUpcomingEvents(30)
+  });
+
+  const createEventMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return await base44.entities.CalendarEvent.create({
+        ...data,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['upcomingEvents']);
+    }
   });
 
   const getTimeUntil = (eventDate, eventTime) => {
@@ -99,10 +116,19 @@ export default function Calendar() {
           </div>
         )}
 
-        <Button className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800">
+        <Button 
+          onClick={() => setShowEventModal(true)}
+          className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Event
         </Button>
+
+        <EventModal
+          open={showEventModal}
+          onClose={() => setShowEventModal(false)}
+          onSubmit={(data) => createEventMutation.mutate(data)}
+        />
       </div>
     </div>
   );
