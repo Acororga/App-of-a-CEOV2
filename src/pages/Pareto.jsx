@@ -245,7 +245,7 @@ export default function Pareto() {
                   <div className="text-xs text-zinc-500 text-center">1h</div>
                 </div>
                 <div className="absolute" style={{ left: CELL_SIZE * 5, bottom: -30, width: CELL_SIZE }}>
-                  <div className="text-xs text-zinc-500 text-center"><30m</div>
+                  <div className="text-xs text-zinc-500 text-center">{'<30m'}</div>
                 </div>
 
                 {/* X-axis label */}
