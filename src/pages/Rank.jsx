@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { RANK_TIERS as IMPORTED_RANK_TIERS, getAverageScreenTime, getOrCreateWinStreak, calculateRank } from '../functions/businessLogic';
 import { ArrowLeft, Crown, TrendingUp } from 'lucide-react';
 
-const RANK_TIERS = IMPORTED_RANK_TIERS || [
+const RANK_TIERS = [
   { level: 1, name: 'Panda', icon: '🐼', minScreenTimeMinutes: 999999, maxScreenTimeMinutes: 999999 },
   { level: 2, name: 'Soldier', icon: '🪖', minScreenTimeMinutes: 480, maxScreenTimeMinutes: 999999 },
   { level: 3, name: 'Warrior', icon: '⚔️', minScreenTimeMinutes: 360, maxScreenTimeMinutes: 479 },
@@ -30,18 +29,16 @@ export default function Rank() {
 
   const { data: avgScreenTime } = useQuery({
     queryKey: ['avgScreenTime'],
-    queryFn: () => getAverageScreenTime(7)
-  });
-
-  const { data: streak } = useQuery({
-    queryKey: ['winStreak'],
-    queryFn: getOrCreateWinStreak
-  });
-
-  const { data: calculated } = useQuery({
-    queryKey: ['calculatedRank', avgScreenTime, streak?.current_streak],
-    queryFn: () => calculateRank(avgScreenTime || 0, streak?.current_streak || 0),
-    enabled: !!avgScreenTime && !!streak
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const logs = await base44.entities.ScreenTimeLog.filter({ 
+        created_by: user.email 
+      }, '-created_date', 7);
+      
+      if (!logs.length) return 0;
+      const totalMinutes = logs.reduce((sum, log) => sum + (log.duration_seconds / 60), 0);
+      return totalMinutes / 7;
+    }
   });
 
   const currentTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1)) || RANK_TIERS[0];
@@ -65,12 +62,18 @@ export default function Rank() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Progress to {nextTier.name}</span>
-              <span className="text-sm text-gray-400">{calculated?.progressToNext || 0}%</span>
+              <span className="text-sm text-gray-400">
+                {nextTier && avgScreenTime ? 
+                  Math.min(100, Math.round(((nextTier.maxScreenTimeMinutes - avgScreenTime) / (nextTier.maxScreenTimeMinutes - nextTier.minScreenTimeMinutes)) * 100)) 
+                  : 0}%
+              </span>
             </div>
             <div className="h-3 bg-gray-900 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all"
-                style={{ width: `${calculated?.progressToNext || 0}%` }}
+                style={{ width: `${nextTier && avgScreenTime ? 
+                  Math.min(100, Math.round(((nextTier.maxScreenTimeMinutes - avgScreenTime) / (nextTier.maxScreenTimeMinutes - nextTier.minScreenTimeMinutes)) * 100)) 
+                  : 0}%` }}
               />
             </div>
           </div>
