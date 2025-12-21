@@ -1,48 +1,41 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Crown, TrendingUp } from 'lucide-react';
+import { calculateUserRank, getNextRankRequirements } from '../functions/calculateRankLogic';
+import { ArrowLeft, Crown, TrendingUp, Zap } from 'lucide-react';
 
 const RANK_TIERS = [
-  { level: 1, name: 'Panda', icon: '🐼', minScreenTimeMinutes: 999999, maxScreenTimeMinutes: 999999 },
-  { level: 2, name: 'Soldier', icon: '🪖', minScreenTimeMinutes: 480, maxScreenTimeMinutes: 999999 },
-  { level: 3, name: 'Warrior', icon: '⚔️', minScreenTimeMinutes: 360, maxScreenTimeMinutes: 479 },
-  { level: 4, name: 'Knight', icon: '🛡️', minScreenTimeMinutes: 300, maxScreenTimeMinutes: 359 },
-  { level: 5, name: 'Captain', icon: '🎖️', minScreenTimeMinutes: 240, maxScreenTimeMinutes: 299 },
-  { level: 6, name: 'Commander', icon: '⭐', minScreenTimeMinutes: 180, maxScreenTimeMinutes: 239 },
-  { level: 7, name: 'General', icon: '🎯', minScreenTimeMinutes: 120, maxScreenTimeMinutes: 179 },
-  { level: 8, name: 'Sigma', icon: '💎', minScreenTimeMinutes: 60, maxScreenTimeMinutes: 119 },
-  { level: 9, name: 'CEO', icon: '👑', minScreenTimeMinutes: 0, maxScreenTimeMinutes: 59 }
+  { level: 1, name: 'Bronze', icon: '🥉', description: 'Starting rank' },
+  { level: 2, name: 'Silver', icon: '🥈', description: '15 days + 10 day streak' },
+  { level: 3, name: 'Gold', icon: '🥇', description: '50 day streak' },
+  { level: 4, name: 'Platinum', icon: '💎', description: '90 day streak + 60h Focus' },
+  { level: 5, name: 'Diamond', icon: '💠', description: '180 day streak + 200h Focus' },
+  { level: 6, name: 'Batman', icon: '🦇', description: '365 day streak + 200h Focus + 100h CEO' },
+  { level: 7, name: 'CEO', icon: '👑', description: '500 day streak + 250h Focus + 250h CEO' }
 ];
 
 export default function Rank() {
-  const { data: rankData } = useQuery({
+  const { data: rankData, refetch } = useQuery({
     queryKey: ['userRank'],
-    queryFn: async () => {
-      const user = await base44.auth.me();
-      const ranks = await base44.entities.UserRank.filter({ created_by: user.email });
-      return ranks[0];
-    }
+    queryFn: calculateUserRank
   });
 
-  const { data: avgScreenTime } = useQuery({
-    queryKey: ['avgScreenTime'],
-    queryFn: async () => {
-      const user = await base44.auth.me();
-      const logs = await base44.entities.ScreenTimeLog.filter({ 
-        created_by: user.email 
-      }, '-created_date', 7);
-      
-      if (!logs.length) return 0;
-      const totalMinutes = logs.reduce((sum, log) => sum + (log.duration_seconds / 60), 0);
-      return totalMinutes / 7;
-    }
-  });
+  useEffect(() => {
+    // Recalculate rank on mount
+    refetch();
+  }, []);
 
-  const currentTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1)) || RANK_TIERS[0];
-  const nextTier = RANK_TIERS.find(t => t.level === (rankData?.rank_level || 1) + 1);
+  const currentTier = RANK_TIERS.find(t => t.level === (rankData?.rankLevel || 1)) || RANK_TIERS[0];
+  const nextTier = RANK_TIERS.find(t => t.level === (rankData?.rankLevel || 1) + 1);
+  
+  const nextRequirements = rankData ? getNextRankRequirements(rankData.rankLevel, {
+    currentStreak: rankData.currentStreak,
+    totalFocusHours: rankData.totalFocusHours,
+    totalCEOHours: rankData.totalCEOHours,
+    daysInApp: rankData.daysInApp
+  }) : null;
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -53,28 +46,24 @@ export default function Rank() {
         </Link>
 
         <div className="text-center mb-12">
-          <div className="text-7xl mb-4">{currentTier?.icon || '🐼'}</div>
-          <h1 className="text-4xl font-bold mb-2">{rankData?.rank_name || 'Panda'}</h1>
-          <div className="text-sm text-gray-500">Level {rankData?.rank_level || 1} / 9</div>
+          <div className="text-7xl mb-4">{currentTier?.icon || '🥉'}</div>
+          <h1 className="text-4xl font-bold mb-2">{rankData?.rankName || 'Bronze'}</h1>
+          <div className="text-sm text-gray-500">Level {rankData?.rankLevel || 1} / 7</div>
         </div>
 
-        {nextTier && (
+        {nextRequirements && nextRequirements.needs.length > 0 && (
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Progress to {nextTier.name}</span>
-              <span className="text-sm text-gray-400">
-                {nextTier && avgScreenTime ? 
-                  Math.min(100, Math.round(((nextTier.maxScreenTimeMinutes - avgScreenTime) / (nextTier.maxScreenTimeMinutes - nextTier.minScreenTimeMinutes)) * 100)) 
-                  : 0}%
-              </span>
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="w-5 h-5 text-yellow-500" />
+              <h2 className="text-lg font-semibold">Path to {nextRequirements.name}</h2>
             </div>
-            <div className="h-3 bg-gray-900 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all"
-                style={{ width: `${nextTier && avgScreenTime ? 
-                  Math.min(100, Math.round(((nextTier.maxScreenTimeMinutes - avgScreenTime) / (nextTier.maxScreenTimeMinutes - nextTier.minScreenTimeMinutes)) * 100)) 
-                  : 0}%` }}
-              />
+            <div className="space-y-2">
+              {nextRequirements.needs.map((need, idx) => (
+                <div key={idx} className="p-3 rounded-lg bg-gray-900 border border-gray-800 flex items-center gap-3">
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  <span className="text-sm text-gray-300">{need}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -83,49 +72,27 @@ export default function Rank() {
           <h2 className="text-lg font-semibold text-gray-300 mb-4">YOUR STATS</h2>
           <div className="space-y-3">
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Avg Screen Time</span>
-              <span className="text-sm font-semibold">
-                {avgScreenTime ? `${Math.round(avgScreenTime)}m/day` : 'N/A'}
-              </span>
+              <span className="text-sm text-gray-400">Days in App</span>
+              <span className="text-sm font-semibold">{rankData?.daysInApp || 0}</span>
             </div>
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Win Streak Bonus</span>
+              <span className="text-sm text-gray-400">Win Streak</span>
               <span className="text-sm font-semibold text-orange-400">
-                +{rankData?.win_streak_bonus || 0}
+                {rankData?.currentStreak || 0} days
               </span>
             </div>
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Days at Rank</span>
-              <span className="text-sm font-semibold">{rankData?.days_at_current_rank || 0}</span>
+              <span className="text-sm text-gray-400">Focus Mode</span>
+              <span className="text-sm font-semibold">{rankData?.totalFocusHours || 0}h</span>
+            </div>
+            <div className="flex justify-between p-4 rounded-lg bg-gray-900">
+              <span className="text-sm text-gray-400">CEO Mode</span>
+              <span className="text-sm font-semibold">{rankData?.totalCEOHours || 0}h</span>
             </div>
           </div>
         </div>
 
-        {nextTier && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-green-500" />
-              <h2 className="text-lg font-semibold text-gray-300">NEXT RANK</h2>
-            </div>
-            <div className="p-4 rounded-lg bg-gray-900 border border-gray-800">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-3xl">{nextTier.icon}</span>
-                <div>
-                  <div className="font-semibold">{nextTier.name}</div>
-                  <div className="text-xs text-gray-500">Level {nextTier.level}</div>
-                </div>
-              </div>
-              <div className="text-sm text-gray-400">
-                Requires: ≤{nextTier.minScreenTimeMinutes}m screen time/day
-              </div>
-              {avgScreenTime && avgScreenTime > nextTier.minScreenTimeMinutes && (
-                <div className="text-sm text-green-400 mt-2">
-                  Reduce by: {Math.round(avgScreenTime - nextTier.minScreenTimeMinutes)}m/day
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+
 
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-300 mb-4">RANK LADDER</h2>
@@ -136,9 +103,9 @@ export default function Rank() {
             <div
               key={tier.level}
               className={`p-4 rounded-lg border transition-all ${
-                tier.level === (rankData?.rank_level || 1)
+                tier.level === (rankData?.rankLevel || 1)
                   ? 'bg-gradient-to-r from-yellow-950 to-gray-900 border-yellow-900'
-                  : tier.level < (rankData?.rank_level || 1)
+                  : tier.level < (rankData?.rankLevel || 1)
                   ? 'bg-gray-900 border-gray-800 opacity-50'
                   : 'bg-gray-900 border-gray-800'
               }`}
@@ -148,13 +115,13 @@ export default function Rank() {
                   <span className="text-2xl">{tier.icon}</span>
                   <div>
                     <div className="font-semibold">{tier.name}</div>
-                    <div className="text-xs text-gray-500">Level {tier.level}</div>
+                    <div className="text-xs text-gray-500">{tier.description}</div>
                   </div>
                 </div>
-                {tier.level === (rankData?.rank_level || 1) && (
+                {tier.level === (rankData?.rankLevel || 1) && (
                   <Crown className="w-5 h-5 text-yellow-500" />
                 )}
-                {tier.level < (rankData?.rank_level || 1) && (
+                {tier.level < (rankData?.rankLevel || 1) && (
                   <span className="text-green-500 text-sm">✓</span>
                 )}
               </div>
