@@ -8,10 +8,14 @@ import { format, startOfWeek, addDays } from 'date-fns';
 import { ArrowLeft, Plus, CheckCircle2, Circle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ObjectiveModal from '../components/habits/ObjectiveModal';
+import HabitModal from '../components/habits/HabitModal';
 
 export default function Habits() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('weekly');
+  const [showObjectiveModal, setShowObjectiveModal] = useState(false);
+  const [showHabitModal, setShowHabitModal] = useState(false);
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
 
   const { data: objectives } = useQuery({
@@ -53,6 +57,63 @@ export default function Habits() {
         data[dayStr] = { habits, completions: completionMap };
       }
       return data;
+    }
+  });
+
+  const { data: weeklyContract } = useQuery({
+    queryKey: ['currentContract', format(weekStart, 'yyyy-MM-dd')],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const contracts = await base44.entities.WeeklyContract.filter({
+        created_by: user.email,
+        week_start_date: format(weekStart, 'yyyy-MM-dd')
+      });
+      return contracts[0];
+    }
+  });
+
+  const createObjectiveMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return await base44.entities.Objective.create({
+        ...data,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['objectives']);
+    }
+  });
+
+  const createHabitMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return await base44.entities.Habit.create({
+        ...data,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['allHabits']);
+    }
+  });
+
+  const updateContractMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      if (weeklyContract) {
+        return await base44.entities.WeeklyContract.update(weeklyContract.id, data);
+      } else {
+        return await base44.entities.WeeklyContract.create({
+          ...data,
+          week_start_date: format(weekStart, 'yyyy-MM-dd'),
+          week_end_date: format(addDays(weekStart, 6), 'yyyy-MM-dd'),
+          created_by: user.email
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['currentContract']);
     }
   });
 
@@ -103,7 +164,10 @@ export default function Habits() {
                 );
               })}
             </div>
-            <Button className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800">
+            <Button 
+              onClick={() => setShowObjectiveModal(true)}
+              className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
+            >
               <Plus className="w-4 h-4 mr-2" />
               New Objective
             </Button>
@@ -149,7 +213,10 @@ export default function Habits() {
                 );
               })}
             </div>
-            <Button className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800">
+            <Button 
+              onClick={() => setShowHabitModal(true)}
+              className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
+            >
               <Plus className="w-4 h-4 mr-2" />
               New Habit
             </Button>
@@ -234,8 +301,79 @@ export default function Habits() {
                 </div>
               </div>
             )}
+
+            {/* Rewards & Sanctions Section */}
+            <div className="mt-8 pt-8 border-t border-gray-800">
+              <h2 className="text-lg font-semibold mb-4">Weekly Contract</h2>
+              
+              {!weeklyContract?.committed ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm text-gray-400 mb-2 block">Reward (if you succeed)</label>
+                    <input
+                      type="text"
+                      value={weeklyContract?.reward_text || ''}
+                      onChange={(e) => updateContractMutation.mutate({ reward_text: e.target.value })}
+                      placeholder="e.g., Movie night, special meal, etc."
+                      className="w-full p-3 rounded-lg bg-gray-900 border border-gray-800 text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm text-gray-400 mb-2 block">Sanction (if you fail)</label>
+                    <input
+                      type="text"
+                      value={weeklyContract?.sanction_text || ''}
+                      onChange={(e) => updateContractMutation.mutate({ sanction_text: e.target.value })}
+                      placeholder="e.g., No social media for a day, donate to charity, etc."
+                      className="w-full p-3 rounded-lg bg-gray-900 border border-gray-800 text-white"
+                    />
+                  </div>
+
+                  {weeklyContract?.reward_text && weeklyContract?.sanction_text && !weeklyContract?.committed && (
+                    <Button
+                      onClick={() => updateContractMutation.mutate({ committed: true })}
+                      className="w-full bg-white text-black hover:bg-gray-200"
+                    >
+                      Commit to Contract
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-green-950 border border-green-900">
+                    <div className="text-sm text-green-400 font-semibold mb-1">✅ Reward</div>
+                    <div className="text-white">{weeklyContract.reward_text}</div>
+                  </div>
+                  
+                  <div className="p-4 rounded-lg bg-red-950 border border-red-900">
+                    <div className="text-sm text-red-400 font-semibold mb-1">⚠️ Sanction</div>
+                    <div className="text-white">{weeklyContract.sanction_text}</div>
+                  </div>
+
+                  <div className="text-sm text-gray-500 text-center">
+                    {weeklyScore?.success_percentage >= (weeklyContract.success_threshold_percentage || 90)
+                      ? '🎉 You\'re on track to earn your reward!'
+                      : '⚡ Keep going to avoid the sanction!'}
+                  </div>
+                </div>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
+
+        <ObjectiveModal
+          open={showObjectiveModal}
+          onClose={() => setShowObjectiveModal(false)}
+          onSubmit={(data) => createObjectiveMutation.mutate(data)}
+        />
+
+        <HabitModal
+          open={showHabitModal}
+          onClose={() => setShowHabitModal(false)}
+          onSubmit={(data) => createHabitMutation.mutate(data)}
+          objectives={objectives}
+        />
       </div>
     </div>
   );
