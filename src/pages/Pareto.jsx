@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,6 +16,7 @@ import {
 
 export default function Pareto() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('list');
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTask, setNewTask] = useState({
     title: '',
@@ -33,6 +34,27 @@ export default function Pareto() {
       });
     }
   });
+
+  // Get top 5 tasks sorted by priority
+  const topTasks = React.useMemo(() => {
+    if (!tasks) return [];
+    
+    const importanceWeight = { crucial: 4, essential: 3, average: 2, low: 1 };
+    const timeWeight = { 
+      less_than_30min: 6, 
+      '1_hour': 5, 
+      '2_hours': 4, 
+      half_day: 3, 
+      '1_day': 2, 
+      several_days: 1 
+    };
+    
+    return [...tasks].sort((a, b) => {
+      const scoreA = (importanceWeight[a.importance_level] || 0) * 10 + (timeWeight[a.time_duration] || 0);
+      const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
+      return scoreB - scoreA;
+    }).slice(0, 5);
+  }, [tasks]);
 
   const createTaskMutation = useMutation({
     mutationFn: async (taskData) => {
@@ -111,101 +133,194 @@ export default function Pareto() {
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-              Pareto Matrix
-            </h1>
-            <p className="text-sm text-zinc-500 font-medium">80/20 Task Prioritization</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                Pareto Matrix
+              </h1>
+              <p className="text-sm text-zinc-500 font-medium">80/20 Task Prioritization</p>
+            </div>
           </div>
-          <Button 
-            onClick={() => setShowAddForm(true)}
-            className="bg-white text-black hover:bg-zinc-200"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Task
-          </Button>
+
+          {/* Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab('list')}
+              className={`px-6 py-2.5 rounded-xl font-semibold transition-all ${
+                activeTab === 'list'
+                  ? 'bg-white text-black'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-700'
+              }`}
+            >
+              To-Do List
+            </button>
+            <button
+              onClick={() => setActiveTab('matrix')}
+              className={`px-6 py-2.5 rounded-xl font-semibold transition-all ${
+                activeTab === 'matrix'
+                  ? 'bg-white text-black'
+                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-700'
+              }`}
+            >
+              Matrix View
+            </button>
+          </div>
         </div>
 
-        {/* Add Task Form */}
-        {showAddForm && (
-          <div className="mb-8 relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-            <form onSubmit={handleSubmit} className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold">New Task</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className="p-2 hover:bg-zinc-700 rounded-lg transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+        {/* LIST TAB */}
+        {activeTab === 'list' && (
+          <div>
+            {/* Add Task Form */}
+            {showAddForm && (
+              <div className="mb-8 relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
+                <form onSubmit={handleSubmit} className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold">New Task</h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddForm(false)}
+                      className="p-2 hover:bg-zinc-700 rounded-lg transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm text-zinc-400 mb-2 block">Task Name</label>
+                      <Input
+                        value={newTask.title}
+                        onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                        placeholder="Enter action/task..."
+                        className="bg-zinc-900 border-zinc-700"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-zinc-400 mb-2 block">Time Duration</label>
+                      <Select
+                        value={newTask.time_duration}
+                        onValueChange={(value) => setNewTask({ ...newTask, time_duration: value })}
+                      >
+                        <SelectTrigger className="bg-zinc-900 border-zinc-700">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="less_than_30min">Less than 30 minutes</SelectItem>
+                          <SelectItem value="1_hour">1 hour</SelectItem>
+                          <SelectItem value="2_hours">2 hours</SelectItem>
+                          <SelectItem value="half_day">Half a day</SelectItem>
+                          <SelectItem value="1_day">1 day</SelectItem>
+                          <SelectItem value="several_days">Several days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="text-sm text-zinc-400 mb-2 block">Importance Level</label>
+                      <Select
+                        value={newTask.importance_level}
+                        onValueChange={(value) => setNewTask({ ...newTask, importance_level: value })}
+                      >
+                        <SelectTrigger className="bg-zinc-900 border-zinc-700">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="crucial">Crucial</SelectItem>
+                          <SelectItem value="essential">Essential</SelectItem>
+                          <SelectItem value="average">Average</SelectItem>
+                          <SelectItem value="low">Low Importance</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      disabled={!newTask.title.trim() || createTaskMutation.isPending}
+                      className="w-full bg-white text-black hover:bg-zinc-200"
+                    >
+                      {createTaskMutation.isPending ? 'Adding...' : 'Add Task'}
+                    </Button>
+                  </div>
+                </form>
               </div>
+            )}
 
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-zinc-400 mb-2 block">Task Name</label>
-                  <Input
-                    value={newTask.title}
-                    onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                    placeholder="Enter action/task..."
-                    className="bg-zinc-900 border-zinc-700"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm text-zinc-400 mb-2 block">Time Duration</label>
-                  <Select
-                    value={newTask.time_duration}
-                    onValueChange={(value) => setNewTask({ ...newTask, time_duration: value })}
-                  >
-                    <SelectTrigger className="bg-zinc-900 border-zinc-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="less_than_30min">Less than 30 minutes</SelectItem>
-                      <SelectItem value="1_hour">1 hour</SelectItem>
-                      <SelectItem value="2_hours">2 hours</SelectItem>
-                      <SelectItem value="half_day">Half a day</SelectItem>
-                      <SelectItem value="1_day">1 day</SelectItem>
-                      <SelectItem value="several_days">Several days</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm text-zinc-400 mb-2 block">Importance Level</label>
-                  <Select
-                    value={newTask.importance_level}
-                    onValueChange={(value) => setNewTask({ ...newTask, importance_level: value })}
-                  >
-                    <SelectTrigger className="bg-zinc-900 border-zinc-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="crucial">Crucial</SelectItem>
-                      <SelectItem value="essential">Essential</SelectItem>
-                      <SelectItem value="average">Average</SelectItem>
-                      <SelectItem value="low">Low Importance</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
+            {!showAddForm && (
+              <div className="mb-6">
                 <Button 
-                  type="submit" 
-                  disabled={!newTask.title.trim() || createTaskMutation.isPending}
+                  onClick={() => setShowAddForm(true)}
                   className="w-full bg-white text-black hover:bg-zinc-200"
                 >
-                  {createTaskMutation.isPending ? 'Adding...' : 'Add to Matrix'}
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Task
                 </Button>
               </div>
-            </form>
+            )}
+
+            {/* Top 5 Tasks List */}
+            <div>
+              <h2 className="text-lg font-bold mb-4 text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
+              <div className="space-y-3">
+                {topTasks.length > 0 ? (
+                  topTasks.map((task, index) => {
+                    const importanceColors = {
+                      crucial: 'from-red-600/10 to-orange-600/10',
+                      essential: 'from-yellow-600/10 to-amber-600/10',
+                      average: 'from-blue-600/10 to-cyan-600/10',
+                      low: 'from-zinc-600/10 to-zinc-500/10'
+                    };
+
+                    const importanceBadge = {
+                      crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
+                      essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
+                      average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
+                      low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
+                    };
+
+                    return (
+                      <div key={task.id} className="group relative">
+                        <div className={`absolute inset-0 bg-gradient-to-r ${importanceColors[task.importance_level]} rounded-xl blur-lg`} />
+                        <div 
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          className="relative flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-red-500/50 transition-all cursor-pointer group-hover:bg-zinc-800/80"
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <span className="text-lg font-bold text-zinc-600">{index + 1}</span>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-white mb-1">{task.title}</div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${importanceBadge[task.importance_level].color}`}>
+                                  {importanceBadge[task.importance_level].text}
+                                </span>
+                                <span className="text-[10px] text-zinc-600">
+                                  {task.time_duration.replace(/_/g, ' ')}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Trash2 className="w-5 h-5 text-red-500" />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-12 text-zinc-600 text-sm">
+                    No tasks yet. Add your first task above.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Matrix Visualization */}
-        <div className="relative">
+        {/* MATRIX TAB */}
+        {activeTab === 'matrix' && (
+          <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 to-zinc-900/20 rounded-3xl blur-2xl" />
           <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-8 overflow-hidden">
             {/* Grid background */}
@@ -251,7 +366,10 @@ export default function Pareto() {
                       <div className={`absolute inset-0 ${getTaskColor(task.importance_level)} rounded-full blur-lg opacity-50`} />
                       
                       {/* Task dot */}
-                      <div className={`relative w-4 h-4 ${getTaskColor(task.importance_level)} rounded-full border-2 border-white/20 cursor-pointer transition-transform hover:scale-150`} />
+                      <div 
+                        onClick={() => deleteTaskMutation.mutate(task.id)}
+                        className={`relative w-4 h-4 ${getTaskColor(task.importance_level)} rounded-full border-2 border-white/20 cursor-pointer transition-transform hover:scale-150`} 
+                      />
                       
                       {/* Tooltip */}
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
@@ -260,13 +378,8 @@ export default function Pareto() {
                           <div className="space-y-1 text-xs text-zinc-400">
                             <div>Time: {task.time_duration.replace(/_/g, ' ')}</div>
                             <div>Importance: {task.importance_level}</div>
+                            <div className="text-red-400 mt-2">Click to delete</div>
                           </div>
-                          <button
-                            onClick={() => deleteTaskMutation.mutate(task.id)}
-                            className="mt-2 text-xs text-red-400 hover:text-red-300"
-                          >
-                            Delete
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -284,9 +397,11 @@ export default function Pareto() {
               </div>
             ) : null}
           </div>
-        </div>
+          </div>
+          )}
 
-        {/* Legend */}
+          {/* Legend */}
+          {activeTab === 'matrix' && (
         <div className="mt-6 flex items-center justify-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full" />
@@ -303,8 +418,9 @@ export default function Pareto() {
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-zinc-500 rounded-full" />
             <span className="text-xs text-zinc-500">Low</span>
-          </div>
-        </div>
+            </div>
+            </div>
+            )}
       </div>
     </div>
   );
