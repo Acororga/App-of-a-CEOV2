@@ -3,8 +3,9 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addM
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function CalendarView({ events, onEventClick, onNewEvent, view = 'monthly' }) {
+export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick }) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState('yearly');
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -27,13 +28,17 @@ export default function CalendarView({ events, onEventClick, onNewEvent, view = 
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isCurrentDay = isToday(day);
         
+        const clickDay = day;
         days.push(
           <div
             key={day.toString()}
-            onClick={() => dayEvents.length > 0 && onEventClick && onEventClick(dayEvents[0])}
-            className={`min-h-24 p-2 border border-zinc-800 ${
+            onClick={() => {
+              setCurrentDate(clickDay);
+              setView('daily');
+            }}
+            className={`min-h-24 p-2 border border-zinc-800 cursor-pointer ${
               !isCurrentMonth ? 'bg-zinc-950/50' : 'bg-zinc-900'
-            } ${dayEvents.length > 0 ? 'cursor-pointer hover:bg-zinc-800' : ''} transition-colors`}
+            } hover:bg-zinc-800 transition-colors`}
           >
             <div className={`text-sm font-semibold mb-1 ${
               isCurrentDay ? 'text-blue-400' : isCurrentMonth ? 'text-white' : 'text-zinc-600'
@@ -127,7 +132,15 @@ export default function CalendarView({ events, onEventClick, onNewEvent, view = 
               <div className="w-16 text-right pr-2 py-2 text-sm text-zinc-500">
                 {format(new Date().setHours(hour, 0), 'HH:mm')}
               </div>
-              <div className="flex-1 p-2 min-h-16 bg-zinc-950">
+              <div 
+                onClick={() => {
+                  if (onTimeClick) {
+                    const timeStr = format(new Date().setHours(hour, 0), 'HH:mm');
+                    onTimeClick(format(currentDate, 'yyyy-MM-dd'), timeStr);
+                  }
+                }}
+                className="flex-1 p-2 min-h-16 bg-zinc-950 cursor-pointer hover:bg-zinc-900 transition-colors"
+              >
                 {dayEvents
                   .filter(e => parseInt(e.event_time.split(':')[0]) === hour)
                   .map(event => (
@@ -181,7 +194,14 @@ export default function CalendarView({ events, onEventClick, onNewEvent, view = 
       }
       
       months.push(
-        <div key={month} className="p-3 bg-zinc-900 rounded-lg border border-zinc-800">
+        <div 
+          key={month} 
+          onClick={() => {
+            setCurrentDate(monthDate);
+            setView('monthly');
+          }}
+          className="p-3 bg-zinc-900 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-800 transition-colors"
+        >
           <div className="text-center font-semibold mb-2 text-zinc-300">
             {format(monthDate, 'MMMM')}
           </div>
@@ -233,7 +253,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, view = 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1 justify-center">
           <Button
             onClick={navigatePrev}
             variant="outline"

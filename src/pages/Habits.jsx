@@ -98,6 +98,22 @@ export default function Habits() {
     }
   });
 
+  const [contractForm, setContractForm] = useState({
+    reward_text: '',
+    sanction_text: '',
+    success_threshold_percentage: 90
+  });
+
+  React.useEffect(() => {
+    if (weeklyContract) {
+      setContractForm({
+        reward_text: weeklyContract.reward_text || '',
+        sanction_text: weeklyContract.sanction_text || '',
+        success_threshold_percentage: weeklyContract.success_threshold_percentage || 90
+      });
+    }
+  }, [weeklyContract]);
+
   const updateContractMutation = useMutation({
     mutationFn: async (data) => {
       const user = await base44.auth.me();
@@ -313,8 +329,8 @@ export default function Habits() {
                       <label className="text-sm text-gray-400 mb-2 block">Reward (if successful)</label>
                       <input
                         type="text"
-                        value={weeklyContract?.reward_text || ''}
-                        onChange={(e) => updateContractMutation.mutate({ reward_text: e.target.value })}
+                        value={contractForm.reward_text}
+                        onChange={(e) => setContractForm(prev => ({ ...prev, reward_text: e.target.value }))}
                         placeholder="e.g., Movie night, treat yourself..."
                         className="w-full p-3 rounded-lg bg-black border border-gray-800 text-white focus:border-green-500 focus:outline-none transition-colors"
                       />
@@ -324,8 +340,8 @@ export default function Habits() {
                       <label className="text-sm text-gray-400 mb-2 block">Sanction (if you fail)</label>
                       <input
                         type="text"
-                        value={weeklyContract?.sanction_text || ''}
-                        onChange={(e) => updateContractMutation.mutate({ sanction_text: e.target.value })}
+                        value={contractForm.sanction_text}
+                        onChange={(e) => setContractForm(prev => ({ ...prev, sanction_text: e.target.value }))}
                         placeholder="e.g., No social media, donate to charity..."
                         className="w-full p-3 rounded-lg bg-black border border-gray-800 text-white focus:border-red-500 focus:outline-none transition-colors"
                       />
@@ -339,12 +355,12 @@ export default function Habits() {
                           min="50"
                           max="100"
                           step="5"
-                          value={weeklyContract?.success_threshold_percentage || 90}
-                          onChange={(e) => updateContractMutation.mutate({ success_threshold_percentage: parseInt(e.target.value) })}
+                          value={contractForm.success_threshold_percentage}
+                          onChange={(e) => setContractForm(prev => ({ ...prev, success_threshold_percentage: parseInt(e.target.value) }))}
                           className="flex-1"
                         />
                         <span className="text-xl font-bold text-white w-16 text-right">
-                          {weeklyContract?.success_threshold_percentage || 90}%
+                          {contractForm.success_threshold_percentage}%
                         </span>
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
@@ -352,12 +368,16 @@ export default function Habits() {
                       </div>
                     </div>
 
-                    {weeklyContract?.reward_text && weeklyContract?.sanction_text && (
+                    {contractForm.reward_text && contractForm.sanction_text && (
                       <Button
-                        onClick={() => updateContractMutation.mutate({ committed: true })}
+                        onClick={() => updateContractMutation.mutate({ 
+                          ...contractForm,
+                          committed: true 
+                        })}
+                        disabled={updateContractMutation.isPending}
                         className="w-full bg-white text-black hover:bg-gray-200 mt-2"
                       >
-                        Commit to Contract
+                        {updateContractMutation.isPending ? 'Validating...' : 'Validate Contract'}
                       </Button>
                     )}
                   </div>

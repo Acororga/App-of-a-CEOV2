@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tantml:react-query';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EventModal from '../components/calendar/EventModal';
 import CalendarView from '../components/calendar/CalendarView';
 
 export default function Calendar() {
   const queryClient = useQueryClient();
   const [showEventModal, setShowEventModal] = useState(false);
-  const [viewMode, setViewMode] = useState('monthly');
+  const [prefilledEvent, setPrefilledEvent] = useState(null);
   
   const { data: events } = useQuery({
     queryKey: ['allEvents'],
@@ -44,31 +43,31 @@ export default function Calendar() {
         </Link>
 
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
             Calendar
           </h1>
-          
-          <Tabs value={viewMode} onValueChange={setViewMode} className="inline-flex">
-            <TabsList className="bg-zinc-900 border border-zinc-800">
-              <TabsTrigger value="daily">Daily</TabsTrigger>
-              <TabsTrigger value="weekly">Weekly</TabsTrigger>
-              <TabsTrigger value="monthly">Monthly</TabsTrigger>
-              <TabsTrigger value="yearly">Yearly</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
 
         <CalendarView
           events={events}
-          view={viewMode}
-          onNewEvent={() => setShowEventModal(true)}
-          onEventClick={(event) => console.log('Event clicked:', event)}
+          onNewEvent={() => {
+            setPrefilledEvent(null);
+            setShowEventModal(true);
+          }}
+          onTimeClick={(date, time) => {
+            setPrefilledEvent({ event_date: date, event_time: time });
+            setShowEventModal(true);
+          }}
         />
 
         <EventModal
           open={showEventModal}
-          onClose={() => setShowEventModal(false)}
+          onClose={() => {
+            setShowEventModal(false);
+            setPrefilledEvent(null);
+          }}
           onSubmit={(data) => createEventMutation.mutate(data)}
+          initialData={prefilledEvent}
         />
       </div>
     </div>
