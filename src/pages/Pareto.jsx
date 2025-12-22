@@ -133,15 +133,13 @@ export default function Pareto() {
           <span className="text-sm font-medium">Home</span>
         </Link>
 
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            Pareto Matrix
+          </h1>
+        </div>
+
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-                Pareto Matrix
-              </h1>
-              <p className="text-sm text-zinc-500 font-medium">80/20 Task Prioritization</p>
-            </div>
-          </div>
 
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
@@ -248,17 +246,7 @@ export default function Pareto() {
               </div>
             )}
 
-            {!showAddForm && (
-              <div className="mb-6">
-                <Button 
-                  onClick={() => setShowAddForm(true)}
-                  className="w-full bg-white text-black hover:bg-zinc-200"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Task
-                </Button>
-              </div>
-            )}
+
 
             {/* Top 5 Tasks List */}
             <div>
@@ -315,6 +303,18 @@ export default function Pareto() {
                 )}
               </div>
             </div>
+            
+            {!showAddForm && (
+              <div className="mt-6 flex justify-center">
+                <Button 
+                  onClick={() => setShowAddForm(true)}
+                  className="bg-white text-black hover:bg-zinc-200"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Task
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

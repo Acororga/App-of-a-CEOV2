@@ -58,11 +58,10 @@ export default function ScreenTimeManager() {
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
             Screen Time Manager
           </h1>
-          <p className="text-sm text-zinc-500 font-medium">Block, Focus & Track</p>
         </div>
 
         {/* Overview Cards */}

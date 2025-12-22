@@ -244,8 +244,7 @@ export default function Rank() {
 
         <div className="text-center mb-12">
           <div className="text-7xl mb-4">{currentTier?.icon || '🥉'}</div>
-          <h1 className="text-4xl font-bold mb-2">{rankData?.rankName || 'Bronze'}</h1>
-          <div className="text-sm text-gray-500">Level {rankData?.rankLevel || 1} / 7</div>
+          <h1 className="text-4xl font-bold">{rankData?.rankName || 'Bronze'}</h1>
         </div>
 
         {nextRequirements && nextRequirements.needs && nextRequirements.needs.length > 0 && (

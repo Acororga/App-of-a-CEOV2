@@ -152,8 +152,10 @@ export default function Habits() {
           <span className="text-sm">Home</span>
         </Link>
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Habits & Productivity</h1>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            Habits & Productivity
+          </h1>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
@@ -180,13 +182,6 @@ export default function Habits() {
                 );
               })}
             </div>
-            <Button 
-              onClick={() => setShowObjectiveModal(true)}
-              className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Objective
-            </Button>
           </TabsContent>
 
           <TabsContent value="habits" className="mt-6">
@@ -229,13 +224,6 @@ export default function Habits() {
                 );
               })}
             </div>
-            <Button 
-              onClick={() => setShowHabitModal(true)}
-              className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Habit
-            </Button>
           </TabsContent>
 
           <TabsContent value="weekly" className="mt-6">
@@ -411,6 +399,31 @@ export default function Habits() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Bottom Center Buttons */}
+        {activeTab === 'objectives' && (
+          <div className="mt-6 flex justify-center">
+            <Button 
+              onClick={() => setShowObjectiveModal(true)}
+              className="bg-gray-900 border border-gray-800 hover:bg-gray-800"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Objective
+            </Button>
+          </div>
+        )}
+
+        {activeTab === 'habits' && (
+          <div className="mt-6 flex justify-center">
+            <Button 
+              onClick={() => setShowHabitModal(true)}
+              className="bg-gray-900 border border-gray-800 hover:bg-gray-800"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              New Habit
+            </Button>
+          </div>
+        )}
 
         <ObjectiveModal
           open={showObjectiveModal}
