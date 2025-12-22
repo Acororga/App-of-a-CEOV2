@@ -9,11 +9,13 @@ import {
 } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { format, subDays } from 'date-fns';
-import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Circle, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const [yesterdayStates, setYesterdayStates] = useState({});
+  const [yesterdayVisible, setYesterdayVisible] = useState(true);
+  const [tempYesterdayStates, setTempYesterdayStates] = useState({});
 
   const today = new Date();
   const yesterday = subDays(today, 1);
@@ -78,14 +80,28 @@ export default function Dashboard() {
     }
   });
 
-  const toggleYesterdayHabitMutation = useMutation({
-    mutationFn: async ({ habitId, completed }) => {
-      await checkInHabit(habitId, yesterday, completed);
+  const validateYesterdayMutation = useMutation({
+    mutationFn: async () => {
+      const promises = Object.entries(tempYesterdayStates).map(([habitId, completed]) => 
+        checkInHabit(habitId, yesterday, completed)
+      );
+      await Promise.all(promises);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['completions', format(yesterday, 'yyyy-MM-dd')]);
+      queryClient.invalidateQueries(['weeklyScore']);
+      queryClient.invalidateQueries(['weekData']);
+      setYesterdayVisible(false);
+      setTempYesterdayStates({});
     }
   });
+
+  const toggleYesterdayHabit = (habitId) => {
+    setTempYesterdayStates(prev => ({
+      ...prev,
+      [habitId]: !prev[habitId]
+    }));
+  };
 
   const completeTaskMutation = useMutation({
     mutationFn: async (taskId) => {
@@ -115,67 +131,76 @@ export default function Dashboard() {
     });
   }
 
+  // Initialize temp states based on existing completions
+  React.useEffect(() => {
+    if (yesterdayCompletions && yesterdayHabits) {
+      const initialStates = {};
+      yesterdayCompletions.forEach(c => {
+        initialStates[c.habit_id] = c.completed;
+      });
+      setTempYesterdayStates(initialStates);
+    }
+  }, [yesterdayCompletions, yesterdayHabits]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Daily Dashboard
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            Dashboard
           </h1>
-          <p className="text-sm text-zinc-500 font-medium">Today's habits & priority actions</p>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* LEFT COLUMN: HABITS */}
-          <div className="space-y-6">
-            {/* Yesterday's Habits to Check Off */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-zinc-300">YESTERDAY</h2>
-                <div className="text-xs text-zinc-600 font-medium">Check off what you did</div>
-              </div>
-              <div className="space-y-2">
-                {yesterdayHabits && yesterdayHabits.length > 0 ? (
-                  yesterdayHabits.map(habit => (
+        <div className="space-y-6">
+          {/* Yesterday's Habits - Validation Box */}
+          {yesterdayVisible && yesterdayHabits && yesterdayHabits.length > 0 && (
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-2xl blur-xl" />
+              <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
+                <div className="text-sm text-zinc-400 mb-4 text-center">
+                  Mark yesterday's completed habits
+                </div>
+                <div className="space-y-2 mb-4">
+                  {yesterdayHabits.map(habit => (
                     <button
                       key={habit.id}
-                      onClick={() => toggleYesterdayHabitMutation.mutate({ 
-                        habitId: habit.id, 
-                        completed: !yesterdayCompletionMap[habit.id] 
-                      })}
-                      className="w-full group relative"
+                      onClick={() => toggleYesterdayHabit(habit.id)}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-orange-600/5 to-red-600/5 rounded-xl blur-lg" />
-                      <div className="relative flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
-                        {yesterdayCompletionMap[habit.id] ? (
-                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
-                        )}
-                        <span className={`text-sm ${yesterdayCompletionMap[habit.id] ? 'text-zinc-400 line-through' : 'text-white'}`}>
-                          {habit.title}
-                        </span>
-                      </div>
+                      {tempYesterdayStates[habit.id] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
+                      )}
+                      <span className={`text-sm ${tempYesterdayStates[habit.id] ? 'text-zinc-400 line-through' : 'text-white'}`}>
+                        {habit.title}
+                      </span>
                     </button>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-zinc-600 text-sm">
-                    No habits yesterday
-                  </div>
-                )}
+                  ))}
+                </div>
+                <Button
+                  onClick={() => validateYesterdayMutation.mutate()}
+                  disabled={validateYesterdayMutation.isPending}
+                  className="w-full bg-white text-black hover:bg-zinc-200"
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  {validateYesterdayMutation.isPending ? 'Validating...' : 'Validate'}
+                </Button>
               </div>
             </div>
+          )}
 
-            {/* Today's Habits */}
-            <div>
+          {/* Today's Habits */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-zinc-300">TODAY</h2>
+                <h2 className="text-lg font-bold text-zinc-300">TODAY'S HABITS</h2>
                 <div className="text-xs text-zinc-600 font-medium">
                   {todayHabits && todayCompletions && 
                     `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
@@ -190,10 +215,9 @@ export default function Dashboard() {
                         habitId: habit.id, 
                         completed: !todayCompletionMap[habit.id] 
                       })}
-                      className="w-full group relative"
+                      className="w-full group"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-xl blur-lg" />
-                      <div className="relative flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all">
                         {todayCompletionMap[habit.id] ? (
                           <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         ) : (
@@ -214,40 +238,37 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: PARETO PRIORITY TASKS */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-zinc-300">PRIORITY ACTIONS</h2>
-              <Link 
-                to={createPageUrl('Pareto')}
-                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-              >
-                View All →
-              </Link>
-            </div>
-            <div className="space-y-2">
-              {topTasks && topTasks.length > 0 ? (
-                topTasks.map((task, index) => {
-                  const importanceColors = {
-                    crucial: 'from-red-600/10 to-orange-600/10',
-                    essential: 'from-yellow-600/10 to-amber-600/10',
-                    average: 'from-blue-600/10 to-cyan-600/10',
-                    low: 'from-zinc-600/10 to-zinc-500/10'
-                  };
-                  
-                  const importanceBadge = {
-                    crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
-                    essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
-                    average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
-                    low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
-                  };
+          {/* PARETO PRIORITY TASKS */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 rounded-2xl blur-xl" />
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
+                <Link 
+                  to={createPageUrl('Pareto')}
+                  className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  View All →
+                </Link>
+              </div>
+              <div className="space-y-2">
+                {topTasks && topTasks.length > 0 ? (
+                  topTasks.map((task, index) => {
+                    const importanceBadge = {
+                      crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
+                      essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
+                      average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
+                      low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
+                    };
 
-                  return (
-                    <div key={task.id} className="group relative">
-                      <div className={`absolute inset-0 bg-gradient-to-r ${importanceColors[task.importance_level]} rounded-xl blur-lg`} />
-                      <div className="relative flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-zinc-600/50 transition-all">
-                        <div className="flex items-center gap-3 flex-1">
-                          <span className="text-lg font-bold text-zinc-600">{index + 1}</span>
+                    return (
+                      <button
+                        key={task.id}
+                        onClick={() => completeTaskMutation.mutate(task.id)}
+                        className="w-full group text-left"
+                      >
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-green-500/50 transition-all">
+                          <span className="text-sm font-bold text-zinc-600">{index + 1}</span>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-white mb-1">{task.title}</div>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -260,21 +281,15 @@ export default function Dashboard() {
                             </div>
                           </div>
                         </div>
-                        <button
-                          onClick={() => completeTaskMutation.mutate(task.id)}
-                          className="p-2 hover:bg-zinc-700/50 rounded-lg transition-all"
-                        >
-                          <CheckCircle2 className="w-5 h-5 text-green-500" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-12 text-zinc-600 text-sm">
-                  No priority tasks yet
-                </div>
-              )}
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-8 text-zinc-600 text-sm">
+                    No priority tasks yet
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -1,35 +1,35 @@
-import Home from './pages/Home';
+import BiannualReport from './pages/BiannualReport';
+import CEOMode from './pages/CEOMode';
+import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
 import FocusMode from './pages/FocusMode';
-import WinStreak from './pages/WinStreak';
-import Rank from './pages/Rank';
-import CEOMode from './pages/CEOMode';
 import Habits from './pages/Habits';
-import Pareto from './pages/Pareto';
-import ScreenTime from './pages/ScreenTime';
-import Rewards from './pages/Rewards';
-import Calendar from './pages/Calendar';
+import Home from './pages/Home';
 import Leaderboard from './pages/Leaderboard';
+import Pareto from './pages/Pareto';
+import Rank from './pages/Rank';
+import Rewards from './pages/Rewards';
+import ScreenTime from './pages/ScreenTime';
 import ScreenTimeManager from './pages/ScreenTimeManager';
-import BiannualReport from './pages/BiannualReport';
+import WinStreak from './pages/WinStreak';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
+    "BiannualReport": BiannualReport,
+    "CEOMode": CEOMode,
+    "Calendar": Calendar,
     "Dashboard": Dashboard,
     "FocusMode": FocusMode,
-    "WinStreak": WinStreak,
-    "Rank": Rank,
-    "CEOMode": CEOMode,
     "Habits": Habits,
-    "Pareto": Pareto,
-    "ScreenTime": ScreenTime,
-    "Rewards": Rewards,
-    "Calendar": Calendar,
+    "Home": Home,
     "Leaderboard": Leaderboard,
+    "Pareto": Pareto,
+    "Rank": Rank,
+    "Rewards": Rewards,
+    "ScreenTime": ScreenTime,
     "ScreenTimeManager": ScreenTimeManager,
-    "BiannualReport": BiannualReport,
+    "WinStreak": WinStreak,
 }
 
 export const pagesConfig = {

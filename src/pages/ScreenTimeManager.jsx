@@ -4,7 +4,7 @@ import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { getTodayScreenTime, getAverageScreenTime, getOrCreateWinStreak } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Target, Flame, Trophy, Crown, Gift, Ban } from 'lucide-react';
+import { ArrowLeft, Target, Flame, Trophy, Crown, Ban } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function ScreenTimeManager() {
@@ -144,22 +144,6 @@ export default function ScreenTimeManager() {
                   <div>
                     <div className="text-xs text-zinc-500 font-medium">Current Rank</div>
                     <div className="text-sm font-bold">{rankData?.rank_name || 'Panda'}</div>
-                  </div>
-                </div>
-                <div className="text-xs text-zinc-600">→</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to={createPageUrl('Rewards')} className="block group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-xl blur-lg group-hover:blur-xl transition-all" />
-              <div className="relative flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 shadow-lg group-hover:border-zinc-600/50 transition-all">
-                <div className="flex items-center gap-3">
-                  <Gift className="w-5 h-5 text-green-500" />
-                  <div>
-                    <div className="text-xs text-zinc-500 font-medium">Weekly Contract</div>
-                    <div className="text-sm font-bold">Rewards & Sanctions</div>
                   </div>
                 </div>
                 <div className="text-xs text-zinc-600">→</div>
