@@ -54,13 +54,14 @@ export default function Home() {
       const user = await base44.auth.me();
       const settings = await base44.entities.AppSettings.filter({ created_by: user.email });
       if (settings.length === 0) {
-        const newSettings = await base44.entities.AppSettings.create({
+        await base44.entities.AppSettings.create({
           active_apps: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
         });
-        return newSettings.active_apps;
+        return ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
       }
-      return settings[0].active_apps;
-    }
+      return settings[0].active_apps || ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
+    },
+    initialData: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
   });
 
   const startFocusMutation = useMutation({
