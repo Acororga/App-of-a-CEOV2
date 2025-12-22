@@ -2,11 +2,49 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
-import { User, FileText, Shield, BarChart3, X } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { User, FileText, Shield, BarChart3, X, ListChecks, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const [showMenu, setShowMenu] = useState(false);
   const [user, setUser] = useState(null);
+  const queryClient = useQueryClient();
+
+  const { data: appSettings } = useQuery({
+    queryKey: ['appSettings'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const settings = await base44.entities.AppSettings.filter({ created_by: user.email });
+      if (settings.length === 0) {
+        const newSettings = await base44.entities.AppSettings.create({
+          active_apps: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
+        });
+        return newSettings;
+      }
+      return settings[0];
+    }
+  });
+
+  const toggleAppMutation = useMutation({
+    mutationFn: async (appName) => {
+      if (!appSettings) return;
+      const currentApps = appSettings.active_apps || [];
+      const newApps = currentApps.includes(appName)
+        ? currentApps.filter(a => a !== appName)
+        : [...currentApps, appName];
+      await base44.entities.AppSettings.update(appSettings.id, { active_apps: newApps });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['appSettings']);
+    }
+  });
+
+  const availableApps = [
+    { id: 'Pareto', name: 'Pareto Matrix', icon: ListChecks },
+    { id: 'Habits', name: 'Habits & Productivity', icon: CheckSquare },
+    { id: 'Calendar', name: 'Schedule', icon: CalendarIcon },
+    { id: 'ScreenTimeManager', name: 'Screen Time Manager', icon: Shield }
+  ];
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -63,15 +101,36 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 </Link>
 
-                <button
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
-                >
-                  <Shield className="w-5 h-5 text-blue-400" />
-                  <div className="text-left">
-                    <div className="font-semibold">Settings</div>
-                    <div className="text-xs text-zinc-500">App preferences</div>
-                  </div>
-                </button>
+                <div className="space-y-2">
+                  <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
+                  {availableApps.map(app => {
+                    const isActive = appSettings?.active_apps?.includes(app.id);
+                    const Icon = app.icon;
+                    return (
+                      <button
+                        key={app.id}
+                        onClick={() => toggleAppMutation.mutate(app.id)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                          isActive
+                            ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
+                            : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
+                        <div className="text-left flex-1">
+                          <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+                            {app.name}
+                          </div>
+                        </div>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          isActive ? 'border-green-500 bg-green-500' : 'border-zinc-700'
+                        }`}>
+                          {isActive && <div className="w-2 h-2 rounded-full bg-white" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
 
                 <button
                   className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"

@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { useQuery } from '@tanstack/react-query';
-import { getOrCreateWinStreak, hasUncheckedHabits } from '../functions/businessLogic';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
-  BarChart3, CheckSquare, ListChecks, Calendar, Shield, Circle 
+  BarChart3, CheckSquare, ListChecks, Calendar, Shield, Circle, Zap 
 } from 'lucide-react';
+import FocusModeQuickStart from '../components/FocusModeQuickStart';
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [showFocusModal, setShowFocusModal] = useState(false);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: streakData } = useQuery({
     queryKey: ['winStreak'],
@@ -44,14 +48,82 @@ export default function Home() {
     queryFn: () => hasUncheckedHabits(subDays(new Date(), 1))
   });
 
+  const { data: activeApps } = useQuery({
+    queryKey: ['appSettings'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const settings = await base44.entities.AppSettings.filter({ created_by: user.email });
+      if (settings.length === 0) {
+        const newSettings = await base44.entities.AppSettings.create({
+          active_apps: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
+        });
+        return newSettings.active_apps;
+      }
+      return settings[0].active_apps;
+    }
+  });
+
+  const startFocusMutation = useMutation({
+    mutationFn: async (duration) => {
+      return await startFocusSession(duration);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['activeSession']);
+      navigate(createPageUrl('FocusMode'));
+    }
+  });
+
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
+  const handleFocusStart = (duration) => {
+    startFocusMutation.mutate(duration);
+  };
+
+  const apps = [
+    { id: 'Pareto', name: 'Pareto', icon: ListChecks, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
+    { id: 'Habits', name: 'Habits', icon: CheckSquare, gradient: 'from-emerald-600/20 to-teal-600/20', colors: 'from-emerald-500 to-teal-600', glow: 'from-emerald-600/10 to-teal-600/10' },
+    { id: 'Calendar', name: 'Schedule', icon: Calendar, gradient: 'from-pink-600/20 to-rose-600/20', colors: 'from-pink-500 to-rose-600', glow: 'from-pink-600/10 to-rose-600/10' },
+    { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
+  ];
+
+  const filteredApps = apps.filter(app => activeApps?.includes(app.id));
+
+  const getRankBackground = () => {
+    const rankLevel = rankData?.rank_level || 1;
+    
+    const backgrounds = {
+      1: { branches: 'from-amber-700/20 via-orange-600/20 to-amber-800/20' },
+      2: { branches: 'from-gray-400/20 via-gray-500/20 to-gray-400/20' },
+      3: { branches: 'from-yellow-500/20 via-yellow-600/20 to-yellow-400/20' },
+      4: { branches: 'from-cyan-300/20 via-slate-400/20 to-cyan-300/20' },
+      5: { branches: 'from-blue-300/20 via-cyan-400/20 to-blue-300/20' },
+      6: { branches: 'from-zinc-900/30 via-black/30 to-zinc-900/30' },
+      7: { branches: 'from-yellow-500/30 via-yellow-600/30 to-yellow-500/30' }
+    };
+    
+    return backgrounds[rankLevel] || backgrounds[1];
+  };
+
+  const bgStyle = getRankBackground();
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+      {/* Rank Branches */}
+      <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+      <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+
+      {/* Focus Mode Quick Button */}
+      <button
+        onClick={() => setShowFocusModal(true)}
+        className="fixed top-6 right-6 z-50 w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+      >
+        <Zap className="w-5 h-5 text-white" />
+      </button>
+
       {/* Header */}
-      <div className="flex justify-end items-center mb-10">
+      <div className="relative flex justify-end items-center mb-10">
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-[10px] text-zinc-600 font-semibold tracking-wider">RANK</div>
@@ -102,76 +174,104 @@ export default function Home() {
         </div>
       </Link>
 
-      {/* 2x2 Grid */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        {/* Pareto Matrix */}
-        <Link to={createPageUrl('Pareto')} className="group relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-          <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-600/10 to-purple-600/10 rounded-full blur-2xl" />
-            <div className="relative h-full flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <ListChecks className="w-6 h-6 text-white" />
+      {/* Dynamic Grid */}
+      {filteredApps.length === 4 && (
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {filteredApps.map(app => (
+            <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
+              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                <div className="relative h-full flex flex-col justify-between">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
+                    <app.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-base font-bold mb-0.5">{app.name}</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="text-base font-bold mb-0.5">Pareto</div>
-                <div className="text-[10px] text-zinc-500 font-medium">80/20 Matrix</div>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Productivity & Habits */}
-        <Link to={createPageUrl('Habits')} className="group relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/20 to-teal-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-          <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 rounded-full blur-2xl" />
-            <div className="relative h-full flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
-                <CheckSquare className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-base font-bold mb-0.5">Habits</div>
-                <div className="text-[10px] text-zinc-500 font-medium">Track & Build</div>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Schedule */}
-        <Link to={createPageUrl('Calendar')} className="group relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-600/20 to-rose-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-          <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-600/10 to-rose-600/10 rounded-full blur-2xl" />
-            <div className="relative h-full flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-base font-bold mb-0.5">Schedule</div>
-                <div className="text-[10px] text-zinc-500 font-medium">Events & Time</div>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Screen Time Manager */}
-        <Link to={createPageUrl('ScreenTimeManager')} className="group relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-600/20 to-orange-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-          <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-600/10 to-orange-600/10 rounded-full blur-2xl" />
-            <div className="relative h-full flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="text-base font-bold mb-0.5">Screen Time</div>
-                <div className="text-[10px] text-zinc-500 font-medium">Block & Focus</div>
-              </div>
-            </div>
-          </div>
-        </Link>
+            </Link>
+          ))}
         </div>
+      )}
+
+      {filteredApps.length === 3 && (
+        <div className="space-y-4 mb-4">
+          <div className="grid grid-cols-2 gap-4">
+            {filteredApps.slice(0, 2).map(app => (
+              <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
+                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+                <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                  <div className="relative h-full flex flex-col justify-between">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
+                      <app.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-base font-bold mb-0.5">{app.name}</div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <Link to={createPageUrl(filteredApps[2].id)} className="block group relative">
+            <div className={`absolute inset-0 bg-gradient-to-br ${filteredApps[2].gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+            <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${filteredApps[2].glow} rounded-full blur-2xl`} />
+              <div className="relative h-full flex flex-col justify-between">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${filteredApps[2].colors} flex items-center justify-center shadow-lg`}>
+                  <filteredApps[2].icon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-base font-bold mb-0.5">{filteredApps[2].name}</div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {filteredApps.length === 2 && (
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {filteredApps.map(app => (
+            <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
+              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                <div className="relative h-full flex flex-col justify-between">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
+                    <app.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-base font-bold mb-0.5">{app.name}</div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {filteredApps.length === 1 && (
+        <div className="mb-4">
+          <Link to={createPageUrl(filteredApps[0].id)} className="block group relative">
+            <div className={`absolute inset-0 bg-gradient-to-br ${filteredApps[0].gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+            <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${filteredApps[0].glow} rounded-full blur-2xl`} />
+              <div className="relative h-full flex flex-col justify-between">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${filteredApps[0].colors} flex items-center justify-center shadow-lg`}>
+                  <filteredApps[0].icon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-base font-bold mb-0.5">{filteredApps[0].name}</div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
 
 
 
@@ -196,6 +296,12 @@ export default function Home() {
           </div>
         </div>
       </Link>
+
+      <FocusModeQuickStart
+        open={showFocusModal}
+        onClose={() => setShowFocusModal(false)}
+        onStart={handleFocusStart}
+      />
     </div>
   );
 }
