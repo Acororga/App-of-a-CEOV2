@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { format } from 'date-fns';
 
-export default function EventModal({ open, onClose, onSubmit }) {
+export default function EventModal({ open, onClose, onSubmit, initialData }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -18,6 +18,12 @@ export default function EventModal({ open, onClose, onSubmit }) {
     event_time: '09:00',
     duration_minutes: 60
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({ ...prev, ...initialData }));
+    }
+  }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
