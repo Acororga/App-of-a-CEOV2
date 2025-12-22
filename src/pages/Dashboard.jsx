@@ -18,28 +18,33 @@ export default function Dashboard() {
   const [tempYesterdayStates, setTempYesterdayStates] = useState({});
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const yesterday = subDays(today, 1);
 
   // Today's habits
-  const { data: todayHabits } = useQuery({
+  const { data: todayHabits, isLoading: todayHabitsLoading } = useQuery({
     queryKey: ['habits', format(today, 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(today)
+    queryFn: () => getHabitsForDate(today),
+    refetchOnMount: true
   });
 
-  const { data: todayCompletions } = useQuery({
+  const { data: todayCompletions, isLoading: todayCompletionsLoading } = useQuery({
     queryKey: ['completions', format(today, 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(today)
+    queryFn: () => getHabitCompletionsForDate(today),
+    refetchOnMount: true
   });
 
   // Yesterday's habits
-  const { data: yesterdayHabits } = useQuery({
+  const { data: yesterdayHabits, isLoading: yesterdayHabitsLoading } = useQuery({
     queryKey: ['habits', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(yesterday)
+    queryFn: () => getHabitsForDate(yesterday),
+    refetchOnMount: true
   });
 
-  const { data: yesterdayCompletions } = useQuery({
+  const { data: yesterdayCompletions, isLoading: yesterdayCompletionsLoading } = useQuery({
     queryKey: ['completions', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(yesterday)
+    queryFn: () => getHabitCompletionsForDate(yesterday),
+    refetchOnMount: true
   });
 
   // Top Pareto tasks
@@ -132,6 +137,21 @@ export default function Dashboard() {
     });
   }
 
+  // Check if yesterday's habits need validation
+  const needsYesterdayValidation = React.useMemo(() => {
+    if (!yesterdayHabits || yesterdayHabits.length === 0) return false;
+    if (!yesterdayCompletions) return true;
+    
+    // Check if all yesterday's habits have been checked in
+    for (const habit of yesterdayHabits) {
+      const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
+      if (!completion || !completion.checked_in_date) {
+        return true;
+      }
+    }
+    return false;
+  }, [yesterdayHabits, yesterdayCompletions]);
+
   // Initialize temp states based on existing completions
   React.useEffect(() => {
     if (yesterdayHabits && yesterdayHabits.length > 0) {
@@ -142,7 +162,7 @@ export default function Dashboard() {
       });
       setTempYesterdayStates(initialStates);
     }
-  }, [yesterdayCompletions, yesterdayHabits]);
+  }, [yesterdayHabits, yesterdayCompletions]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
@@ -160,7 +180,7 @@ export default function Dashboard() {
 
         <div className="space-y-6">
           {/* Yesterday's Habits - Validation Box */}
-          {yesterdayVisible && yesterdayHabits && yesterdayHabits.length > 0 && (
+          {yesterdayVisible && needsYesterdayValidation && yesterdayHabits && yesterdayHabits.length > 0 && (
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-2xl blur-xl" />
               <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">

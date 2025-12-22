@@ -48,21 +48,22 @@ export default function Home() {
     queryFn: () => hasUncheckedHabits(subDays(new Date(), 1))
   });
 
-  const { data: activeApps } = useQuery({
+  const { data: appSettingsData } = useQuery({
     queryKey: ['appSettings'],
     queryFn: async () => {
       const user = await base44.auth.me();
       const settings = await base44.entities.AppSettings.filter({ created_by: user.email });
       if (settings.length === 0) {
-        await base44.entities.AppSettings.create({
+        const newSettings = await base44.entities.AppSettings.create({
           active_apps: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
         });
-        return ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
+        return newSettings;
       }
-      return settings[0].active_apps || ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
-    },
-    initialData: ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager']
+      return settings[0];
+    }
   });
+
+  const activeApps = appSettingsData?.active_apps || ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
 
   const startFocusMutation = useMutation({
     mutationFn: async (duration) => {
@@ -89,11 +90,9 @@ export default function Home() {
     { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
   ];
 
-  const filteredApps = apps.filter(app => {
-    return Array.isArray(activeApps) && activeApps.includes(app.id);
-  });
-
-  const isScreenTimeActive = Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
+  const filteredApps = apps.filter(app => activeApps.includes(app.id));
+  
+  const isScreenTimeActive = activeApps.includes('ScreenTimeManager');
 
   const getRankBackground = () => {
     const rankLevel = rankData?.rank_level || 1;
@@ -115,11 +114,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
-      {/* Rank Branches - Only show if ScreenTimeManager is active */}
+      {/* Rank Branches - Only visible when ScreenTimeManager is active */}
       {isScreenTimeActive && (
         <>
-          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
-          <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-40 pointer-events-none`} />
+          <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-40 pointer-events-none`} />
         </>
       )}
 

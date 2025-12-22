@@ -10,7 +10,7 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  const { data: appSettings, refetch } = useQuery({
+  const { data: appSettings } = useQuery({
     queryKey: ['appSettings'],
     queryFn: async () => {
       const user = await base44.auth.me();
@@ -22,22 +22,22 @@ export default function Layout({ children, currentPageName }) {
         return newSettings;
       }
       return settings[0];
-    }
+    },
+    staleTime: 0,
+    cacheTime: 0
   });
 
   const toggleAppMutation = useMutation({
     mutationFn: async (appName) => {
       if (!appSettings) return;
-      const currentApps = Array.isArray(appSettings.active_apps) ? appSettings.active_apps : ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
+      const currentApps = appSettings.active_apps || [];
       const newApps = currentApps.includes(appName)
         ? currentApps.filter(a => a !== appName)
         : [...currentApps, appName];
       await base44.entities.AppSettings.update(appSettings.id, { active_apps: newApps });
-      return newApps;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(['appSettings']);
-      await refetch();
+    onSuccess: () => {
+      queryClient.invalidateQueries(['appSettings']);
     }
   });
 
@@ -106,8 +106,8 @@ export default function Layout({ children, currentPageName }) {
                 <div className="space-y-2">
                   <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
                   {availableApps.map(app => {
-                    const activeAppsList = Array.isArray(appSettings?.active_apps) ? appSettings.active_apps : ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
-                    const isActive = activeAppsList.includes(app.id);
+                    const currentApps = appSettings?.active_apps || [];
+                    const isActive = currentApps.includes(app.id);
                     const Icon = app.icon;
                     return (
                       <button
