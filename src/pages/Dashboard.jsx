@@ -82,8 +82,9 @@ export default function Dashboard() {
 
   const validateYesterdayMutation = useMutation({
     mutationFn: async () => {
-      const promises = Object.entries(tempYesterdayStates).map(([habitId, completed]) => 
-        checkInHabit(habitId, yesterday, completed)
+      if (!yesterdayHabits) return;
+      const promises = yesterdayHabits.map(habit => 
+        checkInHabit(habit.id, yesterday, tempYesterdayStates[habit.id] || false)
       );
       await Promise.all(promises);
     },
@@ -133,10 +134,11 @@ export default function Dashboard() {
 
   // Initialize temp states based on existing completions
   React.useEffect(() => {
-    if (yesterdayCompletions && yesterdayHabits) {
+    if (yesterdayHabits && yesterdayHabits.length > 0) {
       const initialStates = {};
-      yesterdayCompletions.forEach(c => {
-        initialStates[c.habit_id] = c.completed;
+      yesterdayHabits.forEach(habit => {
+        const completion = yesterdayCompletions?.find(c => c.habit_id === habit.id);
+        initialStates[habit.id] = completion ? completion.completed : false;
       });
       setTempYesterdayStates(initialStates);
     }

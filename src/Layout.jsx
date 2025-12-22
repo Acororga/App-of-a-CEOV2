@@ -10,7 +10,7 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
-  const { data: appSettings } = useQuery({
+  const { data: appSettings, refetch } = useQuery({
     queryKey: ['appSettings'],
     queryFn: async () => {
       const user = await base44.auth.me();
@@ -22,8 +22,7 @@ export default function Layout({ children, currentPageName }) {
         return newSettings;
       }
       return settings[0];
-    },
-    refetchInterval: 1000
+    }
   });
 
   const toggleAppMutation = useMutation({
@@ -34,9 +33,11 @@ export default function Layout({ children, currentPageName }) {
         ? currentApps.filter(a => a !== appName)
         : [...currentApps, appName];
       await base44.entities.AppSettings.update(appSettings.id, { active_apps: newApps });
+      return newApps;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['appSettings']);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(['appSettings']);
+      await refetch();
     }
   });
 

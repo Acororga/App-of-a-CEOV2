@@ -90,11 +90,10 @@ export default function Home() {
   ];
 
   const filteredApps = apps.filter(app => {
-    if (!activeApps) return true; // Show all apps while loading
-    return Array.isArray(activeApps) ? activeApps.includes(app.id) : true;
+    return Array.isArray(activeApps) && activeApps.includes(app.id);
   });
 
-  const isScreenTimeActive = activeApps && Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
+  const isScreenTimeActive = Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
 
   const getRankBackground = () => {
     const rankLevel = rankData?.rank_level || 1;
