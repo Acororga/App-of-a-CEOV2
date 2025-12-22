@@ -216,20 +216,26 @@ export default function Home() {
               </Link>
             ))}
           </div>
-          <Link to={createPageUrl(filteredApps[2].id)} className="block group relative">
-            <div className={`absolute inset-0 bg-gradient-to-br ${filteredApps[2].gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
-            <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${filteredApps[2].glow} rounded-full blur-2xl`} />
-              <div className="relative h-full flex flex-col justify-between">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${filteredApps[2].colors} flex items-center justify-center shadow-lg`}>
-                  <filteredApps[2].icon className="w-6 h-6 text-white" />
+          {(() => {
+            const app = filteredApps[2];
+            const Icon = app.icon;
+            return (
+              <Link to={createPageUrl(app.id)} className="block group relative">
+                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+                <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                  <div className="relative h-full flex flex-col justify-between">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-base font-bold mb-0.5">{app.name}</div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-base font-bold mb-0.5">{filteredApps[2].name}</div>
-                </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })()}
         </div>
       )}
 
@@ -254,24 +260,28 @@ export default function Home() {
         </div>
       )}
 
-      {filteredApps.length === 1 && (
-        <div className="mb-4">
-          <Link to={createPageUrl(filteredApps[0].id)} className="block group relative">
-            <div className={`absolute inset-0 bg-gradient-to-br ${filteredApps[0].gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
-            <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${filteredApps[0].glow} rounded-full blur-2xl`} />
-              <div className="relative h-full flex flex-col justify-between">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${filteredApps[0].colors} flex items-center justify-center shadow-lg`}>
-                  <filteredApps[0].icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <div className="text-base font-bold mb-0.5">{filteredApps[0].name}</div>
+      {filteredApps.length === 1 && (() => {
+        const app = filteredApps[0];
+        const Icon = app.icon;
+        return (
+          <div className="mb-4">
+            <Link to={createPageUrl(app.id)} className="block group relative">
+              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
+              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                <div className="relative h-full flex flex-col justify-between">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-base font-bold mb-0.5">{app.name}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        </div>
-      )}
+            </Link>
+          </div>
+        );
+      })()}
 
 
 
