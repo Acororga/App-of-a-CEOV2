@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getHabitsForDate, getHabitCompletionsForDate, calculateWeeklyHabitScore } from '../functions/businessLogic';
 import { format, startOfWeek, addDays } from 'date-fns';
-import { ArrowLeft, Plus, CheckCircle2, Circle, XCircle } from 'lucide-react';
+import { ArrowLeft, Plus, CheckCircle2, Circle, XCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
@@ -13,10 +13,44 @@ import HabitModal from '../components/habits/HabitModal';
 
 export default function Habits() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('weekly');
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Swipe down to close
+    if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
+      navigate(createPageUrl('Home'));
+      return;
+    }
+
+    // Swipe left/right to switch tabs
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 100) {
+      const tabs = ['objectives', 'habits', 'weekly'];
+      const currentIndex = tabs.indexOf(activeTab);
+      
+      if (deltaX > 0 && currentIndex > 0) {
+        setActiveTab(tabs[currentIndex - 1]);
+      } else if (deltaX < 0 && currentIndex < tabs.length - 1) {
+        setActiveTab(tabs[currentIndex + 1]);
+      }
+    }
+  };
 
   const { data: objectives } = useQuery({
     queryKey: ['objectives'],
@@ -98,6 +132,27 @@ export default function Habits() {
     }
   });
 
+  const deleteObjectiveMutation = useMutation({
+    mutationFn: async (objectiveId) => {
+      const objectiveHabits = habits.filter(h => h.objective_id === objectiveId);
+      await Promise.all(objectiveHabits.map(h => base44.entities.Habit.delete(h.id)));
+      await base44.entities.Objective.delete(objectiveId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['objectives']);
+      queryClient.invalidateQueries(['allHabits']);
+    }
+  });
+
+  const deleteHabitMutation = useMutation({
+    mutationFn: async (habitId) => {
+      await base44.entities.Habit.delete(habitId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['allHabits']);
+    }
+  });
+
   const [contractForm, setContractForm] = useState({
     reward_text: '',
     sanction_text: '',
@@ -145,7 +200,11 @@ export default function Habits() {
   const getDayAbbrev = (dayIndex) => ['M', 'T', 'W', 'T', 'F', 'S', 'S'][dayIndex];
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div 
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="min-h-screen bg-black text-white p-6"
+    >
       <div className="max-w-2xl mx-auto">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
           <ArrowLeft className="w-4 h-4" />
@@ -170,7 +229,18 @@ export default function Habits() {
               {objectives?.map(obj => {
                 const habitCount = groupedHabits[obj.id]?.length || 0;
                 return (
-                  <div key={obj.id} className="p-4 rounded-lg bg-gray-900 border border-gray-800">
+                  <div key={obj.id} className="group p-4 rounded-lg bg-gray-900 border border-gray-800 relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm('Delete this objective and all its habits?')) {
+                          deleteObjectiveMutation.mutate(obj.id);
+                        }
+                      }}
+                      className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-gray-800 rounded-lg"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{obj.icon}</span>
                       <div className="flex-1">
@@ -198,7 +268,18 @@ export default function Habits() {
                     </div>
                     <div className="space-y-2">
                       {objHabits.map(habit => (
-                        <div key={habit.id} className="p-3 rounded-lg bg-gray-900 border border-gray-800">
+                        <div key={habit.id} className="group/habit p-3 rounded-lg bg-gray-900 border border-gray-800 relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm('Delete this habit?')) {
+                                deleteHabitMutation.mutate(habit.id);
+                              }
+                            }}
+                            className="absolute top-3 right-3 opacity-0 group-hover/habit:opacity-100 transition-opacity p-1 hover:bg-gray-800 rounded"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </button>
                           <div className="font-medium mb-2">{habit.title}</div>
                           <div className="flex items-center gap-2">
                             {[0,1,2,3,4,5,6].map(day => (
