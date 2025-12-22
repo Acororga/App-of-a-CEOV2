@@ -22,7 +22,8 @@ export default function Layout({ children, currentPageName }) {
         return newSettings;
       }
       return settings[0];
-    }
+    },
+    refetchInterval: 1000
   });
 
   const toggleAppMutation = useMutation({

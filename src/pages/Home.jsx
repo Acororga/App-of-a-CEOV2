@@ -89,7 +89,9 @@ export default function Home() {
     { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
   ];
 
-  const filteredApps = apps.filter(app => activeApps?.includes(app.id));
+  const filteredApps = apps.filter(app => Array.isArray(activeApps) && activeApps.includes(app.id));
+
+  const isScreenTimeActive = Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
 
   const getRankBackground = () => {
     const rankLevel = rankData?.rank_level || 1;
@@ -111,9 +113,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
-      {/* Rank Branches */}
-      <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
-      <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+      {/* Rank Branches - Only show if ScreenTimeManager is active */}
+      {isScreenTimeActive && (
+        <>
+          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+          <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+        </>
+      )}
 
       {/* Focus Mode Quick Button */}
       <button
