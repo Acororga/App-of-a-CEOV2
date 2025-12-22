@@ -28,7 +28,7 @@ export default function Layout({ children, currentPageName }) {
   const toggleAppMutation = useMutation({
     mutationFn: async (appName) => {
       if (!appSettings) return;
-      const currentApps = appSettings.active_apps || [];
+      const currentApps = Array.isArray(appSettings.active_apps) ? appSettings.active_apps : ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
       const newApps = currentApps.includes(appName)
         ? currentApps.filter(a => a !== appName)
         : [...currentApps, appName];
@@ -104,7 +104,8 @@ export default function Layout({ children, currentPageName }) {
                 <div className="space-y-2">
                   <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
                   {availableApps.map(app => {
-                    const isActive = appSettings?.active_apps?.includes(app.id);
+                    const activeAppsList = Array.isArray(appSettings?.active_apps) ? appSettings.active_apps : ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
+                    const isActive = activeAppsList.includes(app.id);
                     const Icon = app.icon;
                     return (
                       <button
