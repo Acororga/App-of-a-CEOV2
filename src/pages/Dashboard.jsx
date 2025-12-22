@@ -184,8 +184,14 @@ export default function Dashboard() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-2xl blur-xl" />
               <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-                <div className="text-sm text-zinc-400 mb-4 text-center">
-                  Mark yesterday's completed habits
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-zinc-300">YESTERDAY'S HABITS</h2>
+                  <Link 
+                    to={createPageUrl('Habits')}
+                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5 text-zinc-400" />
+                  </Link>
                 </div>
                 <div className="space-y-2 mb-4">
                   {yesterdayHabits.map(habit => (
@@ -223,9 +229,17 @@ export default function Dashboard() {
             <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-zinc-300">TODAY'S HABITS</h2>
-                <div className="text-xs text-zinc-600 font-medium">
-                  {todayHabits && todayCompletions && 
-                    `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
+                <div className="flex items-center gap-3">
+                  <div className="text-xs text-zinc-600 font-medium">
+                    {todayHabits && todayCompletions && 
+                      `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
+                  </div>
+                  <Link 
+                    to={createPageUrl('Habits')}
+                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5 text-zinc-400" />
+                  </Link>
                 </div>
               </div>
               <div className="space-y-2">
@@ -266,12 +280,20 @@ export default function Dashboard() {
             <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
-                <Link 
-                  to={createPageUrl('Pareto')}
-                  className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-                >
-                  View All →
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link 
+                    to={createPageUrl('Pareto')}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    View All →
+                  </Link>
+                  <Link 
+                    to={createPageUrl('Pareto')}
+                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5 text-zinc-400" />
+                  </Link>
+                </div>
               </div>
               <div className="space-y-2">
                 {topTasks && topTasks.length > 0 ? (

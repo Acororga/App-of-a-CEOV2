@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -16,6 +16,7 @@ import {
 
 export default function Pareto() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('list');
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTask, setNewTask] = useState({
@@ -23,6 +24,37 @@ export default function Pareto() {
     time_duration: '1_hour',
     importance_level: 'average'
   });
+  
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const containerRef = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Swipe down to close
+    if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 100) {
+      navigate(createPageUrl('Home'));
+      return;
+    }
+
+    // Swipe left/right to switch tabs
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 100) {
+      if (deltaX > 0 && activeTab === 'matrix') {
+        setActiveTab('list');
+      } else if (deltaX < 0 && activeTab === 'list') {
+        setActiveTab('matrix');
+      }
+    }
+  };
 
   const { data: tasks } = useQuery({
     queryKey: ['paretoTasks'],
@@ -126,7 +158,12 @@ export default function Pareto() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
+    <div 
+      ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6"
+    >
       <div className="max-w-6xl mx-auto">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />

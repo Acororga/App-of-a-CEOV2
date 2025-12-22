@@ -165,8 +165,7 @@ export default function Home() {
                 <BarChart3 className="w-7 h-7 text-white" />
               </div>
               <div>
-                <div className="text-xl font-bold mb-1">Dashboard</div>
-                <div className="text-xs text-zinc-500 font-medium">Today's overview</div>
+                <div className="text-xl font-bold">Dashboard</div>
               </div>
             </div>
             <div className="flex items-center gap-6">
@@ -305,7 +304,6 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-lg font-bold">CEO Mode</div>
-                <div className="text-[10px] text-zinc-600 font-medium uppercase tracking-wide">Maximum Focus</div>
               </div>
             </div>
             <div className="text-zinc-700 text-xs font-semibold uppercase tracking-widest">
