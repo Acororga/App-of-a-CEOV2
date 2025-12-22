@@ -89,9 +89,12 @@ export default function Home() {
     { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
   ];
 
-  const filteredApps = apps.filter(app => Array.isArray(activeApps) && activeApps.includes(app.id));
+  const filteredApps = apps.filter(app => {
+    if (!activeApps) return true; // Show all apps while loading
+    return Array.isArray(activeApps) ? activeApps.includes(app.id) : true;
+  });
 
-  const isScreenTimeActive = Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
+  const isScreenTimeActive = activeApps && Array.isArray(activeApps) && activeApps.includes('ScreenTimeManager');
 
   const getRankBackground = () => {
     const rankLevel = rankData?.rank_level || 1;
