@@ -29,7 +29,11 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const dataToSubmit = {
+      ...formData,
+      weekly_frequency: formData.is_daily ? 7 : formData.specific_days.length
+    };
+    onSubmit(dataToSubmit);
     setFormData({
       objective_id: '',
       title: '',
