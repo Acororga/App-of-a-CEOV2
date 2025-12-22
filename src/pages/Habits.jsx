@@ -302,59 +302,89 @@ export default function Habits() {
               </div>
             )}
 
-            {/* Rewards & Sanctions Section */}
+            {/* Weekly Contract Section */}
             <div className="mt-8 pt-8 border-t border-gray-800">
               <h2 className="text-lg font-semibold mb-4">Weekly Contract</h2>
               
               {!weeklyContract?.committed ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-400 mb-2 block">Reward (if you succeed)</label>
-                    <input
-                      type="text"
-                      value={weeklyContract?.reward_text || ''}
-                      onChange={(e) => updateContractMutation.mutate({ reward_text: e.target.value })}
-                      placeholder="e.g., Movie night, special meal, etc."
-                      className="w-full p-3 rounded-lg bg-gray-900 border border-gray-800 text-white"
-                    />
-                  </div>
+                <div className="p-6 rounded-xl bg-gray-900 border border-gray-800">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm text-gray-400 mb-2 block">Reward (if successful)</label>
+                      <input
+                        type="text"
+                        value={weeklyContract?.reward_text || ''}
+                        onChange={(e) => updateContractMutation.mutate({ reward_text: e.target.value })}
+                        placeholder="e.g., Movie night, treat yourself..."
+                        className="w-full p-3 rounded-lg bg-black border border-gray-800 text-white focus:border-green-500 focus:outline-none transition-colors"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="text-sm text-gray-400 mb-2 block">Sanction (if you fail)</label>
-                    <input
-                      type="text"
-                      value={weeklyContract?.sanction_text || ''}
-                      onChange={(e) => updateContractMutation.mutate({ sanction_text: e.target.value })}
-                      placeholder="e.g., No social media for a day, donate to charity, etc."
-                      className="w-full p-3 rounded-lg bg-gray-900 border border-gray-800 text-white"
-                    />
-                  </div>
+                    <div>
+                      <label className="text-sm text-gray-400 mb-2 block">Sanction (if you fail)</label>
+                      <input
+                        type="text"
+                        value={weeklyContract?.sanction_text || ''}
+                        onChange={(e) => updateContractMutation.mutate({ sanction_text: e.target.value })}
+                        placeholder="e.g., No social media, donate to charity..."
+                        className="w-full p-3 rounded-lg bg-black border border-gray-800 text-white focus:border-red-500 focus:outline-none transition-colors"
+                      />
+                    </div>
 
-                  {weeklyContract?.reward_text && weeklyContract?.sanction_text && !weeklyContract?.committed && (
-                    <Button
-                      onClick={() => updateContractMutation.mutate({ committed: true })}
-                      className="w-full bg-white text-black hover:bg-gray-200"
-                    >
-                      Commit to Contract
-                    </Button>
-                  )}
+                    <div>
+                      <label className="text-sm text-gray-400 mb-2 block">Success Threshold</label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="range"
+                          min="50"
+                          max="100"
+                          step="5"
+                          value={weeklyContract?.success_threshold_percentage || 90}
+                          onChange={(e) => updateContractMutation.mutate({ success_threshold_percentage: parseInt(e.target.value) })}
+                          className="flex-1"
+                        />
+                        <span className="text-xl font-bold text-white w-16 text-right">
+                          {weeklyContract?.success_threshold_percentage || 90}%
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        You must complete at least this percentage of habits to win
+                      </div>
+                    </div>
+
+                    {weeklyContract?.reward_text && weeklyContract?.sanction_text && (
+                      <Button
+                        onClick={() => updateContractMutation.mutate({ committed: true })}
+                        className="w-full bg-white text-black hover:bg-gray-200 mt-2"
+                      >
+                        Commit to Contract
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="p-4 rounded-lg bg-green-950 border border-green-900">
-                    <div className="text-sm text-green-400 font-semibold mb-1">✅ Reward</div>
+                    <div className="text-sm text-green-400 font-semibold mb-1">✅ Your Reward</div>
                     <div className="text-white">{weeklyContract.reward_text}</div>
                   </div>
                   
                   <div className="p-4 rounded-lg bg-red-950 border border-red-900">
-                    <div className="text-sm text-red-400 font-semibold mb-1">⚠️ Sanction</div>
+                    <div className="text-sm text-red-400 font-semibold mb-1">⚠️ Your Sanction</div>
                     <div className="text-white">{weeklyContract.sanction_text}</div>
                   </div>
 
-                  <div className="text-sm text-gray-500 text-center">
-                    {weeklyScore?.success_percentage >= (weeklyContract.success_threshold_percentage || 90)
-                      ? '🎉 You\'re on track to earn your reward!'
-                      : '⚡ Keep going to avoid the sanction!'}
+                  <div className="p-4 rounded-lg bg-gray-900 border border-gray-800">
+                    <div className="text-sm text-gray-400 mb-1">Target: {weeklyContract.success_threshold_percentage}%</div>
+                    <div className="text-lg font-bold">
+                      {weeklyScore?.success_percentage >= weeklyContract.success_threshold_percentage
+                        ? '🎉 You\'re on track to earn your reward!'
+                        : '⚡ Keep going to avoid the sanction!'}
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-gray-600 text-center">
+                    Contract is locked until next week
                   </div>
                 </div>
               )}

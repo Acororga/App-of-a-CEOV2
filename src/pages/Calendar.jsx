@@ -2,20 +2,23 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUpcomingEvents } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { format, parseISO, differenceInMinutes } from 'date-fns';
-import { ArrowLeft, Calendar as CalendarIcon, Clock, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EventModal from '../components/calendar/EventModal';
+import CalendarView from '../components/calendar/CalendarView';
 
 export default function Calendar() {
   const queryClient = useQueryClient();
   const [showEventModal, setShowEventModal] = useState(false);
+  const [viewMode, setViewMode] = useState('monthly');
   
   const { data: events } = useQuery({
-    queryKey: ['upcomingEvents'],
-    queryFn: () => getUpcomingEvents(30)
+    queryKey: ['allEvents'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.CalendarEvent.filter({ created_by: user.email }, '-event_date');
+    }
   });
 
   const createEventMutation = useMutation({
@@ -27,102 +30,40 @@ export default function Calendar() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['upcomingEvents']);
+      queryClient.invalidateQueries(['allEvents']);
+      setShowEventModal(false);
     }
-  });
-
-  const getTimeUntil = (eventDate, eventTime) => {
-    const eventDateTime = parseISO(`${eventDate}T${eventTime}`);
-    const mins = differenceInMinutes(eventDateTime, new Date());
-    
-    if (mins < 0) return 'Past';
-    if (mins < 60) return `${mins}m`;
-    
-    const hours = Math.floor(mins / 60);
-    const remainingMins = mins % 60;
-    
-    if (hours < 24) return `${hours}h ${remainingMins}m`;
-    
-    const days = Math.floor(hours / 24);
-    return `${days}d`;
-  };
-
-  // Group events by date
-  const groupedEvents = {};
-  events?.forEach(event => {
-    if (!groupedEvents[event.event_date]) {
-      groupedEvents[event.event_date] = [];
-    }
-    groupedEvents[event.event_date].push(event);
   });
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
+          <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">Schedule</h1>
-          <p className="text-sm text-gray-400">Upcoming events</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent mb-4">
+            Calendar
+          </h1>
+          
+          <Tabs value={viewMode} onValueChange={setViewMode} className="inline-flex">
+            <TabsList className="bg-zinc-900 border border-zinc-800">
+              <TabsTrigger value="daily">Daily</TabsTrigger>
+              <TabsTrigger value="weekly">Weekly</TabsTrigger>
+              <TabsTrigger value="monthly">Monthly</TabsTrigger>
+              <TabsTrigger value="yearly">Yearly</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
-        <div className="space-y-6 mb-6">
-          {Object.keys(groupedEvents).sort().map(date => (
-            <div key={date}>
-              <div className="text-sm font-semibold text-gray-400 mb-3">
-                {format(new Date(date), 'EEEE, MMM d')}
-              </div>
-              <div className="space-y-2">
-                {groupedEvents[date].map(event => (
-                  <div
-                    key={event.id}
-                    className="p-4 rounded-lg bg-gray-900 border border-gray-800 hover:border-gray-700 transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <div className="font-semibold mb-1">{event.title}</div>
-                        {event.description && (
-                          <div className="text-sm text-gray-500 mb-2">{event.description}</div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{event.event_time}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>•</span>
-                        <span>{event.duration_minutes}min</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>•</span>
-                        <span className="text-blue-400">{getTimeUntil(event.event_date, event.event_time)}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {(!events || events.length === 0) && (
-          <div className="text-center py-12 text-gray-600">
-            No upcoming events
-          </div>
-        )}
-
-        <Button 
-          onClick={() => setShowEventModal(true)}
-          className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Event
-        </Button>
+        <CalendarView
+          events={events}
+          view={viewMode}
+          onNewEvent={() => setShowEventModal(true)}
+          onEventClick={(event) => console.log('Event clicked:', event)}
+        />
 
         <EventModal
           open={showEventModal}
