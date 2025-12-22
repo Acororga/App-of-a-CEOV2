@@ -174,9 +174,69 @@ export default function Rank() {
     daysInApp: rankData.daysInApp
   }) : null;
 
+  // Define rank background styles
+  const getRankBackground = () => {
+    const rankLevel = rankData?.rankLevel || 1;
+    
+    const backgrounds = {
+      1: { // Bronze
+        branches: 'from-amber-700/20 via-orange-600/20 to-amber-800/20',
+        glow: 'from-amber-600/10 to-orange-600/10'
+      },
+      2: { // Silver
+        branches: 'from-gray-400/20 via-gray-500/20 to-gray-400/20',
+        glow: 'from-gray-400/10 to-gray-500/10'
+      },
+      3: { // Gold
+        branches: 'from-yellow-500/20 via-yellow-600/20 to-yellow-400/20',
+        glow: 'from-yellow-500/10 to-yellow-600/10'
+      },
+      4: { // Platinum
+        branches: 'from-cyan-300/20 via-slate-400/20 to-cyan-300/20',
+        glow: 'from-cyan-300/10 to-slate-400/10'
+      },
+      5: { // Diamond
+        branches: 'from-blue-300/20 via-cyan-400/20 to-blue-300/20',
+        glow: 'from-blue-300/10 to-cyan-400/10'
+      },
+      6: { // Batman
+        branches: 'from-zinc-900/30 via-black/30 to-zinc-900/30',
+        glow: 'from-zinc-900/10 to-black/10'
+      },
+      7: { // CEO - No branches, gold border
+        branches: 'from-yellow-500/30 via-yellow-600/30 to-yellow-500/30',
+        glow: 'from-yellow-500/20 to-yellow-600/20',
+        ceoMode: true
+      }
+    };
+    
+    return backgrounds[rankLevel] || backgrounds[1];
+  };
+
+  const bgStyle = getRankBackground();
+
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-black text-white p-6 relative overflow-hidden">
+      {/* Rank Background Branches */}
+      {!bgStyle.ceoMode ? (
+        <>
+          {/* Top Right Branch */}
+          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+          {/* Bottom Left Branch */}
+          <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-30`} />
+        </>
+      ) : (
+        /* CEO Mode - Gold surrounding */
+        <>
+          <div className={`absolute inset-0 bg-gradient-to-br ${bgStyle.glow} opacity-20`} />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
+          <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-transparent via-yellow-500/50 to-transparent" />
+          <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-transparent via-yellow-500/50 to-transparent" />
+        </>
+      )}
+
+      <div className="max-w-md mx-auto relative z-10">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">Home</span>

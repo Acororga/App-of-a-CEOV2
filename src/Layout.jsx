@@ -1,10 +1,106 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
+import { base44 } from '@/api/base44Client';
+import { User, FileText, Shield, BarChart3, X } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
-  // Layout is minimal - just renders the page content
-  // Home menu is a separate page
+  const [showMenu, setShowMenu] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
+
+  if (currentPageName === 'Home') {
+    return (
+      <div className="min-h-screen bg-black text-white relative">
+        {/* User Icon - Top Left */}
+        <button
+          onClick={() => setShowMenu(true)}
+          className="fixed top-6 left-6 z-50 w-11 h-11 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 hover:scale-105 transition-transform"
+        >
+          <span className="text-sm font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+            {user?.full_name?.charAt(0) || '?'}
+          </span>
+        </button>
+
+        {/* Slide-in Menu */}
+        {showMenu && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/80 z-50"
+              onClick={() => setShowMenu(false)}
+            />
+            <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-r border-zinc-800 z-50 p-6 overflow-y-auto">
+              <button
+                onClick={() => setShowMenu(false)}
+                className="absolute top-6 right-6 p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="mb-8">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 mb-4">
+                  <span className="text-2xl font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+                    {user?.full_name?.charAt(0) || '?'}
+                  </span>
+                </div>
+                <div className="text-xl font-bold mb-1">{user?.full_name || 'User'}</div>
+                <div className="text-sm text-zinc-500">{user?.email}</div>
+              </div>
+
+              <div className="space-y-2">
+                <Link
+                  to={createPageUrl('BiannualReport')}
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                >
+                  <BarChart3 className="w-5 h-5 text-purple-400" />
+                  <div>
+                    <div className="font-semibold">6-Month Report</div>
+                    <div className="text-xs text-zinc-500">View your progress</div>
+                  </div>
+                </Link>
+
+                <button
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                >
+                  <Shield className="w-5 h-5 text-blue-400" />
+                  <div className="text-left">
+                    <div className="font-semibold">Settings</div>
+                    <div className="text-xs text-zinc-500">App preferences</div>
+                  </div>
+                </button>
+
+                <button
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                >
+                  <FileText className="w-5 h-5 text-green-400" />
+                  <div className="text-left">
+                    <div className="font-semibold">Privacy Policy</div>
+                    <div className="text-xs text-zinc-500">Terms & conditions</div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-zinc-800">
+                <button
+                  onClick={() => base44.auth.logout()}
+                  className="w-full p-3 rounded-lg bg-red-950/30 border border-red-900/50 text-red-400 hover:bg-red-950/50 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       {children}
