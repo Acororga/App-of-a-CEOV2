@@ -210,18 +210,19 @@ export default function Home() {
         </>
       )}
 
-      {/* Header with Focus Button, Rank, and Streak */}
+      {/* Header with User Icon, Rank, Streak, and Focus Button */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
-        {/* Focus Mode Quick Button - Left */}
-        <button
-          onClick={() => setShowFocusModal(true)}
-          className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
+        {/* User Icon - Left */}
+        <Link
+          to={createPageUrl('Home')}
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 hover:scale-105 transition-transform"
         >
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
-          <Zap className="w-5 h-5 text-white relative z-10" />
-        </button>
+          <span className="text-sm font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+            {user?.full_name?.charAt(0) || '?'}
+          </span>
+        </Link>
 
-        {/* Rank and Streak - Right */}
+        {/* Rank, Streak, and Focus Button - Right */}
         <div className="flex items-center gap-2">
           {/* Rank */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
@@ -238,6 +239,15 @@ export default function Home() {
               {streakData?.current_streak || 0}
             </span>
           </div>
+          
+          {/* Focus Mode Quick Button */}
+          <button
+            onClick={() => setShowFocusModal(true)}
+            className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
+            <Zap className="w-5 h-5 text-white relative z-10" />
+          </button>
         </div>
       </div>
 

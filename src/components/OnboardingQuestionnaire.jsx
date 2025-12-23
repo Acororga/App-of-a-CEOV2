@@ -1,22 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Briefcase, Heart, Dumbbell, BookOpen, ShoppingBag, Users } from 'lucide-react';
+import { ChevronRight, Briefcase, Heart, Dumbbell, BookOpen, ShoppingBag, Users, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { base44 } from '@/api/base44Client';
 
-const categoryIcons = {
-  work: Briefcase,
-  health: Heart,
-  fitness: Dumbbell,
-  learning: BookOpen,
-  personal: ShoppingBag,
-  social: Users
-};
-
 export default function OnboardingQuestionnaire({ onComplete }) {
   const [step, setStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     mainGoals: '',
     habitCategories: [],
@@ -34,6 +25,39 @@ export default function OnboardingQuestionnaire({ onComplete }) {
     { id: 'social', label: 'Social & Family', icon: Users }
   ];
 
+  const workOptions = [
+    'Entrepreneur',
+    'Student',
+    'Engineer / Developer',
+    'Manager / Executive',
+    'Designer / Creative',
+    'Healthcare Professional',
+    'Sales / Marketing',
+    'Freelancer',
+    'Other'
+  ];
+
+  const challengeOptions = [
+    'Staying focused',
+    'Managing time effectively',
+    'Building consistency',
+    'Avoiding procrastination',
+    'Balancing work and life',
+    'Setting clear goals',
+    'Other'
+  ];
+
+  const goalOptions = [
+    'Launch my business',
+    'Get fit and healthy',
+    'Learn a new language',
+    'Advance my career',
+    'Build better habits',
+    'Improve productivity',
+    'Reduce screen time',
+    'Other'
+  ];
+
   const toggleCategory = (id) => {
     setFormData(prev => ({
       ...prev,
@@ -44,34 +68,106 @@ export default function OnboardingQuestionnaire({ onComplete }) {
   };
 
   const handleComplete = async () => {
+    setIsLoading(true);
+    
+    // Smart loading animation (2 seconds)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     try {
       const user = await base44.auth.me();
       await base44.auth.updateMe({
         onboarding_data: formData
       });
-      onComplete();
     } catch (error) {
       console.error('Error saving onboarding data:', error);
-      onComplete();
     }
+    
+    onComplete();
   };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center p-6">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-20 h-20 mx-auto mb-6"
+          >
+            <Sparkles className="w-20 h-20 text-white" />
+          </motion.div>
+          
+          <motion.h2
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl font-bold text-white mb-2"
+          >
+            Analyzing your profile...
+          </motion.h2>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-2"
+          >
+            <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />
+            <p className="text-zinc-400">Creating your personalized experience</p>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
 
   const steps = [
     {
       title: "What are your main goals?",
-      description: "Tell us what you want to achieve. This helps us personalize your experience.",
+      description: "Select all that apply or write your own",
       content: (
-        <Textarea
-          value={formData.mainGoals}
-          onChange={(e) => setFormData({ ...formData, mainGoals: e.target.value })}
-          placeholder="e.g., Launch my business, get fit, learn Spanish..."
-          className="bg-zinc-900 border-zinc-800 text-white h-32 resize-none"
-        />
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            {goalOptions.slice(0, -1).map(goal => {
+              const isSelected = formData.mainGoals.includes(goal);
+              return (
+                <button
+                  key={goal}
+                  onClick={() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      mainGoals: isSelected 
+                        ? prev.mainGoals.replace(goal, '').replace(/,\s*,/g, ',').replace(/^,\s*/, '').replace(/,\s*$/, '')
+                        : prev.mainGoals ? `${prev.mainGoals}, ${goal}` : goal
+                    }));
+                  }}
+                  className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                    isSelected
+                      ? 'bg-white text-black border-white'
+                      : 'bg-zinc-900 border-zinc-800 text-white hover:border-zinc-700'
+                  }`}
+                >
+                  {goal}
+                </button>
+              );
+            })}
+          </div>
+          <Textarea
+            value={formData.mainGoals}
+            onChange={(e) => setFormData({ ...formData, mainGoals: e.target.value })}
+            placeholder="Or type your own goals..."
+            className="bg-zinc-900 border-zinc-800 text-white h-20 resize-none"
+          />
+        </div>
       )
     },
     {
       title: "Which areas matter most?",
-      description: "Select the categories you want to focus on.",
+      description: "Select the categories you want to focus on",
       content: (
         <div className="grid grid-cols-2 gap-3">
           {categories.map(cat => {
@@ -97,38 +193,57 @@ export default function OnboardingQuestionnaire({ onComplete }) {
     },
     {
       title: "What do you do professionally?",
-      description: "This helps us suggest relevant tasks and habits.",
+      description: "This helps us suggest relevant tasks and habits",
       content: (
-        <Input
-          value={formData.workType}
-          onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
-          placeholder="e.g., Entrepreneur, Student, Engineer..."
-          className="bg-zinc-900 border-zinc-800 text-white"
-        />
+        <div className="grid grid-cols-2 gap-2">
+          {workOptions.map(work => {
+            const isSelected = formData.workType === work;
+            return (
+              <button
+                key={work}
+                onClick={() => setFormData({ ...formData, workType: work })}
+                className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                  isSelected
+                    ? 'bg-white text-black border-white'
+                    : 'bg-zinc-900 border-zinc-800 text-white hover:border-zinc-700'
+                }`}
+              >
+                {work}
+              </button>
+            );
+          })}
+        </div>
       )
     },
     {
       title: "What's your biggest challenge?",
-      description: "Understanding your obstacles helps us support you better.",
+      description: "Select all that apply",
       content: (
-        <Textarea
-          value={formData.challenges}
-          onChange={(e) => setFormData({ ...formData, challenges: e.target.value })}
-          placeholder="e.g., Staying focused, managing time, building consistency..."
-          className="bg-zinc-900 border-zinc-800 text-white h-32 resize-none"
-        />
-      )
-    },
-    {
-      title: "Describe your ideal day",
-      description: "What does a perfect, productive day look like for you?",
-      content: (
-        <Textarea
-          value={formData.idealDay}
-          onChange={(e) => setFormData({ ...formData, idealDay: e.target.value })}
-          placeholder="e.g., Wake up early, workout, deep work sessions, evening relaxation..."
-          className="bg-zinc-900 border-zinc-800 text-white h-32 resize-none"
-        />
+        <div className="grid grid-cols-2 gap-2">
+          {challengeOptions.map(challenge => {
+            const isSelected = formData.challenges.includes(challenge);
+            return (
+              <button
+                key={challenge}
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    challenges: isSelected 
+                      ? prev.challenges.replace(challenge, '').replace(/,\s*,/g, ',').replace(/^,\s*/, '').replace(/,\s*$/, '')
+                      : prev.challenges ? `${prev.challenges}, ${challenge}` : challenge
+                  }));
+                }}
+                className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                  isSelected
+                    ? 'bg-white text-black border-white'
+                    : 'bg-zinc-900 border-zinc-800 text-white hover:border-zinc-700'
+                }`}
+              >
+                {challenge}
+              </button>
+            );
+          })}
+        </div>
       )
     }
   ];
