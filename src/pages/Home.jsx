@@ -6,11 +6,12 @@ import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
-  BarChart3, CheckSquare, ListChecks, Calendar, Shield, Circle, Zap, Plus 
+  BarChart3, CheckSquare, ClipboardList, Calendar, Shield, Circle, Zap, Plus 
 } from 'lucide-react';
 import FocusModeQuickStart from '../components/FocusModeQuickStart';
 import HabitModal from '../components/habits/HabitModal';
 import EventModal from '../components/calendar/EventModal';
+import OnboardingTutorial from '../components/OnboardingTutorial';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -18,8 +19,21 @@ export default function Home() {
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showParetoForm, setShowParetoForm] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+    }
+  }, []);
+
+  const handleCompleteTutorial = () => {
+    localStorage.setItem('hasSeenTutorial', 'true');
+    setShowTutorial(false);
+  };
 
   const { data: streakData } = useQuery({
     queryKey: ['winStreak'],
@@ -143,7 +157,7 @@ export default function Home() {
   };
 
   const apps = [
-    { id: 'Pareto', name: 'Pareto', icon: ListChecks, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
+    { id: 'Pareto', name: 'To-Do', icon: ClipboardList, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
     { id: 'Habits', name: 'Habits', icon: CheckSquare, gradient: 'from-emerald-600/20 to-teal-600/20', colors: 'from-emerald-500 to-teal-600', glow: 'from-emerald-600/10 to-teal-600/10' },
     { id: 'Calendar', name: 'Schedule', icon: Calendar, gradient: 'from-pink-600/20 to-rose-600/20', colors: 'from-pink-500 to-rose-600', glow: 'from-pink-600/10 to-rose-600/10' },
     { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
@@ -171,6 +185,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+      {/* Modern texture overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }} />
+
       {/* Rank Branches - Only visible when ScreenTimeManager is active */}
       {isScreenTimeActive && (
         <>
@@ -179,33 +198,34 @@ export default function Home() {
         </>
       )}
 
-      {/* Focus Mode Quick Button */}
-      <button
-        onClick={() => setShowFocusModal(true)}
-        className="fixed top-6 right-6 z-50 w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-      >
-        <Zap className="w-5 h-5 text-white" />
-      </button>
-
-      {/* Header */}
-      <div className="relative flex justify-end items-center mb-10">
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="text-[10px] text-zinc-600 font-semibold tracking-wider">RANK</div>
-            <div className="text-sm font-bold bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent">
+      {/* Header with Rank, Streak, and Focus Button */}
+      <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Rank */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
+            <div className="text-[10px] text-zinc-500 font-semibold tracking-wider">RANK</div>
+            <div className="text-xs font-bold bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent">
               {rankData?.rank_name || 'Panda'}
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-[10px] text-zinc-600 font-semibold tracking-wider">STREAK</div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-lg">🔥</span>
-              <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
-                {streakData?.current_streak || 0}
-              </span>
-            </div>
+          
+          {/* Streak */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
+            <span className="text-sm">🔥</span>
+            <span className="text-xs font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+              {streakData?.current_streak || 0}
+            </span>
           </div>
         </div>
+
+        {/* Focus Mode Quick Button */}
+        <button
+          onClick={() => setShowFocusModal(true)}
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
+          <Zap className="w-5 h-5 text-white relative z-10" />
+        </button>
       </div>
 
       {/* Dashboard Card - Large Rectangular */}
@@ -215,11 +235,16 @@ export default function Home() {
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
         <div className="relative h-32 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-6 overflow-hidden shadow-2xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.98]">
+          {/* Texture overlay */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`
+          }} />
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-full blur-3xl" />
           <div className="relative flex items-center justify-between h-full">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <BarChart3 className="w-7 h-7 text-white" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+                <BarChart3 className="w-7 h-7 text-white relative z-10" />
               </div>
               <div>
                 <div className="text-xl font-bold">Dashboard</div>
@@ -393,11 +418,16 @@ export default function Home() {
       <Link to={createPageUrl('CEOMode')} className="block group relative">
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-zinc-700/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
         <div className="relative h-24 rounded-3xl bg-gradient-to-br from-black via-zinc-950 to-black border border-zinc-800/50 p-5 overflow-hidden shadow-2xl group-hover:border-zinc-700/50 transition-all group-active:scale-[0.98]">
+          {/* Texture */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")`
+          }} />
           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-3xl" />
           <div className="relative flex items-center justify-between h-full">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center shadow-lg border border-zinc-700/50">
-                <Circle className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center shadow-lg border border-zinc-700/50 relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                <Circle className="w-6 h-6 text-white relative z-10" />
               </div>
               <div>
                 <div className="text-lg font-bold">CEO Mode</div>
@@ -409,6 +439,8 @@ export default function Home() {
           </div>
         </div>
       </Link>
+
+      {showTutorial && <OnboardingTutorial onComplete={handleCompleteTutorial} />}
 
       <FocusModeQuickStart
         open={showFocusModal}

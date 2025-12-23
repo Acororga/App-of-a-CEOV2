@@ -172,7 +172,7 @@ export default function Pareto() {
 
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Pareto Matrix
+            To-Do Matrix
           </h1>
         </div>
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { User, FileText, Shield, BarChart3, X, ListChecks, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
+import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -42,7 +42,7 @@ export default function Layout({ children, currentPageName }) {
   });
 
   const availableApps = [
-    { id: 'Pareto', name: 'Pareto Matrix', icon: ListChecks },
+    { id: 'Pareto', name: 'To-Do Matrix', icon: ClipboardList },
     { id: 'Habits', name: 'Habits & Productivity', icon: CheckSquare },
     { id: 'Calendar', name: 'Schedule', icon: CalendarIcon },
     { id: 'ScreenTimeManager', name: 'Screen Time Manager', icon: Shield }
