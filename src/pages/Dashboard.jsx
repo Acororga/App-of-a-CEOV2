@@ -13,6 +13,7 @@ import { ArrowLeft, CheckCircle2, Circle, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
+  console.log('🔴 DASHBOARD VERSION: 2025-12-23-FINAL');
   const queryClient = useQueryClient();
   const [yesterdayVisible, setYesterdayVisible] = useState(true);
   const [tempYesterdayStates, setTempYesterdayStates] = useState({});
