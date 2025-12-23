@@ -488,47 +488,108 @@ export default function Home() {
       {showMenu && (
         <>
           <div
-            className="fixed inset-0 bg-black/80 z-[60]"
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60]"
             onClick={() => setShowMenu(false)}
           />
-          <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-r border-zinc-800 z-[60] p-6 overflow-y-auto">
+          <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 backdrop-blur-xl border-r border-zinc-700/50 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[60] p-6 overflow-y-auto">
             <button
               onClick={() => setShowMenu(false)}
-              className="absolute top-6 right-6 p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+              className="absolute top-6 right-6 p-2 hover:bg-zinc-800/50 rounded-lg transition-all duration-200"
             >
               <X className="w-5 h-5" />
             </button>
 
+            {/* User Profile */}
             <div className="mb-8">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 mb-4">
-                <span className="text-2xl font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+              <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.6)] border-2 border-zinc-700/60 mb-4 mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/5 rounded-full" />
+                <span className="text-3xl font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
                   {user?.full_name?.charAt(0) || '?'}
                 </span>
               </div>
-              <div className="text-xl font-bold mb-1">{user?.full_name || 'User'}</div>
-              <div className="text-sm text-zinc-500">{user?.email}</div>
+              <div className="text-xl font-bold text-center mb-1">{user?.full_name || 'User'}</div>
+              <div className="text-sm text-zinc-500 text-center">{user?.email}</div>
             </div>
 
-            <div className="space-y-2">
+            {/* Quick Stats - Visual Priority */}
+            <div className="mb-6 grid grid-cols-3 gap-2">
+              {/* Rank */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
+                  <div className="text-2xl mb-1">{rankData?.rank_level || 1}</div>
+                  <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Rank</div>
+                  <div className="text-xs font-bold bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent mt-1">
+                    {rankData?.rank_name || 'Panda'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Streak */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
+                  <div className="text-2xl mb-1">🔥</div>
+                  <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Streak</div>
+                  <div className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent mt-1">
+                    {streakData?.current_streak || 0}
+                  </div>
+                </div>
+              </div>
+
+              {/* Today's Habits */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
+                  <div className="text-2xl mb-1">✓</div>
+                  <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Today</div>
+                  <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mt-1">
+                    {todayHabits || 0}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Check-in Alert */}
+            {needsCheckIn && (
+              <div className="mb-6 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-xl blur-md animate-pulse" />
+                <div className="relative p-4 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-red-500/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-red-400">Check-in Required</div>
+                      <div className="text-xs text-zinc-500">Yesterday's habits need validation</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3">
               <Link
                 to={createPageUrl('BiannualReport')}
                 onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-900/70 transition-all duration-300 relative overflow-hidden"
               >
-                <BarChart3 className="w-5 h-5 text-purple-400" />
-                <div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
+                  <BarChart3 className="w-5 h-5 text-white relative z-10" />
+                </div>
+                <div className="flex-1">
                   <div className="font-semibold">6-Month Report</div>
-                  <div className="text-xs text-zinc-500">View your progress</div>
+                  <div className="text-xs text-zinc-500">Your progress overview</div>
                 </div>
               </Link>
 
               <div className="space-y-2">
-                <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
+                <div className="text-[10px] text-zinc-600 uppercase tracking-wider font-bold mb-3 px-1">Active Apps</div>
                 {[
-                  { id: 'Pareto', name: 'To-Do Matrix', icon: ClipboardList },
-                  { id: 'Habits', name: 'Habits & Productivity', icon: CheckSquare },
-                  { id: 'Calendar', name: 'Schedule', icon: Calendar },
-                  { id: 'ScreenTimeManager', name: 'Screen Time Manager', icon: Shield }
+                  { id: 'Pareto', name: 'To-Do', icon: ClipboardList, color: 'from-indigo-500 to-purple-600' },
+                  { id: 'Habits', name: 'Habits', icon: CheckSquare, color: 'from-emerald-500 to-teal-600' },
+                  { id: 'Calendar', name: 'Schedule', icon: Calendar, color: 'from-pink-500 to-rose-600' },
+                  { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, color: 'from-red-500 to-orange-600' }
                 ].map(app => {
                   const currentApps = appSettingsData?.active_apps || [];
                   const isActive = currentApps.includes(app.id);
@@ -544,22 +605,30 @@ export default function Home() {
                           queryClient.invalidateQueries(['appSettings']);
                         });
                       }}
-                      className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                      className={`group w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 relative overflow-hidden ${
                         isActive
-                          ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
-                          : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
+                          ? 'bg-zinc-900/60 border-zinc-700/50 hover:border-zinc-600/50'
+                          : 'bg-zinc-950/30 border-zinc-800/30 opacity-40 hover:opacity-70'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/[0.02] to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      )}
+                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} flex items-center justify-center shadow-md relative ${!isActive && 'opacity-40'}`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
+                        <Icon className="w-4 h-4 text-white relative z-10" />
+                      </div>
                       <div className="text-left flex-1">
                         <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
                           {app.name}
                         </div>
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        isActive ? 'border-green-500 bg-green-500' : 'border-zinc-700'
+                      <div className={`relative w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                        isActive ? 'border-green-500 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'border-zinc-700'
                       }`}>
-                        {isActive && <div className="w-2 h-2 rounded-full bg-white" />}
+                        {isActive && (
+                          <div className="w-2 h-2 rounded-full bg-white shadow-sm" />
+                        )}
                       </div>
                     </button>
                   );
@@ -567,20 +636,24 @@ export default function Home() {
               </div>
 
               <button
-                className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/30 hover:bg-zinc-900/70 transition-all duration-300 relative overflow-hidden"
               >
-                <FileText className="w-5 h-5 text-green-400" />
-                <div className="text-left">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg relative">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
+                  <FileText className="w-5 h-5 text-white relative z-10" />
+                </div>
+                <div className="text-left flex-1">
                   <div className="font-semibold">Privacy Policy</div>
                   <div className="text-xs text-zinc-500">Terms & conditions</div>
                 </div>
               </button>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-zinc-800">
+            <div className="mt-8 pt-6 border-t border-zinc-800/50">
               <button
                 onClick={() => base44.auth.logout()}
-                className="w-full p-3 rounded-lg bg-red-950/30 border border-red-900/50 text-red-400 hover:bg-red-950/50 transition-colors"
+                className="w-full p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 hover:border-red-900/50 transition-all duration-300 font-medium"
               >
                 Logout
               </button>
