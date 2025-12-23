@@ -280,23 +280,37 @@ export async function getHabitsForDate(date) {
     archived: false
   });
   
-  // JavaScript getDay(): 0=Sunday, 1=Monday, 2=Tuesday, ..., 6=Saturday
-  const jsDay = date.getDay();
+  console.log('getHabitsForDate called for:', format(date, 'yyyy-MM-dd'));
+  console.log('Total habits found:', allHabits.length);
+  console.log('Day of week:', date.getDay());
   
-  return allHabits.filter(habit => {
-    // If daily, always include
-    if (habit.is_daily) return true;
+  const jsDay = date.getDay(); // 0=Sunday, 1=Monday, etc.
+  
+  const filtered = allHabits.filter(habit => {
+    console.log(`Checking habit "${habit.title}":`, {
+      is_daily: habit.is_daily,
+      specific_days: habit.specific_days
+    });
     
-    // If no specific days set, skip
-    if (!habit.specific_days || habit.specific_days.length === 0) return false;
+    if (habit.is_daily) {
+      console.log('  -> INCLUDED (daily)');
+      return true;
+    }
     
-    // Check both formats:
-    // Old format: 0=Sunday, 1=Monday, ..., 6=Saturday (matches JS directly)
-    // New format: 1=Monday, 2=Tuesday, ..., 7=Sunday
+    if (!habit.specific_days || habit.specific_days.length === 0) {
+      console.log('  -> SKIPPED (no specific days)');
+      return false;
+    }
+    
     const newFormatDay = jsDay === 0 ? 7 : jsDay;
+    const matches = habit.specific_days.some(d => d === jsDay || d === newFormatDay);
+    console.log(`  -> ${matches ? 'INCLUDED' : 'SKIPPED'} (checking ${jsDay} and ${newFormatDay})`);
     
-    return habit.specific_days.includes(jsDay) || habit.specific_days.includes(newFormatDay);
+    return matches;
   });
+  
+  console.log('Filtered habits count:', filtered.length);
+  return filtered;
 }
 
 export async function getHabitCompletionsForDate(date) {

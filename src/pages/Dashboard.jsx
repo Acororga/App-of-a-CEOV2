@@ -21,35 +21,40 @@ export default function Dashboard() {
   today.setHours(0, 0, 0, 0);
   const yesterday = subDays(today, 1);
 
-  // Today's habits
-  const { data: todayHabits } = useQuery({
-    queryKey: ['habits', format(today, 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(today),
-    refetchOnMount: true,
-    staleTime: 0
-  });
+  const [todayHabits, setTodayHabits] = React.useState(null);
+  const [todayCompletions, setTodayCompletions] = React.useState(null);
+  const [yesterdayHabits, setYesterdayHabits] = React.useState(null);
+  const [yesterdayCompletions, setYesterdayCompletions] = React.useState(null);
 
-  const { data: todayCompletions } = useQuery({
-    queryKey: ['completions', format(today, 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(today),
-    refetchOnMount: true,
-    staleTime: 0
-  });
-
-  // Yesterday's habits
-  const { data: yesterdayHabits } = useQuery({
-    queryKey: ['habits', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitsForDate(yesterday),
-    refetchOnMount: true,
-    staleTime: 0
-  });
-
-  const { data: yesterdayCompletions } = useQuery({
-    queryKey: ['completions', format(yesterday, 'yyyy-MM-dd')],
-    queryFn: () => getHabitCompletionsForDate(yesterday),
-    refetchOnMount: true,
-    staleTime: 0
-  });
+  // Fetch habits directly with useEffect
+  React.useEffect(() => {
+    const fetchData = async () => {
+      console.log('=== DASHBOARD FETCHING DATA ===');
+      console.log('Today:', format(today, 'yyyy-MM-dd'));
+      console.log('Yesterday:', format(yesterday, 'yyyy-MM-dd'));
+      
+      try {
+        const tHabits = await getHabitsForDate(today);
+        const tCompletions = await getHabitCompletionsForDate(today);
+        const yHabits = await getHabitsForDate(yesterday);
+        const yCompletions = await getHabitCompletionsForDate(yesterday);
+        
+        console.log('Today habits:', tHabits);
+        console.log('Today completions:', tCompletions);
+        console.log('Yesterday habits:', yHabits);
+        console.log('Yesterday completions:', yCompletions);
+        
+        setTodayHabits(tHabits);
+        setTodayCompletions(tCompletions);
+        setYesterdayHabits(yHabits);
+        setYesterdayCompletions(yCompletions);
+      } catch (error) {
+        console.error('Error fetching habits:', error);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   // Top Pareto tasks
   const { data: topTasks } = useQuery({
@@ -84,8 +89,9 @@ export default function Dashboard() {
     mutationFn: async ({ habitId, completed }) => {
       await checkInHabit(habitId, today, completed);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['completions', format(today, 'yyyy-MM-dd')]);
+    onSuccess: async () => {
+      const tCompletions = await getHabitCompletionsForDate(today);
+      setTodayCompletions(tCompletions);
     }
   });
 
@@ -97,8 +103,9 @@ export default function Dashboard() {
       );
       await Promise.all(promises);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['completions', format(yesterday, 'yyyy-MM-dd')]);
+    onSuccess: async () => {
+      const yCompletions = await getHabitCompletionsForDate(yesterday);
+      setYesterdayCompletions(yCompletions);
       queryClient.invalidateQueries(['weeklyScore']);
       queryClient.invalidateQueries(['weekData']);
       setYesterdayVisible(false);
@@ -141,21 +148,34 @@ export default function Dashboard() {
     });
   }
 
-  // Check if yesterday's habits need validation
   const needsYesterdayValidation = React.useMemo(() => {
-    if (!yesterdayHabits || yesterdayHabits.length === 0) return false;
-    if (!yesterdayCompletions || yesterdayCompletions.length === 0) return true;
+    console.log('Checking needsYesterdayValidation:', {
+      yesterdayHabits: yesterdayHabits?.length,
+      yesterdayCompletions: yesterdayCompletions?.length,
+      yesterdayVisible
+    });
     
-    // Check if ALL habits have been validated (have checked_in_date)
+    if (!yesterdayHabits || yesterdayHabits.length === 0) {
+      console.log('No yesterday habits');
+      return false;
+    }
+    
+    if (!yesterdayCompletions || yesterdayCompletions.length === 0) {
+      console.log('No completions - needs validation');
+      return true;
+    }
+    
     for (const habit of yesterdayHabits) {
       const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
       if (!completion || !completion.checked_in_date) {
+        console.log(`Habit ${habit.title} needs validation`);
         return true;
       }
     }
     
+    console.log('All validated');
     return false;
-  }, [yesterdayHabits, yesterdayCompletions]);
+  }, [yesterdayHabits, yesterdayCompletions, yesterdayVisible]);
 
   // Initialize temp states based on existing completions
   React.useEffect(() => {
