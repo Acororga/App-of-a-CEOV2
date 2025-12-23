@@ -9,7 +9,7 @@ import {
 } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { format, subDays } from 'date-fns';
-import { ArrowLeft, CheckCircle2, Circle, Check } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Circle, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
