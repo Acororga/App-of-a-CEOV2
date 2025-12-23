@@ -12,6 +12,7 @@ import FocusModeQuickStart from '../components/FocusModeQuickStart';
 import HabitModal from '../components/habits/HabitModal';
 import EventModal from '../components/calendar/EventModal';
 import OnboardingTutorial from '../components/OnboardingTutorial';
+import OnboardingQuestionnaire from '../components/OnboardingQuestionnaire';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -19,16 +20,27 @@ export default function Home() {
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showParetoForm, setShowParetoForm] = useState(false);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    const hasCompletedQuestionnaire = localStorage.getItem('hasCompletedQuestionnaire');
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeenTutorial) {
+    
+    if (!hasCompletedQuestionnaire) {
+      setShowQuestionnaire(true);
+    } else if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
   }, []);
+
+  const handleCompleteQuestionnaire = () => {
+    localStorage.setItem('hasCompletedQuestionnaire', 'true');
+    setShowQuestionnaire(false);
+    setShowTutorial(true);
+  };
 
   const handleCompleteTutorial = () => {
     localStorage.setItem('hasSeenTutorial', 'true');
@@ -198,9 +210,19 @@ export default function Home() {
         </>
       )}
 
-      {/* Header with Rank, Streak, and Focus Button */}
+      {/* Header with Focus Button, Rank, and Streak */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        {/* Focus Mode Quick Button - Left */}
+        <button
+          onClick={() => setShowFocusModal(true)}
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
+          <Zap className="w-5 h-5 text-white relative z-10" />
+        </button>
+
+        {/* Rank and Streak - Right */}
+        <div className="flex items-center gap-2">
           {/* Rank */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
             <div className="text-[10px] text-zinc-500 font-semibold tracking-wider">RANK</div>
@@ -217,15 +239,6 @@ export default function Home() {
             </span>
           </div>
         </div>
-
-        {/* Focus Mode Quick Button */}
-        <button
-          onClick={() => setShowFocusModal(true)}
-          className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
-          <Zap className="w-5 h-5 text-white relative z-10" />
-        </button>
       </div>
 
       {/* Dashboard Card - Large Rectangular */}
@@ -440,6 +453,7 @@ export default function Home() {
         </div>
       </Link>
 
+      {showQuestionnaire && <OnboardingQuestionnaire onComplete={handleCompleteQuestionnaire} />}
       {showTutorial && <OnboardingTutorial onComplete={handleCompleteTutorial} />}
 
       <FocusModeQuickStart
