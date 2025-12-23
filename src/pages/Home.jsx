@@ -428,6 +428,6 @@ export default function Home() {
         onClose={() => setShowEventModal(false)}
         onSubmit={(data) => createEventMutation.mutate(data)}
       />
-      </div>
-      );
-      }
+    </div>
+  );
+}
