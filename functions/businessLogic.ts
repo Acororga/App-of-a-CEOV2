@@ -280,20 +280,22 @@ export async function getHabitsForDate(date) {
     archived: false
   });
   
-  const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
-  const dayNum = dayOfWeek === 0 ? 7 : dayOfWeek; // Convert to 1=Monday, ..., 7=Sunday
+  // JavaScript getDay(): 0=Sunday, 1=Monday, 2=Tuesday, ..., 6=Saturday
+  const jsDay = date.getDay();
   
   return allHabits.filter(habit => {
+    // If daily, always include
     if (habit.is_daily) return true;
+    
+    // If no specific days set, skip
     if (!habit.specific_days || habit.specific_days.length === 0) return false;
     
-    // Support both old (0-6) and new (1-7) day numbering systems
-    // Old system: 0=Sunday, 1=Monday, ..., 6=Saturday
-    // New system: 1=Monday, 2=Tuesday, ..., 7=Sunday
-    const hasOldFormat = habit.specific_days.includes(dayOfWeek);
-    const hasNewFormat = habit.specific_days.includes(dayNum);
+    // Check both formats:
+    // Old format: 0=Sunday, 1=Monday, ..., 6=Saturday (matches JS directly)
+    // New format: 1=Monday, 2=Tuesday, ..., 7=Sunday
+    const newFormatDay = jsDay === 0 ? 7 : jsDay;
     
-    return hasOldFormat || hasNewFormat;
+    return habit.specific_days.includes(jsDay) || habit.specific_days.includes(newFormatDay);
   });
 }
 
