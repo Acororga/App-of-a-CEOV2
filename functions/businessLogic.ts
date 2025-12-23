@@ -285,8 +285,15 @@ export async function getHabitsForDate(date) {
   
   return allHabits.filter(habit => {
     if (habit.is_daily) return true;
-    if (habit.specific_days && habit.specific_days.includes(dayNum)) return true;
-    return false;
+    if (!habit.specific_days || habit.specific_days.length === 0) return false;
+    
+    // Support both old (0-6) and new (1-7) day numbering systems
+    // Old system: 0=Sunday, 1=Monday, ..., 6=Saturday
+    // New system: 1=Monday, 2=Tuesday, ..., 7=Sunday
+    const hasOldFormat = habit.specific_days.includes(dayOfWeek);
+    const hasNewFormat = habit.specific_days.includes(dayNum);
+    
+    return hasOldFormat || hasNewFormat;
   });
 }
 
