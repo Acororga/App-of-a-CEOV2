@@ -10,7 +10,10 @@ import { differenceInMinutes, addMinutes, parseISO } from 'date-fns';
 export default function CEOMode() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(() => {
+    const lastDuration = localStorage.getItem('lastCEODuration');
+    return lastDuration ? parseInt(lastDuration) : 30;
+  });
   const [timeRemaining, setTimeRemaining] = useState(null);
 
   const { data: activeSession, refetch: refetchSession } = useQuery({
@@ -51,6 +54,8 @@ export default function CEOMode() {
     mutationFn: async () => {
       const now = new Date();
       const plannedEnd = addMinutes(now, duration);
+      
+      localStorage.setItem('lastCEODuration', duration.toString());
       
       const user = await base44.auth.me();
       return await base44.entities.CEOModeSession.create({

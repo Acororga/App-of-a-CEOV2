@@ -9,11 +9,15 @@ import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
 
 export default function FocusModeQuickStart({ open, onClose, onStart }) {
-  const [duration, setDuration] = useState(25);
+  const [duration, setDuration] = useState(() => {
+    const lastDuration = localStorage.getItem('lastFocusDuration');
+    return lastDuration ? parseInt(lastDuration) : 25;
+  });
 
   const durations = [15, 25, 45, 60, 90, 120];
 
   const handleStart = () => {
+    localStorage.setItem('lastFocusDuration', duration.toString());
     onStart(duration);
     onClose();
   };
