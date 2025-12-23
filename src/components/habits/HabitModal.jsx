@@ -40,7 +40,7 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
       description: '',
       is_daily: true,
       weekly_frequency: 7,
-      specific_days: [1, 2, 3, 4, 5, 6, 7]
+      specific_days: [0, 1, 2, 3, 4, 5, 6]
     });
     onClose();
   };

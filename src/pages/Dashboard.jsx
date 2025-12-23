@@ -28,10 +28,14 @@ export default function Dashboard() {
 
   // Fetch habits directly with useEffect
   React.useEffect(() => {
+    let mounted = true;
+    
     const fetchData = async () => {
       console.log('=== DASHBOARD FETCHING DATA ===');
       console.log('Today:', format(today, 'yyyy-MM-dd'));
       console.log('Yesterday:', format(yesterday, 'yyyy-MM-dd'));
+      console.log('Today day of week:', today.getDay());
+      console.log('Yesterday day of week:', yesterday.getDay());
       
       try {
         const tHabits = await getHabitsForDate(today);
@@ -39,10 +43,13 @@ export default function Dashboard() {
         const yHabits = await getHabitsForDate(yesterday);
         const yCompletions = await getHabitCompletionsForDate(yesterday);
         
-        console.log('Today habits:', tHabits);
-        console.log('Today completions:', tCompletions);
-        console.log('Yesterday habits:', yHabits);
-        console.log('Yesterday completions:', yCompletions);
+        if (!mounted) return;
+        
+        console.log('RESULTS:');
+        console.log('- Today habits:', tHabits.length, tHabits.map(h => h.title));
+        console.log('- Today completions:', tCompletions.length);
+        console.log('- Yesterday habits:', yHabits.length, yHabits.map(h => h.title));
+        console.log('- Yesterday completions:', yCompletions.length);
         
         setTodayHabits(tHabits);
         setTodayCompletions(tCompletions);
@@ -54,7 +61,11 @@ export default function Dashboard() {
     };
     
     fetchData();
-  }, []);
+    
+    return () => {
+      mounted = false;
+    };
+  }, [today.getTime(), yesterday.getTime()]);
 
   // Top Pareto tasks
   const { data: topTasks } = useQuery({
@@ -149,33 +160,52 @@ export default function Dashboard() {
   }
 
   const needsYesterdayValidation = React.useMemo(() => {
-    console.log('Checking needsYesterdayValidation:', {
-      yesterdayHabits: yesterdayHabits?.length,
-      yesterdayCompletions: yesterdayCompletions?.length,
-      yesterdayVisible
-    });
+    console.log('=== Checking needsYesterdayValidation ===');
+    console.log('yesterdayHabits:', yesterdayHabits?.length);
+    console.log('yesterdayCompletions:', yesterdayCompletions?.length);
+    console.log('yesterdayVisible:', yesterdayVisible);
     
+    // Must have yesterday habits
     if (!yesterdayHabits || yesterdayHabits.length === 0) {
-      console.log('No yesterday habits');
+      console.log('→ NO HABITS YESTERDAY');
       return false;
     }
     
+    // If no completions at all, needs validation
     if (!yesterdayCompletions || yesterdayCompletions.length === 0) {
-      console.log('No completions - needs validation');
+      console.log('→ NO COMPLETIONS - NEEDS VALIDATION');
       return true;
     }
     
+    // Check if all habits have been checked in
+    const yesterdayStr = format(yesterday, 'yyyy-MM-dd');
     for (const habit of yesterdayHabits) {
       const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
-      if (!completion || !completion.checked_in_date) {
-        console.log(`Habit ${habit.title} needs validation`);
+      if (!completion) {
+        console.log(`→ HABIT "${habit.title}" NOT CHECKED IN`);
+        return true;
+      }
+      
+      // Check if completion was made for yesterday specifically
+      const completionDate = format(new Date(completion.checked_in_date), 'yyyy-MM-dd');
+      const isSameDay = completion.date === yesterdayStr;
+      
+      console.log(`Habit "${habit.title}":`, {
+        completion_date: completion.date,
+        checked_in_date: completionDate,
+        yesterday: yesterdayStr,
+        isSameDay
+      });
+      
+      if (!isSameDay) {
+        console.log(`→ HABIT "${habit.title}" WRONG DATE`);
         return true;
       }
     }
     
-    console.log('All validated');
+    console.log('→ ALL VALIDATED');
     return false;
-  }, [yesterdayHabits, yesterdayCompletions, yesterdayVisible]);
+  }, [yesterdayHabits, yesterdayCompletions, yesterdayVisible, yesterday]);
 
   // Initialize temp states based on existing completions
   React.useEffect(() => {

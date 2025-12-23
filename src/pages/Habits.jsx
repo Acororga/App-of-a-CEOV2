@@ -116,6 +116,7 @@ export default function Habits() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['objectives']);
+      setShowObjectiveModal(false);
     }
   });
 
@@ -129,6 +130,7 @@ export default function Habits() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['allHabits']);
+      setShowHabitModal(false);
     }
   });
 
