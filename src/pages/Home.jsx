@@ -6,7 +6,7 @@ import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
-  BarChart3, CheckSquare, ClipboardList, Calendar, Shield, Circle, Zap, Plus 
+  BarChart3, CheckSquare, ClipboardList, Calendar, Shield, Circle, Zap, Plus, X, FileText 
 } from 'lucide-react';
 import FocusModeQuickStart from '../components/FocusModeQuickStart';
 import HabitModal from '../components/habits/HabitModal';
@@ -16,6 +16,7 @@ import OnboardingQuestionnaire from '../components/OnboardingQuestionnaire';
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
   const [showFocusModal, setShowFocusModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
@@ -26,6 +27,8 @@ export default function Home() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+    
     const hasCompletedQuestionnaire = localStorage.getItem('hasCompletedQuestionnaire');
     const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     
@@ -160,9 +163,7 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
+
 
   const handleFocusStart = (duration) => {
     startFocusMutation.mutate(duration);
@@ -213,14 +214,14 @@ export default function Home() {
       {/* Header with User Icon, Rank, Streak, and Focus Button */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
         {/* User Icon - Left */}
-        <Link
-          to={createPageUrl('Home')}
+        <button
+          onClick={() => setShowMenu(true)}
           className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 hover:scale-105 transition-transform"
         >
           <span className="text-sm font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
             {user?.full_name?.charAt(0) || '?'}
           </span>
-        </Link>
+        </button>
 
         {/* Rank, Streak, and Focus Button - Right */}
         <div className="flex items-center gap-2">
@@ -462,6 +463,111 @@ export default function Home() {
           </div>
         </div>
       </Link>
+
+      {/* Slide-in Menu */}
+      {showMenu && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/80 z-[60]"
+            onClick={() => setShowMenu(false)}
+          />
+          <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black border-r border-zinc-800 z-[60] p-6 overflow-y-auto">
+            <button
+              onClick={() => setShowMenu(false)}
+              className="absolute top-6 right-6 p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="mb-8">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 mb-4">
+                <span className="text-2xl font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+                  {user?.full_name?.charAt(0) || '?'}
+                </span>
+              </div>
+              <div className="text-xl font-bold mb-1">{user?.full_name || 'User'}</div>
+              <div className="text-sm text-zinc-500">{user?.email}</div>
+            </div>
+
+            <div className="space-y-2">
+              <Link
+                to={createPageUrl('BiannualReport')}
+                onClick={() => setShowMenu(false)}
+                className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+              >
+                <BarChart3 className="w-5 h-5 text-purple-400" />
+                <div>
+                  <div className="font-semibold">6-Month Report</div>
+                  <div className="text-xs text-zinc-500">View your progress</div>
+                </div>
+              </Link>
+
+              <div className="space-y-2">
+                <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
+                {[
+                  { id: 'Pareto', name: 'To-Do Matrix', icon: ClipboardList },
+                  { id: 'Habits', name: 'Habits & Productivity', icon: CheckSquare },
+                  { id: 'Calendar', name: 'Schedule', icon: Calendar },
+                  { id: 'ScreenTimeManager', name: 'Screen Time Manager', icon: Shield }
+                ].map(app => {
+                  const currentApps = appSettingsData?.active_apps || [];
+                  const isActive = currentApps.includes(app.id);
+                  const Icon = app.icon;
+                  return (
+                    <button
+                      key={app.id}
+                      onClick={() => {
+                        const newApps = isActive
+                          ? currentApps.filter(a => a !== app.id)
+                          : [...currentApps, app.id];
+                        base44.entities.AppSettings.update(appSettingsData.id, { active_apps: newApps }).then(() => {
+                          queryClient.invalidateQueries(['appSettings']);
+                        });
+                      }}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                        isActive
+                          ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
+                          : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
+                      <div className="text-left flex-1">
+                        <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+                          {app.name}
+                        </div>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        isActive ? 'border-green-500 bg-green-500' : 'border-zinc-700'
+                      }`}>
+                        {isActive && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+              >
+                <FileText className="w-5 h-5 text-green-400" />
+                <div className="text-left">
+                  <div className="font-semibold">Privacy Policy</div>
+                  <div className="text-xs text-zinc-500">Terms & conditions</div>
+                </div>
+              </button>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-zinc-800">
+              <button
+                onClick={() => base44.auth.logout()}
+                className="w-full p-3 rounded-lg bg-red-950/30 border border-red-900/50 text-red-400 hover:bg-red-950/50 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {showQuestionnaire && <OnboardingQuestionnaire onComplete={handleCompleteQuestionnaire} />}
       {showTutorial && <OnboardingTutorial onComplete={handleCompleteTutorial} />}
