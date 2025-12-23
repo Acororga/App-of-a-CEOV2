@@ -282,16 +282,16 @@ export default function Habits() {
                           </button>
                           <div className="font-medium mb-2">{habit.title}</div>
                           <div className="flex items-center gap-2">
-                            {[0,1,2,3,4,5,6].map(day => (
+                            {[1,2,3,4,5,6,7].map(day => (
                               <div
                                 key={day}
                                 className={`w-6 h-6 rounded flex items-center justify-center text-xs ${
-                                  habit.is_daily || (habit.specific_days && habit.specific_days.includes(day === 0 ? 0 : day))
+                                  habit.is_daily || (habit.specific_days && habit.specific_days.includes(day))
                                     ? 'bg-gray-800 text-white'
                                     : 'bg-gray-950 text-gray-700'
                                 }`}
                               >
-                                {getDayAbbrev(day)}
+                                {getDayAbbrev(day - 1)}
                               </div>
                             ))}
                             <span className="text-xs text-gray-500 ml-2">
@@ -343,9 +343,9 @@ export default function Habits() {
                 <thead>
                   <tr className="border-b border-gray-800">
                     <th className="text-left py-2 text-gray-500 font-medium">Habit</th>
-                    {[0,1,2,3,4,5,6].map(i => (
+                    {[1,2,3,4,5,6,7].map(i => (
                       <th key={i} className="text-center py-2 text-gray-500 font-medium w-8">
-                        {getDayAbbrev(i)}
+                        {getDayAbbrev(i - 1)}
                       </th>
                     ))}
                   </tr>
@@ -354,15 +354,16 @@ export default function Habits() {
                   {habits?.map(habit => (
                     <tr key={habit.id} className="border-b border-gray-900">
                       <td className="py-3 text-gray-300">{habit.title}</td>
-                      {[0,1,2,3,4,5,6].map(dayIndex => {
+                      {[1,2,3,4,5,6,7].map(dayNum => {
+                        const dayIndex = dayNum - 1; // Convert to 0-based for addDays
                         const day = addDays(weekStart, dayIndex);
                         const dayStr = format(day, 'yyyy-MM-dd');
                         const dayData = weekData?.[dayStr];
-                        const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayIndex === 0 ? 0 : dayIndex));
+                        const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
                         const isCompleted = dayData?.completions[habit.id];
-                        
+
                         return (
-                          <td key={dayIndex} className="text-center py-3">
+                          <td key={dayNum} className="text-center py-3">
                             {!isScheduled ? (
                               <span className="text-gray-800">·</span>
                             ) : isCompleted ? (

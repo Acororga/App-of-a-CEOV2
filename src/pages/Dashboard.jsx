@@ -22,29 +22,33 @@ export default function Dashboard() {
   const yesterday = subDays(today, 1);
 
   // Today's habits
-  const { data: todayHabits, isLoading: todayHabitsLoading } = useQuery({
+  const { data: todayHabits } = useQuery({
     queryKey: ['habits', format(today, 'yyyy-MM-dd')],
     queryFn: () => getHabitsForDate(today),
-    refetchOnMount: true
+    refetchOnMount: true,
+    staleTime: 0
   });
 
-  const { data: todayCompletions, isLoading: todayCompletionsLoading } = useQuery({
+  const { data: todayCompletions } = useQuery({
     queryKey: ['completions', format(today, 'yyyy-MM-dd')],
     queryFn: () => getHabitCompletionsForDate(today),
-    refetchOnMount: true
+    refetchOnMount: true,
+    staleTime: 0
   });
 
   // Yesterday's habits
-  const { data: yesterdayHabits, isLoading: yesterdayHabitsLoading } = useQuery({
+  const { data: yesterdayHabits } = useQuery({
     queryKey: ['habits', format(yesterday, 'yyyy-MM-dd')],
     queryFn: () => getHabitsForDate(yesterday),
-    refetchOnMount: true
+    refetchOnMount: true,
+    staleTime: 0
   });
 
-  const { data: yesterdayCompletions, isLoading: yesterdayCompletionsLoading } = useQuery({
+  const { data: yesterdayCompletions } = useQuery({
     queryKey: ['completions', format(yesterday, 'yyyy-MM-dd')],
     queryFn: () => getHabitCompletionsForDate(yesterday),
-    refetchOnMount: true
+    refetchOnMount: true,
+    staleTime: 0
   });
 
   // Top Pareto tasks
