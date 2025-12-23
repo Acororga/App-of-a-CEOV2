@@ -140,15 +140,18 @@ export default function Dashboard() {
   // Check if yesterday's habits need validation
   const needsYesterdayValidation = React.useMemo(() => {
     if (!yesterdayHabits || yesterdayHabits.length === 0) return false;
-    if (!yesterdayCompletions) return true;
     
-    // Check if all yesterday's habits have been checked in
+    // If no completions exist at all, needs validation
+    if (!yesterdayCompletions || yesterdayCompletions.length === 0) return true;
+    
+    // Check if any habit is missing a completion record with checked_in_date
     for (const habit of yesterdayHabits) {
       const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
-      if (!completion || !completion.checked_in_date) {
-        return true;
+      if (!completion) {
+        return true; // Missing completion record entirely
       }
     }
+    
     return false;
   }, [yesterdayHabits, yesterdayCompletions]);
 

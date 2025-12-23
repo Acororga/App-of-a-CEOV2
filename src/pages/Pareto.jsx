@@ -344,6 +344,7 @@ export default function Pareto() {
             {!showAddForm && (
               <div className="mt-6 flex justify-center">
                 <Button 
+                  data-pareto-add
                   onClick={() => setShowAddForm(true)}
                   className="bg-white text-black hover:bg-zinc-200"
                 >

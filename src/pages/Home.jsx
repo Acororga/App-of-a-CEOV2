@@ -6,13 +6,18 @@ import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
-  BarChart3, CheckSquare, ListChecks, Calendar, Shield, Circle, Zap 
+  BarChart3, CheckSquare, ListChecks, Calendar, Shield, Circle, Zap, Plus 
 } from 'lucide-react';
 import FocusModeQuickStart from '../components/FocusModeQuickStart';
+import HabitModal from '../components/habits/HabitModal';
+import EventModal from '../components/calendar/EventModal';
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [showFocusModal, setShowFocusModal] = useState(false);
+  const [showHabitModal, setShowHabitModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [showParetoForm, setShowParetoForm] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -48,7 +53,7 @@ export default function Home() {
     queryFn: () => hasUncheckedHabits(subDays(new Date(), 1))
   });
 
-  const { data: appSettingsData } = useQuery({
+  const { data: appSettingsData, isLoading: settingsLoading } = useQuery({
     queryKey: ['appSettings'],
     queryFn: async () => {
       const user = await base44.auth.me();
@@ -63,7 +68,8 @@ export default function Home() {
     }
   });
 
-  const activeApps = appSettingsData?.active_apps || ['Pareto', 'Habits', 'Calendar', 'ScreenTimeManager'];
+  const activeApps = appSettingsData?.active_apps || [];
+  const isScreenTimeActive = !settingsLoading && appSettingsData && activeApps.includes('ScreenTimeManager');
 
   const startFocusMutation = useMutation({
     mutationFn: async (duration) => {
@@ -74,6 +80,59 @@ export default function Home() {
       navigate(createPageUrl('FocusMode'));
     }
   });
+
+  const { data: objectives } = useQuery({
+    queryKey: ['objectives'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.Objective.filter({ created_by: user.email, archived: false });
+    }
+  });
+
+  const createHabitMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return await base44.entities.Habit.create({
+        ...data,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['allHabits']);
+      queryClient.invalidateQueries(['habits']);
+      setShowHabitModal(false);
+    }
+  });
+
+  const createEventMutation = useMutation({
+    mutationFn: async (eventData) => {
+      const user = await base44.auth.me();
+      return await base44.entities.CalendarEvent.create({
+        ...eventData,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['events']);
+      setShowEventModal(false);
+    }
+  });
+
+  const handleQuickAddClick = (e, appId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (appId === 'Habits') {
+      setShowHabitModal(true);
+    } else if (appId === 'Calendar') {
+      setShowEventModal(true);
+    } else if (appId === 'Pareto') {
+      navigate(createPageUrl('Pareto'));
+      setTimeout(() => {
+        const addButton = document.querySelector('[data-pareto-add]');
+        if (addButton) addButton.click();
+      }, 100);
+    }
+  };
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -91,8 +150,6 @@ export default function Home() {
   ];
 
   const filteredApps = apps.filter(app => activeApps.includes(app.id));
-  
-  const isScreenTimeActive = activeApps.includes('ScreenTimeManager');
 
   const getRankBackground = () => {
     const rankLevel = rankData?.rank_level || 1;
@@ -189,6 +246,14 @@ export default function Home() {
               <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
               <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                  <button
+                    onClick={(e) => handleQuickAddClick(e, app.id)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
+                  >
+                    <Plus className="w-4 h-4 text-zinc-400" />
+                  </button>
+                )}
                 <div className="relative h-full flex flex-col justify-between">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
                     <app.icon className="w-6 h-6 text-white" />
@@ -211,6 +276,14 @@ export default function Home() {
                 <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
                 <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                    <button
+                      onClick={(e) => handleQuickAddClick(e, app.id)}
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
+                    >
+                      <Plus className="w-4 h-4 text-zinc-400" />
+                    </button>
+                  )}
                   <div className="relative h-full flex flex-col justify-between">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
                       <app.icon className="w-6 h-6 text-white" />
@@ -231,6 +304,14 @@ export default function Home() {
                 <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
                 <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                    <button
+                      onClick={(e) => handleQuickAddClick(e, app.id)}
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
+                    >
+                      <Plus className="w-4 h-4 text-zinc-400" />
+                    </button>
+                  )}
                   <div className="relative h-full flex flex-col justify-between">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
                       <Icon className="w-6 h-6 text-white" />
@@ -253,6 +334,14 @@ export default function Home() {
               <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
               <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                  <button
+                    onClick={(e) => handleQuickAddClick(e, app.id)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
+                  >
+                    <Plus className="w-4 h-4 text-zinc-400" />
+                  </button>
+                )}
                 <div className="relative h-full flex flex-col justify-between">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
                     <app.icon className="w-6 h-6 text-white" />
@@ -276,6 +365,14 @@ export default function Home() {
               <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl group-hover:blur-2xl transition-all`} />
               <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-5 overflow-hidden shadow-xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.97]">
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl`} />
+                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                  <button
+                    onClick={(e) => handleQuickAddClick(e, app.id)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
+                  >
+                    <Plus className="w-4 h-4 text-zinc-400" />
+                  </button>
+                )}
                 <div className="relative h-full flex flex-col justify-between">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-lg`}>
                     <Icon className="w-6 h-6 text-white" />
@@ -318,6 +415,19 @@ export default function Home() {
         onClose={() => setShowFocusModal(false)}
         onStart={handleFocusStart}
       />
-    </div>
-  );
-}
+
+      <HabitModal
+        open={showHabitModal}
+        onClose={() => setShowHabitModal(false)}
+        onSubmit={(data) => createHabitMutation.mutate(data)}
+        objectives={objectives}
+      />
+
+      <EventModal
+        open={showEventModal}
+        onClose={() => setShowEventModal(false)}
+        onSubmit={(data) => createEventMutation.mutate(data)}
+      />
+      </div>
+      );
+      }
