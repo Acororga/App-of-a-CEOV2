@@ -24,7 +24,7 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
     description: '',
     is_daily: true,
     weekly_frequency: 7,
-    specific_days: [0, 1, 2, 3, 4, 5, 6]
+    specific_days: [1, 2, 3, 4, 5, 6, 7]
   });
 
   const handleSubmit = (e) => {
@@ -40,7 +40,7 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
       description: '',
       is_daily: true,
       weekly_frequency: 7,
-      specific_days: [0, 1, 2, 3, 4, 5, 6]
+      specific_days: [1, 2, 3, 4, 5, 6, 7]
     });
     onClose();
   };
@@ -66,7 +66,7 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
     { value: 4, label: 'Thu' },
     { value: 5, label: 'Fri' },
     { value: 6, label: 'Sat' },
-    { value: 0, label: 'Sun' }
+    { value: 7, label: 'Sun' }
   ];
 
   return (
@@ -125,7 +125,7 @@ export default function HabitModal({ open, onClose, onSubmit, objectives }) {
                   ...formData,
                   is_daily: checked,
                   weekly_frequency: checked ? 7 : formData.weekly_frequency,
-                  specific_days: checked ? [0, 1, 2, 3, 4, 5, 6] : formData.specific_days
+                  specific_days: checked ? [1, 2, 3, 4, 5, 6, 7] : formData.specific_days
                 })}
               />
               <label className="text-sm text-white">Daily habit</label>
