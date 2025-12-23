@@ -226,17 +226,17 @@ export default function Home() {
         {/* Rank, Streak, and Focus Button - Right */}
         <div className="flex items-center gap-2">
           {/* Rank */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
-            <div className="text-[10px] text-zinc-500 font-semibold tracking-wider">RANK</div>
-            <div className="text-xs font-bold bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+            <div className="text-[9px] text-zinc-500 font-bold tracking-wider uppercase">Rank</div>
+            <div className="text-sm font-bold bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
               {rankData?.rank_name || 'Panda'}
             </div>
           </div>
           
           {/* Streak */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/50">
-            <span className="text-sm">🔥</span>
-            <span className="text-xs font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+            <span className="text-base drop-shadow-lg">🔥</span>
+            <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
               {streakData?.current_streak || 0}
             </span>
           </div>
@@ -244,10 +244,11 @@ export default function Home() {
           {/* Focus Mode Quick Button */}
           <button
             onClick={() => setShowFocusModal(true)}
-            className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg hover:scale-105 transition-transform relative overflow-hidden"
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex items-center justify-center shadow-[0_8px_24px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_32px_rgba(239,68,68,0.5)] hover:scale-105 transition-all duration-300 relative overflow-hidden group"
           >
-            <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
-            <Zap className="w-5 h-5 text-white relative z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/20" />
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Zap className="w-6 h-6 text-white relative z-10 drop-shadow-lg" />
           </button>
         </div>
       </div>
@@ -257,30 +258,35 @@ export default function Home() {
         to={createPageUrl('Dashboard')}
         className="block mb-4 group relative"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
-        <div className="relative h-32 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 p-6 overflow-hidden shadow-2xl group-hover:border-zinc-600/50 transition-all group-active:scale-[0.98]">
-          {/* Texture overlay */}
-          <div className="absolute inset-0 opacity-5" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-all duration-500" />
+        <div className="relative h-36 rounded-3xl bg-gradient-to-br from-zinc-900/95 via-zinc-800/95 to-zinc-900/95 backdrop-blur-xl border border-zinc-700/80 p-6 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_48px_rgba(59,130,246,0.15)] transition-all duration-300 group-active:scale-[0.98]">
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          {/* Light ray effect */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
+          
           <div className="relative flex items-center justify-between h-full">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
-                <BarChart3 className="w-7 h-7 text-white relative z-10" />
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-[0_8px_24px_rgba(59,130,246,0.4)] relative overflow-hidden group-hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/20" />
+                <BarChart3 className="w-8 h-8 text-white relative z-10 drop-shadow-lg" />
               </div>
               <div>
-                <div className="text-xl font-bold">Dashboard</div>
+                <div className="text-xl font-bold mb-0.5 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">Dashboard</div>
+                <div className="text-xs text-zinc-500">Your daily overview</div>
               </div>
             </div>
             <div className="flex items-center gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold">{todayHabits || 0}</div>
-                <div className="text-[10px] text-zinc-500 uppercase tracking-wide">Habits</div>
+              <div className="text-center px-4 py-2 rounded-xl bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50">
+                <div className="text-3xl font-bold bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">{todayHabits || 0}</div>
+                <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-0.5">Habits Today</div>
               </div>
               {needsCheckIn && (
-                <div className="w-3 h-3 rounded-full bg-gradient-to-br from-red-500 to-orange-500 animate-pulse shadow-lg shadow-red-500/50" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500/50 rounded-full blur-md animate-pulse" />
+                  <div className="relative w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-orange-500 shadow-lg shadow-red-500/50" />
+                </div>
               )}
             </div>
           </div>
@@ -440,25 +446,29 @@ export default function Home() {
 
       {/* CEO Mode - Rectangular Black */}
       <Link to={createPageUrl('CEOMode')} className="block group relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-zinc-700/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
-        <div className="relative h-24 rounded-3xl bg-gradient-to-br from-black via-zinc-950 to-black border border-zinc-800/50 p-5 overflow-hidden shadow-2xl group-hover:border-zinc-700/50 transition-all group-active:scale-[0.98]">
-          {/* Texture */}
-          <div className="absolute inset-0 opacity-5" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-500/10 to-zinc-700/10 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500" />
+        <div className="relative h-28 rounded-3xl bg-gradient-to-br from-black/95 via-zinc-950/95 to-black/95 backdrop-blur-xl border border-zinc-800/80 p-6 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)] group-hover:shadow-[0_12px_48px_rgba(0,0,0,0.7)] group-hover:border-zinc-700/80 transition-all duration-300 group-active:scale-[0.98]">
+          {/* Subtle shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+          {/* Depth light */}
+          <div className="absolute top-0 right-0 w-56 h-56 bg-gradient-to-br from-zinc-700/10 to-transparent rounded-full blur-3xl" />
+
           <div className="relative flex items-center justify-between h-full">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center shadow-lg border border-zinc-700/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
-                <Circle className="w-6 h-6 text-white relative z-10" />
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-zinc-800 via-zinc-900 to-black flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-zinc-700/60 relative overflow-hidden group-hover:border-zinc-600/60 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/5" />
+                <Circle className="w-7 h-7 text-zinc-400 relative z-10 drop-shadow-lg" />
               </div>
               <div>
-                <div className="text-lg font-bold">CEO Mode</div>
+                <div className="text-xl font-bold mb-0.5 bg-gradient-to-r from-zinc-300 to-zinc-500 bg-clip-text text-transparent">CEO Mode</div>
+                <div className="text-xs text-zinc-600">Maximum focus</div>
               </div>
             </div>
-            <div className="text-zinc-700 text-xs font-semibold uppercase tracking-widest">
-              Restricted
+            <div className="px-4 py-2 rounded-lg bg-zinc-900/50 border border-zinc-800/50">
+              <div className="text-xs font-bold uppercase tracking-wider text-zinc-600">
+                Restricted
+              </div>
             </div>
           </div>
         </div>
