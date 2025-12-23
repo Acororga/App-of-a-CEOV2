@@ -275,20 +275,19 @@ export async function updateUserRank() {
 
 export async function getHabitsForDate(date) {
   const user = await base44.auth.me();
-  const dayOfWeek = date.getDay();
-  
-  const allHabits = await base44.entities.Habit.filter({
+  const allHabits = await base44.entities.Habit.filter({ 
     created_by: user.email,
     archived: false
   });
   
-  const habitsForDate = allHabits.filter(habit => {
+  const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+  const dayNum = dayOfWeek === 0 ? 7 : dayOfWeek; // Convert to 1=Monday, ..., 7=Sunday
+  
+  return allHabits.filter(habit => {
     if (habit.is_daily) return true;
-    if (habit.specific_days && habit.specific_days.includes(dayOfWeek)) return true;
+    if (habit.specific_days && habit.specific_days.includes(dayNum)) return true;
     return false;
   });
-  
-  return habitsForDate;
 }
 
 export async function getHabitCompletionsForDate(date) {
