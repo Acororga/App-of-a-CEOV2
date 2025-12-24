@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, isSameMonth, isSameDay, isToday, startOfDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, isSameMonth, isSameDay, isToday, isFuture, isPast } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState('yearly');
+  const [view, setView] = useState('monthly');
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -21,46 +21,66 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
     const rows = [];
     let days = [];
     let day = startDate;
+    const today = startOfDay(new Date());
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         const dayEvents = getEventsForDate(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isCurrentDay = isToday(day);
+        const isFutureDay = isFuture(day) && !isCurrentDay;
+        const isPastDay = isPast(day) && !isCurrentDay;
         
         const clickDay = day;
         days.push(
-          <div
+          <button
             key={day.toString()}
             onClick={() => {
               setCurrentDate(clickDay);
               setView('daily');
             }}
-            className={`min-h-24 p-2 border border-zinc-800 cursor-pointer ${
-              !isCurrentMonth ? 'bg-zinc-950/50' : 'bg-zinc-900'
-            } hover:bg-zinc-800 transition-colors`}
+            className={`relative min-h-24 p-3 border transition-all duration-150 text-left ${
+              !isCurrentMonth 
+                ? 'bg-zinc-950/30 border-zinc-900/30 opacity-30' 
+                : isCurrentDay
+                ? 'bg-gradient-to-br from-blue-950/80 to-purple-950/80 border-blue-700/60 shadow-[0_8px_24px_rgba(59,130,246,0.3),inset_0_1px_0_rgba(59,130,246,0.1)] scale-105'
+                : 'bg-zinc-900/60 border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98]'
+            }`}
           >
-            <div className={`text-sm font-semibold mb-1 ${
-              isCurrentDay ? 'text-blue-400' : isCurrentMonth ? 'text-white' : 'text-zinc-600'
+            {isCurrentDay && (
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded" />
+            )}
+            <div className={`relative text-sm font-bold mb-2 ${
+              isCurrentDay 
+                ? 'text-blue-300' 
+                : isCurrentMonth 
+                ? isPastDay ? 'text-zinc-500' : 'text-white' 
+                : 'text-zinc-700'
             }`}>
               {format(day, 'd')}
             </div>
-            <div className="space-y-1">
+            <div className="relative space-y-1">
               {dayEvents.slice(0, 2).map(event => (
-                <div key={event.id} className="text-xs px-2 py-1 rounded bg-blue-600/20 text-blue-300 truncate">
+                <div key={event.id} className={`text-xs px-2 py-1 rounded-lg font-medium truncate transition-all ${
+                  isCurrentDay
+                    ? 'bg-blue-500/30 text-blue-200 border border-blue-500/40'
+                    : 'bg-blue-950/40 text-blue-400/80 border border-blue-900/40'
+                }`}>
                   {event.event_time} {event.title}
                 </div>
               ))}
               {dayEvents.length > 2 && (
-                <div className="text-xs text-zinc-500">+{dayEvents.length - 2} more</div>
+                <div className={`text-[10px] font-semibold ${isCurrentDay ? 'text-blue-400' : 'text-zinc-600'}`}>
+                  +{dayEvents.length - 2}
+                </div>
               )}
             </div>
-          </div>
+          </button>
         );
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} className="grid grid-cols-7">
+        <div key={day.toString()} className="grid grid-cols-7 gap-2">
           {days}
         </div>
       );
@@ -69,150 +89,79 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
 
     return (
       <div>
-        <div className="grid grid-cols-7 mb-2">
+        <div className="grid grid-cols-7 gap-2 mb-4">
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <div key={day} className="text-center text-sm font-semibold text-zinc-500 py-2">
+            <div key={day} className="text-center text-[10px] font-black text-zinc-700 uppercase tracking-widest py-2">
               {day}
             </div>
           ))}
         </div>
-        {rows}
+        <div className="space-y-2">
+          {rows}
+        </div>
       </div>
     );
-  };
-
-  const renderWeeklyView = () => {
-    const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-    const days = [];
-    
-    for (let i = 0; i < 7; i++) {
-      const day = addDays(weekStart, i);
-      const dayEvents = getEventsForDate(day);
-      const isCurrentDay = isToday(day);
-      
-      days.push(
-        <div key={i} className="flex-1 border-r border-zinc-800 last:border-r-0">
-          <div className={`text-center py-3 border-b border-zinc-800 ${
-            isCurrentDay ? 'bg-blue-600/20 text-blue-400' : 'bg-zinc-900 text-white'
-          }`}>
-            <div className="text-xs text-zinc-500">{format(day, 'EEE')}</div>
-            <div className="text-lg font-bold">{format(day, 'd')}</div>
-          </div>
-          <div className="p-2 space-y-2 min-h-96">
-            {dayEvents.map(event => (
-              <div
-                key={event.id}
-                onClick={() => onEventClick && onEventClick(event)}
-                className="p-2 rounded bg-blue-600/20 border border-blue-600/30 text-blue-300 cursor-pointer hover:bg-blue-600/30 transition-colors"
-              >
-                <div className="text-xs font-semibold">{event.event_time}</div>
-                <div className="text-sm">{event.title}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    
-    return <div className="flex border border-zinc-800 rounded-lg overflow-hidden">{days}</div>;
   };
 
   const renderDailyView = () => {
     const dayEvents = getEventsForDate(currentDate);
-    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const isCurrentDay = isToday(currentDate);
+    
+    // Get next few hours if today
+    const now = new Date();
+    const currentHour = now.getHours();
+    const hours = isCurrentDay 
+      ? Array.from({ length: 8 }, (_, i) => (currentHour + i) % 24).filter(h => h >= currentHour && h < 24)
+      : Array.from({ length: 24 }, (_, i) => i);
     
     return (
-      <div className="border border-zinc-800 rounded-lg overflow-hidden">
-        <div className="bg-zinc-900 text-center py-4 border-b border-zinc-800">
-          <div className="text-2xl font-bold">{format(currentDate, 'EEEE, MMMM d, yyyy')}</div>
-        </div>
-        <div className="max-h-[600px] overflow-y-auto">
-          {hours.map(hour => (
-            <div key={hour} className="flex border-b border-zinc-900">
-              <div className="w-16 text-right pr-2 py-2 text-sm text-zinc-500">
-                {format(new Date().setHours(hour, 0), 'HH:mm')}
-              </div>
-              <div 
-                onClick={() => {
-                  if (onTimeClick) {
-                    const timeStr = format(new Date().setHours(hour, 0), 'HH:mm');
-                    onTimeClick(format(currentDate, 'yyyy-MM-dd'), timeStr);
-                  }
-                }}
-                className="flex-1 p-2 min-h-16 bg-zinc-950 cursor-pointer hover:bg-zinc-900 transition-colors"
-              >
-                {dayEvents
-                  .filter(e => parseInt(e.event_time.split(':')[0]) === hour)
-                  .map(event => (
-                    <div
-                      key={event.id}
-                      onClick={() => onEventClick && onEventClick(event)}
-                      className="p-2 rounded bg-blue-600/20 border border-blue-600/30 text-blue-300 cursor-pointer hover:bg-blue-600/30 transition-colors mb-1"
-                    >
-                      <div className="text-sm font-semibold">{event.title}</div>
-                      <div className="text-xs">{event.event_time} • {event.duration_minutes}min</div>
-                    </div>
-                  ))}
-              </div>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-700/10 to-zinc-600/10 rounded-2xl blur-xl" />
+        <div className="relative rounded-2xl bg-zinc-900/60 border border-zinc-800/50 overflow-hidden shadow-[0_12px_48px_rgba(0,0,0,0.5)]">
+          <div className="bg-gradient-to-r from-zinc-900/80 to-zinc-850/80 text-center py-5 border-b border-zinc-800/50">
+            <div className={`text-xl font-black tracking-tight ${isCurrentDay ? 'text-blue-300' : 'text-white'}`}>
+              {format(currentDate, 'EEEE, MMM d')}
             </div>
-          ))}
+          </div>
+          <div className="max-h-[500px] overflow-y-auto">
+            {hours.map(hour => {
+              const hourEvents = dayEvents.filter(e => parseInt(e.event_time.split(':')[0]) === hour);
+              const hasEvents = hourEvents.length > 0;
+              
+              return (
+                <button
+                  key={hour}
+                  onClick={() => {
+                    if (onTimeClick) {
+                      const timeStr = format(new Date().setHours(hour, 0), 'HH:mm');
+                      onTimeClick(format(currentDate, 'yyyy-MM-dd'), timeStr);
+                    }
+                  }}
+                  className={`w-full flex border-b border-zinc-900/50 hover:bg-zinc-900/60 active:scale-[0.99] transition-all duration-150 ${
+                    hasEvents ? 'bg-zinc-900/40' : 'bg-transparent'
+                  }`}
+                >
+                  <div className="w-16 text-right pr-4 py-3 text-xs text-zinc-700 font-bold tabular-nums">
+                    {format(new Date().setHours(hour, 0), 'HH:mm')}
+                  </div>
+                  <div className="flex-1 p-3 min-h-16 text-left">
+                    {hourEvents.map(event => (
+                      <div
+                        key={event.id}
+                        className="p-3 rounded-xl bg-gradient-to-br from-blue-950/60 to-purple-950/60 border border-blue-700/50 shadow-[0_4px_16px_rgba(59,130,246,0.2)] mb-2 last:mb-0"
+                      >
+                        <div className="text-sm font-bold text-blue-200 mb-1">{event.title}</div>
+                        <div className="text-xs text-blue-400/60 font-medium">{event.event_time} • {event.duration_minutes}min</div>
+                      </div>
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
-  };
-
-  const renderYearlyView = () => {
-    const year = currentDate.getFullYear();
-    const months = [];
-    
-    for (let month = 0; month < 12; month++) {
-      const monthDate = new Date(year, month, 1);
-      const monthStart = startOfMonth(monthDate);
-      const monthEnd = endOfMonth(monthStart);
-      const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-      const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-      
-      const days = [];
-      let day = startDate;
-      
-      while (day <= endDate) {
-        const dayEvents = getEventsForDate(day);
-        const isCurrentMonth = isSameMonth(day, monthStart);
-        const isCurrentDay = isToday(day);
-        
-        days.push(
-          <div
-            key={day.toString()}
-            className={`aspect-square flex items-center justify-center text-xs ${
-              !isCurrentMonth ? 'text-zinc-700' : isCurrentDay ? 'bg-blue-600 text-white rounded-full' : dayEvents.length > 0 ? 'text-blue-400 font-bold' : 'text-zinc-400'
-            }`}
-          >
-            {format(day, 'd')}
-          </div>
-        );
-        day = addDays(day, 1);
-      }
-      
-      months.push(
-        <div 
-          key={month} 
-          onClick={() => {
-            setCurrentDate(monthDate);
-            setView('monthly');
-          }}
-          className="p-3 bg-zinc-900 rounded-lg border border-zinc-800 cursor-pointer hover:bg-zinc-800 transition-colors"
-        >
-          <div className="text-center font-semibold mb-2 text-zinc-300">
-            {format(monthDate, 'MMMM')}
-          </div>
-          <div className="grid grid-cols-7 gap-1 text-[10px]">
-            {days}
-          </div>
-        </div>
-      );
-    }
-    
-    return <div className="grid grid-cols-3 gap-4">{months}</div>;
   };
 
   const navigatePrev = () => {
@@ -252,39 +201,51 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3 flex-1 justify-center">
-          <Button
-            onClick={navigatePrev}
-            variant="outline"
-            size="icon"
-            className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <h2 className="text-xl font-bold min-w-64 text-center">{getHeaderText()}</h2>
-          <Button
-            onClick={navigateNext}
-            variant="outline"
-            size="icon"
-            className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+      {/* View Controls */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-2">
+          {['monthly', 'daily'].map(v => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-150 ${
+                view === v
+                  ? 'bg-white text-black shadow-lg'
+                  : 'bg-zinc-900/60 text-zinc-500 border border-zinc-800/50 hover:text-zinc-300 active:scale-95'
+              }`}
+            >
+              {v}
+            </button>
+          ))}
         </div>
         <Button
           onClick={onNewEvent}
-          className="bg-white text-black hover:bg-zinc-200"
+          className="bg-white text-black hover:bg-zinc-200 h-10 px-5 text-sm font-bold rounded-xl shadow-[0_8px_24px_rgba(255,255,255,0.12)] active:scale-95 transition-all duration-150"
         >
           <Plus className="w-4 h-4 mr-2" />
-          New Event
+          New
         </Button>
       </div>
 
+      {/* Navigation */}
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <button
+          onClick={navigatePrev}
+          className="p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <h2 className="text-xl font-bold min-w-64 text-center">{getHeaderText()}</h2>
+        <button
+          onClick={navigateNext}
+          className="p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+
       {view === 'monthly' && renderMonthlyView()}
-      {view === 'weekly' && renderWeeklyView()}
       {view === 'daily' && renderDailyView()}
-      {view === 'yearly' && renderYearlyView()}
     </div>
   );
 }
