@@ -165,40 +165,41 @@ export default function Pareto() {
       className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6"
     >
       <div className="max-w-6xl mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            To-Do Matrix
-          </h1>
-        </div>
-
-        <div className="mb-8">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
+              Pareto Priority Matrix
+            </h1>
+            <div className="text-xs text-zinc-600 font-bold tracking-wider">80/20</div>
+          </div>
+          <p className="text-xs text-zinc-600 mb-4">Focus on the 20% that drives 80% of results</p>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('list')}
-              className={`px-6 py-2.5 rounded-xl font-semibold transition-all ${
+              className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === 'list'
                   ? 'bg-white text-black'
-                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-700'
+                  : 'bg-zinc-900/50 text-zinc-500 hover:text-white border border-zinc-800'
               }`}
             >
-              To-Do List
+              Priority List
             </button>
             <button
               onClick={() => setActiveTab('matrix')}
-              className={`px-6 py-2.5 rounded-xl font-semibold transition-all ${
+              className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === 'matrix'
                   ? 'bg-white text-black'
-                  : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-700'
+                  : 'bg-zinc-900/50 text-zinc-500 hover:text-white border border-zinc-800'
               }`}
             >
-              Matrix View
+              Visual Matrix
             </button>
           </div>
         </div>
@@ -208,21 +209,21 @@ export default function Pareto() {
           <div>
             {/* Add Task Form */}
             {showAddForm && (
-              <div className="mb-8 relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-                <form onSubmit={handleSubmit} className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold">New Task</h3>
+              <div className="mb-4 relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-xl blur-lg" />
+                <form onSubmit={handleSubmit} className="relative p-4 rounded-xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-base font-bold">New Task</h3>
                     <button
                       type="button"
                       onClick={() => setShowAddForm(false)}
-                      className="p-2 hover:bg-zinc-700 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-zinc-700 rounded-lg transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div>
                       <label className="text-sm text-zinc-400 mb-2 block">Task Name</label>
                       <Input
@@ -285,74 +286,94 @@ export default function Pareto() {
 
 
 
-            {/* Top 5 Tasks List */}
-            <div>
-              <h2 className="text-lg font-bold mb-4 text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
-              <div className="space-y-3">
-                {topTasks.length > 0 ? (
-                  topTasks.map((task, index) => {
-                    const importanceColors = {
-                      crucial: 'from-red-600/10 to-orange-600/10',
-                      essential: 'from-yellow-600/10 to-amber-600/10',
-                      average: 'from-blue-600/10 to-cyan-600/10',
-                      low: 'from-zinc-600/10 to-zinc-500/10'
-                    };
+            {/* Top 5 Tasks List - DECISIVE */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 rounded-2xl blur-3xl" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-xl font-black tracking-tight bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent">
+                      FOCUS NOW
+                    </h2>
+                    <p className="text-[10px] text-zinc-600 font-medium mt-0.5">Your highest leverage actions</p>
+                  </div>
+                  {!showAddForm && (
+                    <Button 
+                      data-pareto-add
+                      onClick={() => setShowAddForm(true)}
+                      size="sm"
+                      className="bg-white text-black hover:bg-zinc-200 h-8 text-xs"
+                    >
+                      <Plus className="w-3 h-3 mr-1.5" />
+                      Add
+                    </Button>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  {topTasks.length > 0 ? (
+                    topTasks.map((task, index) => {
+                      const importanceColors = {
+                        crucial: { glow: 'from-red-600/20 to-orange-600/20', border: 'border-red-500/40', accent: 'from-red-500 to-orange-500' },
+                        essential: { glow: 'from-yellow-600/20 to-amber-600/20', border: 'border-yellow-500/40', accent: 'from-yellow-500 to-amber-500' },
+                        average: { glow: 'from-blue-600/15 to-cyan-600/15', border: 'border-blue-500/30', accent: 'from-blue-500 to-cyan-500' },
+                        low: { glow: 'from-zinc-600/10 to-zinc-500/10', border: 'border-zinc-700/30', accent: 'from-zinc-500 to-zinc-600' }
+                      };
 
-                    const importanceBadge = {
-                      crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
-                      essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
-                      average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
-                      low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
-                    };
+                      const importanceBadge = {
+                        crucial: { text: 'CRITICAL', color: 'text-red-400 bg-red-950/80 border-red-800/50' },
+                        essential: { text: 'HIGH', color: 'text-yellow-400 bg-yellow-950/80 border-yellow-800/50' },
+                        average: { text: 'MEDIUM', color: 'text-blue-400 bg-blue-950/80 border-blue-800/50' },
+                        low: { text: 'LOW', color: 'text-zinc-500 bg-zinc-900/80 border-zinc-800/50' }
+                      };
 
-                    return (
-                      <div key={task.id} className="group relative">
-                        <div className={`absolute inset-0 bg-gradient-to-r ${importanceColors[task.importance_level]} rounded-xl blur-lg`} />
-                        <div 
-                          onClick={() => deleteTaskMutation.mutate(task.id)}
-                          className="relative flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 hover:border-red-500/50 transition-all cursor-pointer group-hover:bg-zinc-800/80"
-                        >
-                          <div className="flex items-center gap-3 flex-1">
-                            <span className="text-lg font-bold text-zinc-600">{index + 1}</span>
-                            <div className="flex-1">
-                              <div className="text-sm font-medium text-white mb-1">{task.title}</div>
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${importanceBadge[task.importance_level].color}`}>
-                                  {importanceBadge[task.importance_level].text}
+                      const colors = importanceColors[task.importance_level];
+                      const badge = importanceBadge[task.importance_level];
+
+                      return (
+                        <div key={task.id} className="group relative">
+                          <div className={`absolute inset-0 bg-gradient-to-r ${colors.glow} rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                          <div 
+                            onClick={() => deleteTaskMutation.mutate(task.id)}
+                            className={`relative flex items-center gap-3 p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border ${colors.border} hover:border-red-500/60 transition-all cursor-pointer group-hover:bg-zinc-850/80`}
+                          >
+                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${colors.accent} flex items-center justify-center font-black text-white text-sm shadow-lg`}>
+                              {index + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-semibold text-white mb-1 truncate">{task.title}</div>
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${badge.color}`}>
+                                  {badge.text}
                                 </span>
-                                <span className="text-[10px] text-zinc-600">
+                                <span className="text-[9px] text-zinc-600 font-medium">
                                   {task.time_duration.replace(/_/g, ' ')}
                                 </span>
                               </div>
                             </div>
-                          </div>
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 className="w-5 h-5 text-red-500" />
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-12 text-zinc-600 text-sm">
-                    No tasks yet. Add your first task above.
-                  </div>
-                )}
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-8 px-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+                      <div className="text-sm text-zinc-500 mb-2">No priority actions yet</div>
+                      <Button 
+                        onClick={() => setShowAddForm(true)}
+                        size="sm"
+                        className="bg-white text-black hover:bg-zinc-200"
+                      >
+                        <Plus className="w-3 h-3 mr-1.5" />
+                        Add Your First Task
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            
-            {!showAddForm && (
-              <div className="mt-6 flex justify-center">
-                <Button 
-                  data-pareto-add
-                  onClick={() => setShowAddForm(true)}
-                  className="bg-white text-black hover:bg-zinc-200"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Task
-                </Button>
-              </div>
-            )}
           </div>
         )}
 
