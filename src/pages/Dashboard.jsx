@@ -13,7 +13,6 @@ import { ArrowLeft, CheckCircle2, Circle, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
-  console.log('🔴 DASHBOARD VERSION: 2025-12-23-FINAL');
   const queryClient = useQueryClient();
   const [yesterdayVisible, setYesterdayVisible] = useState(true);
   const [tempYesterdayStates, setTempYesterdayStates] = useState({});
@@ -27,17 +26,10 @@ export default function Dashboard() {
   const [yesterdayHabits, setYesterdayHabits] = React.useState(null);
   const [yesterdayCompletions, setYesterdayCompletions] = React.useState(null);
 
-  // Fetch habits directly with useEffect
   React.useEffect(() => {
     let mounted = true;
     
     const fetchData = async () => {
-      console.log('=== DASHBOARD FETCHING DATA ===');
-      console.log('Today:', format(today, 'yyyy-MM-dd'));
-      console.log('Yesterday:', format(yesterday, 'yyyy-MM-dd'));
-      console.log('Today day of week:', today.getDay());
-      console.log('Yesterday day of week:', yesterday.getDay());
-      
       try {
         const tHabits = await getHabitsForDate(today);
         const tCompletions = await getHabitCompletionsForDate(today);
@@ -45,12 +37,6 @@ export default function Dashboard() {
         const yCompletions = await getHabitCompletionsForDate(yesterday);
         
         if (!mounted) return;
-        
-        console.log('RESULTS:');
-        console.log('- Today habits:', tHabits.length, tHabits.map(h => h.title));
-        console.log('- Today completions:', tCompletions.length);
-        console.log('- Yesterday habits:', yHabits.length, yHabits.map(h => h.title));
-        console.log('- Yesterday completions:', yCompletions.length);
         
         setTodayHabits(tHabits);
         setTodayCompletions(tCompletions);
@@ -68,7 +54,6 @@ export default function Dashboard() {
     };
   }, [today.getTime(), yesterday.getTime()]);
 
-  // Top Pareto tasks
   const { data: topTasks } = useQuery({
     queryKey: ['topTasks'],
     queryFn: async () => {
@@ -78,7 +63,6 @@ export default function Dashboard() {
         completed: false
       });
       
-      // Sort by importance (crucial highest) and time (less time = higher priority)
       const importanceWeight = { crucial: 4, essential: 3, average: 2, low: 1 };
       const timeWeight = { 
         less_than_30min: 6, 
@@ -93,7 +77,7 @@ export default function Dashboard() {
         const scoreA = (importanceWeight[a.importance_level] || 0) * 10 + (timeWeight[a.time_duration] || 0);
         const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
         return scoreB - scoreA;
-      }).slice(0, 5);
+      }).slice(0, 3);
     }
   });
 
@@ -145,7 +129,6 @@ export default function Dashboard() {
     }
   });
 
-  // Create completion maps
   const todayCompletionMap = {};
   if (todayCompletions) {
     todayCompletions.forEach(c => {
@@ -161,54 +144,20 @@ export default function Dashboard() {
   }
 
   const needsYesterdayValidation = React.useMemo(() => {
-    console.log('=== Checking needsYesterdayValidation ===');
-    console.log('yesterdayHabits:', yesterdayHabits?.length);
-    console.log('yesterdayCompletions:', yesterdayCompletions?.length);
-    console.log('yesterdayVisible:', yesterdayVisible);
+    if (!yesterdayHabits || yesterdayHabits.length === 0) return false;
+    if (!yesterdayCompletions || yesterdayCompletions.length === 0) return true;
     
-    // Must have yesterday habits
-    if (!yesterdayHabits || yesterdayHabits.length === 0) {
-      console.log('→ NO HABITS YESTERDAY');
-      return false;
-    }
-    
-    // If no completions at all, needs validation
-    if (!yesterdayCompletions || yesterdayCompletions.length === 0) {
-      console.log('→ NO COMPLETIONS - NEEDS VALIDATION');
-      return true;
-    }
-    
-    // Check if all habits have been checked in
     const yesterdayStr = format(yesterday, 'yyyy-MM-dd');
     for (const habit of yesterdayHabits) {
       const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
-      if (!completion) {
-        console.log(`→ HABIT "${habit.title}" NOT CHECKED IN`);
-        return true;
-      }
-      
-      // Check if completion was made for yesterday specifically
-      const completionDate = format(new Date(completion.checked_in_date), 'yyyy-MM-dd');
+      if (!completion) return true;
       const isSameDay = completion.date === yesterdayStr;
-      
-      console.log(`Habit "${habit.title}":`, {
-        completion_date: completion.date,
-        checked_in_date: completionDate,
-        yesterday: yesterdayStr,
-        isSameDay
-      });
-      
-      if (!isSameDay) {
-        console.log(`→ HABIT "${habit.title}" WRONG DATE`);
-        return true;
-      }
+      if (!isSameDay) return true;
     }
     
-    console.log('→ ALL VALIDATED');
     return false;
   }, [yesterdayHabits, yesterdayCompletions, yesterdayVisible, yesterday]);
 
-  // Initialize temp states based on existing completions
   React.useEffect(() => {
     if (yesterdayHabits && yesterdayHabits.length > 0) {
       const initialStates = {};
@@ -220,48 +169,67 @@ export default function Dashboard() {
     }
   }, [yesterdayHabits, yesterdayCompletions]);
 
+  const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
+  const isOnTrack = completionRate >= 0.7;
+  const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+      {/* Noise texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '128px 128px'
+      }} />
+
+      <div className="max-w-2xl mx-auto">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Dashboard
+        <div className="mb-10 relative">
+          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
+            Control Center
           </h1>
+          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Today's Focus</div>
         </div>
 
-        <div className="space-y-6">
-          {/* Yesterday's Habits - Validation Box */}
+        {/* ACTION ZONE - Layered visual hierarchy */}
+        <div className="space-y-8 mb-16">
+          {/* Yesterday Alert - CRITICAL PRIORITY */}
           {yesterdayVisible && needsYesterdayValidation && yesterdayHabits && yesterdayHabits.length > 0 && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-2xl blur-xl" />
-              <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-zinc-300">YESTERDAY'S HABITS</h2>
+            <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-red-500/40 rounded-[32px] blur-3xl opacity-80 animate-pulse" />
+              <div className="relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.5),0_0_0_1px_rgba(249,115,22,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-black text-orange-200 mb-1 tracking-tight">YESTERDAY</h2>
+                    <div className="text-xs text-orange-400/60 font-medium">Validation required</div>
+                  </div>
                   <Link 
                     to={createPageUrl('Habits')}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="p-2.5 hover:bg-zinc-800/50 rounded-xl transition-all duration-150 active:scale-95"
                   >
                     <Plus className="w-5 h-5 text-zinc-400" />
                   </Link>
                 </div>
-                <div className="space-y-2 mb-4">
+                <div className="space-y-2 mb-6">
                   {yesterdayHabits.map(habit => (
                     <button
                       key={habit.id}
                       onClick={() => toggleYesterdayHabit(habit.id)}
-                      className="w-full flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 active:scale-[0.98] transition-all duration-150"
                     >
                       {tempYesterdayStates[habit.id] ? (
-                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md" />
+                          <CheckCircle2 className="relative w-6 h-6 text-green-400 flex-shrink-0" />
+                        </div>
                       ) : (
-                        <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
+                        <Circle className="w-6 h-6 text-zinc-600 flex-shrink-0" />
                       )}
-                      <span className={`text-sm ${tempYesterdayStates[habit.id] ? 'text-zinc-400 line-through' : 'text-white'}`}>
+                      <span className={`text-sm font-medium ${tempYesterdayStates[habit.id] ? 'text-zinc-500 line-through' : 'text-white'}`}>
                         {habit.title}
                       </span>
                     </button>
@@ -270,91 +238,57 @@ export default function Dashboard() {
                 <Button
                   onClick={() => validateYesterdayMutation.mutate()}
                   disabled={validateYesterdayMutation.isPending}
-                  className="w-full bg-white text-black hover:bg-zinc-200"
+                  className="w-full bg-white text-black hover:bg-zinc-200 h-14 text-base font-bold rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] active:scale-[0.98] transition-all duration-150"
                 >
-                  <Check className="w-4 h-4 mr-2" />
-                  {validateYesterdayMutation.isPending ? 'Validating...' : 'Validate'}
+                  <Check className="w-5 h-5 mr-2" />
+                  {validateYesterdayMutation.isPending ? 'Validating...' : 'Validate Yesterday'}
                 </Button>
               </div>
             </div>
           )}
 
-          {/* Today's Habits */}
-          <div className="relative">
-            {(() => {
-              const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
-              const isOnTrack = completionRate >= 0.7;
-              const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
-              const isOffTrack = completionRate <= 0.3;
-
-              return (
-                <div className={`absolute inset-0 rounded-2xl blur-xl transition-opacity ${
-                  isOnTrack ? 'bg-gradient-to-r from-emerald-600/15 to-green-600/15 opacity-70' :
-                  isAtRisk ? 'bg-gradient-to-r from-yellow-600/15 to-orange-600/15 opacity-60' :
-                  'bg-gradient-to-r from-red-600/15 to-orange-600/15 opacity-50'
-                }`} />
-              );
-            })()}
-            <div className={(() => {
-              const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
-              const isOnTrack = completionRate >= 0.7;
-              const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
-              
-              return `relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border transition-all ${
-                isOnTrack ? 'border-emerald-700/40' :
-                isAtRisk ? 'border-yellow-700/40' :
-                'border-red-700/40'
-              }`;
-            })()}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-bold text-zinc-300">TODAY'S HABITS</h2>
-                  {/* Visual state indicator */}
-                  {(() => {
-                    const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
-                    const isOnTrack = completionRate >= 0.7;
-                    const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
-                    
-                    return (
-                      <div className={`w-2 h-2 rounded-full ${
-                        isOnTrack ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' :
-                        isAtRisk ? 'bg-yellow-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]' :
-                        'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)] animate-pulse'
-                      }`} />
-                    );
-                  })()}
+          {/* Today's Habits - PRIMARY FOCUS */}
+          <div className="relative animate-in fade-in zoom-in-95 duration-300">
+            <div className={`absolute inset-0 rounded-[32px] blur-3xl transition-all duration-300 ${
+              isOnTrack ? 'bg-gradient-to-r from-emerald-500/30 to-green-500/30 opacity-80' :
+              isAtRisk ? 'bg-gradient-to-r from-yellow-500/30 to-orange-500/30 opacity-70' :
+              'bg-gradient-to-r from-red-500/30 to-orange-500/30 opacity-60'
+            }`} />
+            <div className={`relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 transition-all duration-300 shadow-[0_24px_96px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] ${
+              isOnTrack ? 'border-emerald-600/60' :
+              isAtRisk ? 'border-yellow-600/60' :
+              'border-red-600/60'
+            }`}>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl font-black text-zinc-200 tracking-tight">TODAY</h2>
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    isOnTrack ? 'bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.8)]' :
+                    isAtRisk ? 'bg-yellow-400 shadow-[0_0_16px_rgba(251,191,36,0.8)]' :
+                    'bg-red-400 shadow-[0_0_16px_rgba(248,113,113,0.8)] animate-pulse'
+                  }`} />
                 </div>
                 <div className="flex items-center gap-3">
-                  {/* Progress indicator */}
-                  {(() => {
-                    const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
-                    const isOnTrack = completionRate >= 0.7;
-                    const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
-                    
-                    return (
-                      <div className={`px-2 py-1 rounded text-xs font-bold ${
-                        isOnTrack ? 'bg-emerald-950/50 text-emerald-300 border border-emerald-800/50' :
-                        isAtRisk ? 'bg-yellow-950/50 text-yellow-300 border border-yellow-800/50' :
-                        'bg-red-950/50 text-red-300 border border-red-800/50'
-                      }`}>
-                        {todayHabits && todayCompletions && 
-                          `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
-                      </div>
-                    );
-                  })()}
+                  <div className={`px-4 py-2 rounded-xl text-sm font-black border-2 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] transition-all ${
+                    isOnTrack ? 'bg-emerald-950/50 text-emerald-200 border-emerald-700/50' :
+                    isAtRisk ? 'bg-yellow-950/50 text-yellow-200 border-yellow-700/50' :
+                    'bg-red-950/50 text-red-200 border-red-700/50'
+                  }`}>
+                    {todayHabits && todayCompletions && 
+                      `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
+                  </div>
                   <Link 
                     to={createPageUrl('Habits')}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="p-2.5 hover:bg-zinc-800/50 rounded-xl transition-all duration-150 active:scale-95"
                   >
                     <Plus className="w-5 h-5 text-zinc-400" />
                   </Link>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {todayHabits && todayHabits.length > 0 ? (
                   todayHabits.map((habit, idx) => {
                     const isCompleted = todayCompletionMap[habit.id];
-                    const completionRate = todayHabits.length > 0 ? (Object.values(todayCompletionMap).filter(Boolean).length / todayHabits.length) : 0;
                     
                     return (
                       <button
@@ -365,31 +299,29 @@ export default function Dashboard() {
                         })}
                         className="w-full group relative"
                       >
-                        {/* Completion glow */}
                         {isCompleted && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg blur-sm" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-green-500/15 to-emerald-500/15 rounded-2xl blur-lg" />
                         )}
-                        <div className={`relative flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                        <div className={`relative flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-150 ${
                           isCompleted 
-                            ? 'bg-green-950/20 border-green-800/30' 
-                            : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'
+                            ? 'bg-green-950/30 border-green-700/50 shadow-[inset_0_2px_12px_rgba(34,197,94,0.2)]' 
+                            : 'bg-zinc-900/60 border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 active:scale-[0.98]'
                         }`}>
                           {isCompleted ? (
                             <div className="relative">
-                              <div className="absolute inset-0 bg-green-500/30 rounded-full blur-sm" />
-                              <CheckCircle2 className="relative w-5 h-5 text-green-400 flex-shrink-0" />
+                              <div className="absolute inset-0 bg-green-500/40 rounded-full blur-lg" />
+                              <CheckCircle2 className="relative w-6 h-6 text-green-400 flex-shrink-0" />
                             </div>
                           ) : (
-                            <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
+                            <Circle className="w-6 h-6 text-zinc-600 flex-shrink-0" />
                           )}
-                          <span className={`text-sm flex-1 text-left ${isCompleted ? 'text-zinc-500 line-through' : 'text-white'}`}>
+                          <span className={`text-sm font-medium flex-1 text-left ${isCompleted ? 'text-zinc-500 line-through' : 'text-white'}`}>
                             {habit.title}
                           </span>
-                          {/* Position indicator */}
-                          <div className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold ${
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${
                             isCompleted 
-                              ? 'bg-green-500/20 text-green-400' 
-                              : 'bg-zinc-800 text-zinc-600'
+                              ? 'bg-green-500/30 text-green-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]' 
+                              : 'bg-zinc-800/60 text-zinc-600'
                           }`}>
                             {idx + 1}
                           </div>
@@ -398,7 +330,7 @@ export default function Dashboard() {
                     );
                   })
                 ) : (
-                  <div className="text-center py-8 text-zinc-600 text-sm">
+                  <div className="text-center py-12 text-zinc-600 text-sm font-medium">
                     No habits today
                   </div>
                 )}
@@ -406,52 +338,47 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* PARETO PRIORITY TASKS */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
-                <div className="flex items-center gap-3">
+          {/* Priority Tasks - SECONDARY FOCUS */}
+          {topTasks && topTasks.length > 0 && (
+            <div className="relative animate-in fade-in zoom-in-95 duration-300 delay-75">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[28px] blur-2xl opacity-60" />
+              <div className="relative p-7 rounded-[28px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">PRIORITIES</h2>
                   <Link 
                     to={createPageUrl('Pareto')}
-                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                    className="text-xs text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
                   >
                     View All →
                   </Link>
-                  <Link 
-                    to={createPageUrl('Pareto')}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-5 h-5 text-zinc-400" />
-                  </Link>
                 </div>
-              </div>
-              <div className="space-y-2">
-                {topTasks && topTasks.length > 0 ? (
-                  topTasks.map((task, index) => {
+                <div className="space-y-2">
+                  {topTasks.map((task, index) => {
                     const importanceBadge = {
-                      crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
-                      essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
-                      average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
-                      low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
+                      crucial: { text: 'CRITICAL', color: 'text-red-300 bg-red-950/60 border-red-800/60' },
+                      essential: { text: 'HIGH', color: 'text-yellow-300 bg-yellow-950/60 border-yellow-800/60' },
+                      average: { text: 'MEDIUM', color: 'text-blue-300 bg-blue-950/60 border-blue-800/60' }
                     };
+
+                    const badge = importanceBadge[task.importance_level] || importanceBadge.average;
 
                     return (
                       <button
                         key={task.id}
                         onClick={() => completeTaskMutation.mutate(task.id)}
-                        className="w-full group text-left"
+                        className="w-full group text-left relative"
                       >
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-green-500/50 transition-all">
-                          <span className="text-sm font-bold text-zinc-600">{index + 1}</span>
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-white mb-1">{task.title}</div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${importanceBadge[task.importance_level].color}`}>
-                                {importanceBadge[task.importance_level].text}
+                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/50 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
+                          <div className="w-8 h-8 rounded-xl bg-zinc-800/60 flex items-center justify-center text-sm font-black text-zinc-600 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-semibold text-white mb-1 truncate">{task.title}</div>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[9px] px-2 py-1 rounded-lg font-black border uppercase tracking-wider ${badge.color}`}>
+                                {badge.text}
                               </span>
-                              <span className="text-[10px] text-zinc-600">
+                              <span className="text-[9px] text-zinc-700 font-medium">
                                 {task.time_duration.replace(/_/g, ' ')}
                               </span>
                             </div>
@@ -459,15 +386,11 @@ export default function Dashboard() {
                         </div>
                       </button>
                     );
-                  })
-                ) : (
-                  <div className="text-center py-8 text-zinc-600 text-sm">
-                    No priority tasks yet
-                  </div>
-                )}
+                  })}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
