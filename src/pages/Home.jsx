@@ -388,8 +388,7 @@ export default function Home() {
                         <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
                       </div>
                       <div>
-                        <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
-                        <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
+                        <div className="text-sm font-bold text-white">{app.name}</div>
                       </div>
                     </div>
                   </div>
