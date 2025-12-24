@@ -288,48 +288,68 @@ export default function Dashboard() {
               const isOffTrack = completionRate <= 0.3;
 
               return (
-                <>
-                  <div className={`absolute inset-0 rounded-2xl blur-xl transition-opacity ${
-                    isOnTrack ? 'bg-gradient-to-r from-emerald-600/15 to-green-600/15 opacity-70' :
-                    isAtRisk ? 'bg-gradient-to-r from-yellow-600/15 to-orange-600/15 opacity-60' :
-                    'bg-gradient-to-r from-red-600/15 to-orange-600/15 opacity-50'
-                  }`} />
-                  <div className={`relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border transition-all ${
-                    isOnTrack ? 'border-emerald-700/40' :
-                    isAtRisk ? 'border-yellow-700/40' :
-                    'border-red-700/40'
-                  }`}>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <h2 className="text-lg font-bold text-zinc-300">TODAY'S HABITS</h2>
-                        {/* Visual state indicator */}
-                        <div className={`w-2 h-2 rounded-full ${
-                          isOnTrack ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' :
-                          isAtRisk ? 'bg-yellow-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]' :
-                          'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)] animate-pulse'
-                        }`} />
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {/* Progress indicator */}
-                        <div className={`px-2 py-1 rounded text-xs font-bold ${
-                          isOnTrack ? 'bg-emerald-950/50 text-emerald-300 border border-emerald-800/50' :
-                          isAtRisk ? 'bg-yellow-950/50 text-yellow-300 border border-yellow-800/50' :
-                          'bg-red-950/50 text-red-300 border border-red-800/50'
-                        }`}>
-                          {todayHabits && todayCompletions && 
-                            `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
-                        </div>
-                        <Link 
-                          to={createPageUrl('Habits')}
-                          className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
-                        >
-                          <Plus className="w-5 h-5 text-zinc-400" />
-                        </Link>
-                      </div>
-                    </div>
-                </>
+                <div className={`absolute inset-0 rounded-2xl blur-xl transition-opacity ${
+                  isOnTrack ? 'bg-gradient-to-r from-emerald-600/15 to-green-600/15 opacity-70' :
+                  isAtRisk ? 'bg-gradient-to-r from-yellow-600/15 to-orange-600/15 opacity-60' :
+                  'bg-gradient-to-r from-red-600/15 to-orange-600/15 opacity-50'
+                }`} />
               );
             })()}
+            <div className={(() => {
+              const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
+              const isOnTrack = completionRate >= 0.7;
+              const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
+              
+              return `relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border transition-all ${
+                isOnTrack ? 'border-emerald-700/40' :
+                isAtRisk ? 'border-yellow-700/40' :
+                'border-red-700/40'
+              }`;
+            })()}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-bold text-zinc-300">TODAY'S HABITS</h2>
+                  {/* Visual state indicator */}
+                  {(() => {
+                    const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
+                    const isOnTrack = completionRate >= 0.7;
+                    const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
+                    
+                    return (
+                      <div className={`w-2 h-2 rounded-full ${
+                        isOnTrack ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' :
+                        isAtRisk ? 'bg-yellow-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]' :
+                        'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)] animate-pulse'
+                      }`} />
+                    );
+                  })()}
+                </div>
+                <div className="flex items-center gap-3">
+                  {/* Progress indicator */}
+                  {(() => {
+                    const completionRate = todayHabits && todayCompletions ? (todayCompletions.filter(c => c.completed).length / todayHabits.length) : 0;
+                    const isOnTrack = completionRate >= 0.7;
+                    const isAtRisk = completionRate < 0.7 && completionRate > 0.3;
+                    
+                    return (
+                      <div className={`px-2 py-1 rounded text-xs font-bold ${
+                        isOnTrack ? 'bg-emerald-950/50 text-emerald-300 border border-emerald-800/50' :
+                        isAtRisk ? 'bg-yellow-950/50 text-yellow-300 border border-yellow-800/50' :
+                        'bg-red-950/50 text-red-300 border border-red-800/50'
+                      }`}>
+                        {todayHabits && todayCompletions && 
+                          `${todayCompletions.filter(c => c.completed).length}/${todayHabits.length}`}
+                      </div>
+                    );
+                  })()}
+                  <Link 
+                    to={createPageUrl('Habits')}
+                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5 text-zinc-400" />
+                  </Link>
+                </div>
+              </div>
               <div className="space-y-2">
                 {todayHabits && todayHabits.length > 0 ? (
                   todayHabits.map((habit, idx) => {
