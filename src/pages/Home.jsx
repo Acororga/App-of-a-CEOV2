@@ -262,10 +262,10 @@ export default function Home() {
         <div className="relative h-40 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 backdrop-blur-xl border-2 border-zinc-700/90 p-6 overflow-hidden shadow-[0_12px_48px_rgba(0,0,0,0.6)] group-hover:shadow-[0_16px_64px_rgba(59,130,246,0.2)] transition-all duration-300 group-active:scale-[0.98]">
           {/* Animated gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
+
           {/* Light ray effect */}
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-          
+
           <div className="relative flex items-center justify-between h-full">
             <div className="flex items-center gap-5">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-[0_8px_24px_rgba(59,130,246,0.4)] relative overflow-hidden group-hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] transition-all duration-300">
@@ -277,15 +277,41 @@ export default function Home() {
                 <div className="text-xs text-zinc-500">Your daily overview</div>
               </div>
             </div>
-            <div className="flex items-center gap-6">
-              <div className="text-center px-4 py-2 rounded-xl bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50">
-                <div className="text-3xl font-bold bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">{todayHabits || 0}</div>
-                <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-0.5">Habits Today</div>
+            <div className="flex items-center gap-4">
+              {/* Visual State Indicator */}
+              <div className={`relative text-center px-4 py-2 rounded-xl backdrop-blur-sm border transition-all ${
+                (todayHabits || 0) === 0 && needsCheckIn
+                  ? 'bg-red-950/30 border-red-700/40'
+                  : (todayHabits || 0) >= 5
+                  ? 'bg-emerald-950/30 border-emerald-700/40'
+                  : (todayHabits || 0) >= 3
+                  ? 'bg-blue-950/30 border-blue-700/40'
+                  : 'bg-zinc-800/50 border-zinc-700/50'
+              }`}>
+                {/* Progress bar */}
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-800 overflow-hidden rounded-b-xl">
+                  <div 
+                    className={`h-full transition-all duration-500 ${
+                      (todayHabits || 0) >= 5 ? 'bg-emerald-400' : (todayHabits || 0) >= 3 ? 'bg-blue-400' : 'bg-zinc-600'
+                    }`}
+                    style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
+                  />
+                </div>
+                <div className={`text-3xl font-bold bg-gradient-to-b bg-clip-text text-transparent ${
+                  (todayHabits || 0) === 0 && needsCheckIn
+                    ? 'from-red-300 to-red-500'
+                    : (todayHabits || 0) >= 5
+                    ? 'from-emerald-200 to-emerald-400'
+                    : (todayHabits || 0) >= 3
+                    ? 'from-blue-200 to-blue-400'
+                    : 'from-white to-zinc-400'
+                }`}>{todayHabits || 0}</div>
+                <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-0.5">Habits</div>
               </div>
               {needsCheckIn && (
-                <div className="relative">
-                  <div className="absolute inset-0 bg-red-500/50 rounded-full blur-md animate-pulse" />
-                  <div className="relative w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-orange-500 shadow-lg shadow-red-500/50" />
+                <div className="relative flex items-center gap-1">
+                  <div className="absolute inset-0 bg-red-500/40 rounded-full blur-lg animate-pulse" />
+                  <div className="relative w-2 h-2 rounded-full bg-red-400" />
                 </div>
               )}
             </div>
@@ -508,55 +534,127 @@ export default function Home() {
               <div className="text-sm text-zinc-500 text-center">{user?.email}</div>
             </div>
 
-            {/* Quick Stats - Visual Priority */}
+            {/* Quick Stats - Intelligent Visual State */}
             <div className="mb-6 grid grid-cols-3 gap-2">
-              {/* Rank */}
+              {/* Rank - Contextual State */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
+                <div className={`absolute inset-0 rounded-xl blur-lg transition-opacity duration-300 ${
+                  (rankData?.rank_level || 1) >= 5 
+                    ? 'bg-gradient-to-br from-blue-500/30 to-cyan-500/30 opacity-70' 
+                    : (rankData?.rank_level || 1) >= 3 
+                    ? 'bg-gradient-to-br from-amber-500/25 to-yellow-500/25 opacity-65'
+                    : 'bg-gradient-to-br from-amber-500/20 to-orange-500/20 opacity-60'
+                } group-hover:opacity-90`} />
+                <div className={`relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border text-center transition-colors ${
+                  (rankData?.rank_level || 1) >= 5 
+                    ? 'border-cyan-700/60' 
+                    : (rankData?.rank_level || 1) >= 3 
+                    ? 'border-yellow-700/60'
+                    : 'border-zinc-700/60'
+                }`}>
                   <div className="text-2xl mb-1">{rankData?.rank_level || 1}</div>
                   <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Rank</div>
-                  <div className="text-xs font-bold bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent mt-1">
+                  <div className={`text-xs font-bold mt-1 ${
+                    (rankData?.rank_level || 1) >= 5 
+                      ? 'bg-gradient-to-r from-cyan-200 to-blue-400 bg-clip-text text-transparent'
+                      : (rankData?.rank_level || 1) >= 3 
+                      ? 'bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent'
+                      : 'bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent'
+                  }`}>
                     {rankData?.rank_name || 'Panda'}
                   </div>
                 </div>
               </div>
 
-              {/* Streak */}
+              {/* Streak - Visual Intensity */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
-                  <div className="text-2xl mb-1">🔥</div>
+                <div className={`absolute inset-0 rounded-xl blur-lg transition-all duration-300 ${
+                  (streakData?.current_streak || 0) >= 7 
+                    ? 'bg-gradient-to-br from-orange-500/40 to-red-500/40 opacity-80 animate-pulse' 
+                    : (streakData?.current_streak || 0) >= 3 
+                    ? 'bg-gradient-to-br from-orange-500/25 to-red-500/25 opacity-70'
+                    : (streakData?.current_streak || 0) >= 1
+                    ? 'bg-gradient-to-br from-orange-500/20 to-red-500/20 opacity-60'
+                    : 'bg-gradient-to-br from-zinc-600/15 to-zinc-500/15 opacity-40'
+                } group-hover:opacity-90`} />
+                <div className={`relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border text-center transition-all ${
+                  (streakData?.current_streak || 0) >= 7
+                    ? 'border-orange-600/70 shadow-[0_0_20px_rgba(249,115,22,0.2)]'
+                    : (streakData?.current_streak || 0) >= 3
+                    ? 'border-orange-700/60'
+                    : (streakData?.current_streak || 0) >= 1
+                    ? 'border-zinc-700/60'
+                    : 'border-zinc-800/50'
+                }`}>
+                  <div className="text-2xl mb-1">{(streakData?.current_streak || 0) === 0 ? '💤' : '🔥'}</div>
                   <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Streak</div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent mt-1">
+                  <div className={`text-xl font-bold mt-1 transition-all ${
+                    (streakData?.current_streak || 0) >= 7
+                      ? 'bg-gradient-to-r from-orange-300 to-red-400 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]'
+                      : (streakData?.current_streak || 0) >= 3
+                      ? 'bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent'
+                      : (streakData?.current_streak || 0) >= 1
+                      ? 'bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent'
+                      : 'text-zinc-600'
+                  }`}>
                     {streakData?.current_streak || 0}
                   </div>
                 </div>
               </div>
 
-              {/* Today's Habits */}
+              {/* Today's Habits - Progress State */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                <div className="relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/60 text-center">
-                  <div className="text-2xl mb-1">✓</div>
+                <div className={`absolute inset-0 rounded-xl blur-lg transition-opacity duration-300 ${
+                  (todayHabits || 0) >= 5 
+                    ? 'bg-gradient-to-br from-emerald-500/30 to-green-500/30 opacity-75'
+                    : (todayHabits || 0) >= 3 
+                    ? 'bg-gradient-to-br from-blue-500/25 to-purple-500/25 opacity-65'
+                    : (todayHabits || 0) >= 1
+                    ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-60'
+                    : 'bg-gradient-to-br from-zinc-600/15 to-zinc-500/15 opacity-40'
+                } group-hover:opacity-85`} />
+                <div className={`relative p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border text-center transition-colors ${
+                  (todayHabits || 0) >= 5
+                    ? 'border-emerald-700/60'
+                    : (todayHabits || 0) >= 3
+                    ? 'border-blue-700/60'
+                    : (todayHabits || 0) >= 1
+                    ? 'border-zinc-700/60'
+                    : 'border-zinc-800/50'
+                }`}>
+                  <div className="text-2xl mb-1">{(todayHabits || 0) === 0 ? '○' : '✓'}</div>
                   <div className="text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Today</div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mt-1">
+                  <div className={`text-xl font-bold mt-1 ${
+                    (todayHabits || 0) >= 5
+                      ? 'bg-gradient-to-r from-emerald-300 to-green-400 bg-clip-text text-transparent'
+                      : (todayHabits || 0) >= 3
+                      ? 'bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent'
+                      : (todayHabits || 0) >= 1
+                      ? 'bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent'
+                      : 'text-zinc-600'
+                  }`}>
                     {todayHabits || 0}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Check-in Alert */}
+            {/* Intelligent Alert - Visual Priority */}
             {needsCheckIn && (
               <div className="mb-6 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-xl blur-md animate-pulse" />
-                <div className="relative p-4 rounded-xl bg-zinc-900/80 backdrop-blur-sm border border-red-500/30">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 to-orange-500/30 rounded-xl blur-lg animate-pulse" />
+                <div className="relative p-3 rounded-xl bg-gradient-to-r from-red-950/90 to-orange-950/90 backdrop-blur-sm border-2 border-red-500/40 shadow-[0_0_24px_rgba(239,68,68,0.3)]">
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-500 rounded-full blur-sm animate-pulse" />
+                      <div className="relative w-2 h-2 rounded-full bg-red-400" />
+                    </div>
                     <div className="flex-1">
-                      <div className="text-sm font-bold text-red-400">Check-in Required</div>
-                      <div className="text-xs text-zinc-500">Yesterday's habits need validation</div>
+                      <div className="text-sm font-bold text-red-300">Action Required</div>
+                      <div className="text-[10px] text-red-400/60 font-medium">Yesterday unvalidated</div>
+                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center">
+                      <span className="text-red-300 font-black text-xs">!</span>
                     </div>
                   </div>
                 </div>
