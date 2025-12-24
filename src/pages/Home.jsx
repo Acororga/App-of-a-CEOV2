@@ -20,7 +20,6 @@ export default function Home() {
   const [showFocusModal, setShowFocusModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
-  const [showParetoForm, setShowParetoForm] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const navigate = useNavigate();
@@ -163,8 +162,6 @@ export default function Home() {
     }
   };
 
-
-
   const handleFocusStart = (duration) => {
     startFocusMutation.mutate(duration);
   };
@@ -198,44 +195,44 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
-      {/* Modern texture overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      {/* Noise texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '128px 128px'
       }} />
 
-      {/* Rank Branches - Only visible when ScreenTimeManager is active */}
+      {/* Rank ambient light */}
       {isScreenTimeActive && (
         <>
-          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-3xl opacity-40 pointer-events-none`} />
-          <div className={`absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-3xl opacity-40 pointer-events-none`} />
+          <div className={`absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-[120px] opacity-30 pointer-events-none`} />
+          <div className={`absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-[120px] opacity-30 pointer-events-none`} />
         </>
       )}
 
-      {/* Header with User Icon, Rank, Streak, and Focus Button */}
+      {/* Header */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
-        {/* User Icon - Left */}
         <button
           onClick={() => setShowMenu(true)}
-          className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-lg border border-zinc-700/50 hover:scale-105 transition-transform"
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-800/90 via-zinc-700/90 to-zinc-800/90 backdrop-blur-xl flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] border border-zinc-700/30 hover:scale-105 active:scale-100 transition-all duration-150"
         >
-          <span className="text-sm font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
+          <span className="text-sm font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent drop-shadow-sm">
             {user?.full_name?.charAt(0) || '?'}
           </span>
         </button>
 
-        {/* Rank, Streak, and Focus Button - Right */}
         <div className="flex items-center gap-2">
           {/* Rank */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
-            <div className="text-[9px] text-zinc-500 font-bold tracking-wider uppercase">Rank</div>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
+            <div className="text-[9px] text-zinc-600 font-bold tracking-wider uppercase">Rank</div>
             <div className="text-sm font-bold bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
               {rankData?.rank_name || 'Panda'}
             </div>
           </div>
           
           {/* Streak */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/60 shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
-            <span className="text-base drop-shadow-lg">🔥</span>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
+            <span className="text-base drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
             <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
               {streakData?.current_streak || 0}
             </span>
@@ -244,288 +241,277 @@ export default function Home() {
           {/* Focus Mode Quick Button */}
           <button
             onClick={() => setShowFocusModal(true)}
-            className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex items-center justify-center shadow-[0_8px_24px_rgba(239,68,68,0.4)] hover:shadow-[0_12px_32px_rgba(239,68,68,0.5)] hover:scale-105 transition-all duration-300 relative overflow-hidden group"
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex items-center justify-center shadow-[0_8px_32px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group"
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/20" />
-            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <Zap className="w-6 h-6 text-white relative z-10 drop-shadow-lg" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            <Zap className="w-6 h-6 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
           </button>
         </div>
       </div>
 
-      {/* Dashboard Card - PRIMARY FOCUS */}
-      <Link
-        to={createPageUrl('Dashboard')}
-        className="block mb-6 group relative"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/40 to-purple-500/40 rounded-3xl blur-3xl opacity-70 group-hover:opacity-90 transition-all duration-500" />
-        <div className="relative h-40 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 backdrop-blur-xl border-2 border-zinc-700/90 p-6 overflow-hidden shadow-[0_12px_48px_rgba(0,0,0,0.6)] group-hover:shadow-[0_16px_64px_rgba(59,130,246,0.2)] transition-all duration-300 group-active:scale-[0.98]">
-          {/* Animated gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Light ray effect */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
-
-          <div className="relative flex items-center justify-between h-full">
-            <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-[0_8px_24px_rgba(59,130,246,0.4)] relative overflow-hidden group-hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/20" />
-                <BarChart3 className="w-8 h-8 text-white relative z-10 drop-shadow-lg" />
-              </div>
-              <div>
-                <div className="text-xl font-bold mb-0.5 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">Dashboard</div>
-                <div className="text-xs text-zinc-500">Your daily overview</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              {/* Visual State Indicator */}
-              <div className={`relative text-center px-4 py-2 rounded-xl backdrop-blur-sm border transition-all ${
-                (todayHabits || 0) === 0 && needsCheckIn
-                  ? 'bg-red-950/30 border-red-700/40'
-                  : (todayHabits || 0) >= 5
-                  ? 'bg-emerald-950/30 border-emerald-700/40'
-                  : (todayHabits || 0) >= 3
-                  ? 'bg-blue-950/30 border-blue-700/40'
-                  : 'bg-zinc-800/50 border-zinc-700/50'
-              }`}>
-                {/* Progress bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-800 overflow-hidden rounded-b-xl">
-                  <div 
-                    className={`h-full transition-all duration-500 ${
-                      (todayHabits || 0) >= 5 ? 'bg-emerald-400' : (todayHabits || 0) >= 3 ? 'bg-blue-400' : 'bg-zinc-600'
-                    }`}
-                    style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
-                  />
+      {/* Main content - ACTION ZONE */}
+      <div className="space-y-6 mb-12">
+        {/* Critical Alert - Maximum visual priority */}
+        {needsCheckIn && (
+          <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 to-orange-500/40 rounded-[28px] blur-2xl animate-pulse" />
+            <div className="relative p-6 rounded-3xl bg-gradient-to-br from-red-950/95 to-orange-950/95 backdrop-blur-xl border-2 border-red-500/50 shadow-[0_16px_64px_rgba(239,68,68,0.4),0_0_0_1px_rgba(239,68,68,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500 rounded-full blur-xl animate-pulse" />
+                  <div className="relative w-3 h-3 rounded-full bg-red-400 shadow-[0_0_16px_rgba(248,113,113,0.8)]" />
                 </div>
-                <div className={`text-3xl font-bold bg-gradient-to-b bg-clip-text text-transparent ${
-                  (todayHabits || 0) === 0 && needsCheckIn
-                    ? 'from-red-300 to-red-500'
-                    : (todayHabits || 0) >= 5
-                    ? 'from-emerald-200 to-emerald-400'
-                    : (todayHabits || 0) >= 3
-                    ? 'from-blue-200 to-blue-400'
-                    : 'from-white to-zinc-400'
-                }`}>{todayHabits || 0}</div>
-                <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold mt-0.5">Habits</div>
-              </div>
-              {needsCheckIn && (
-                <div className="relative flex items-center gap-1">
-                  <div className="absolute inset-0 bg-red-500/40 rounded-full blur-lg animate-pulse" />
-                  <div className="relative w-2 h-2 rounded-full bg-red-400" />
+                <div className="flex-1">
+                  <div className="text-base font-black text-red-200 mb-1 tracking-tight">ACTION REQUIRED</div>
+                  <div className="text-xs text-red-400/70 font-medium">Yesterday unvalidated</div>
                 </div>
-              )}
+                <div className="w-12 h-12 rounded-2xl bg-red-500/30 border-2 border-red-500/50 flex items-center justify-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]">
+                  <span className="text-red-200 font-black text-lg drop-shadow-sm">!</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </Link>
+        )}
 
-      {/* Dynamic Grid */}
-      {filteredApps.length === 4 && (
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {filteredApps.map(app => (
-            <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
-              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`} />
-              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-lg border border-zinc-700/50 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-zinc-600/60 transition-all duration-300 group-active:scale-[0.98]">
-                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700`} />
-                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                  <button
-                    onClick={(e) => handleQuickAddClick(e, app.id)}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-10"
-                  >
-                    <Plus className="w-4 h-4 text-zinc-400" />
-                  </button>
-                )}
-                <div className="relative h-full flex flex-col justify-between">
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                    <app.icon className="w-7 h-7 text-white drop-shadow-lg relative z-10" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold mb-1 bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">{app.name}</div>
-                    <div className="text-xs text-zinc-500">Quick access</div>
-                  </div>
+        {/* Dashboard - PRIMARY ACTION */}
+        <Link
+          to={createPageUrl('Dashboard')}
+          className="block group relative animate-in fade-in slide-in-from-bottom-4 duration-300"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-[32px] blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" />
+          <div className="relative h-44 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/60 p-7 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(59,130,246,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:shadow-[0_24px_96px_rgba(59,130,246,0.3),0_0_0_1px_rgba(59,130,246,0.15)] group-active:scale-[0.99] transition-all duration-200">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/8 via-transparent to-purple-600/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute -top-32 -right-32 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-700" />
+
+            <div className="relative flex items-center justify-between h-full">
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 rounded-[20px] bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-[0_12px_32px_rgba(59,130,246,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_16px_48px_rgba(59,130,246,0.6)] transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
+                  <BarChart3 className="w-10 h-10 text-white relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
+                </div>
+                <div>
+                  <div className="text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">Dashboard</div>
+                  <div className="text-xs text-zinc-500 font-medium">Your daily control center</div>
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
-      )}
+              <div className="flex items-center gap-5">
+                <div className={`relative text-center px-5 py-3 rounded-2xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
+                  (todayHabits || 0) === 0 && needsCheckIn
+                    ? 'bg-red-950/40 border-red-600/50'
+                    : (todayHabits || 0) >= 5
+                    ? 'bg-emerald-950/40 border-emerald-600/50'
+                    : (todayHabits || 0) >= 3
+                    ? 'bg-blue-950/40 border-blue-600/50'
+                    : 'bg-zinc-800/60 border-zinc-700/50'
+                }`}>
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 overflow-hidden rounded-b-2xl">
+                    <div 
+                      className={`h-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${
+                        (todayHabits || 0) >= 5 ? 'bg-emerald-400' : (todayHabits || 0) >= 3 ? 'bg-blue-400' : 'bg-zinc-600'
+                      }`}
+                      style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
+                    />
+                  </div>
+                  <div className={`text-4xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-2 ${
+                    (todayHabits || 0) === 0 && needsCheckIn
+                      ? 'from-red-300 to-red-500'
+                      : (todayHabits || 0) >= 5
+                      ? 'from-emerald-200 to-emerald-400'
+                      : (todayHabits || 0) >= 3
+                      ? 'from-blue-200 to-blue-400'
+                      : 'from-white to-zinc-400'
+                  }`}>{todayHabits || 0}</div>
+                  <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-black">Habits</div>
+                </div>
+                {needsCheckIn && (
+                  <div className="relative flex items-center gap-1">
+                    <div className="absolute inset-0 bg-red-500/50 rounded-full blur-xl animate-pulse" />
+                    <div className="relative w-2.5 h-2.5 rounded-full bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.8)]" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </Link>
+      </div>
 
-      {filteredApps.length === 3 && (
-        <div className="space-y-3 mb-6">
+      {/* NAVIGATION ZONE - Secondary hierarchy */}
+      <div className="space-y-3 mb-8">
+        <div className="text-[10px] text-zinc-700 uppercase tracking-widest font-black mb-4 px-1">Quick Access</div>
+        
+        {filteredApps.length === 4 && (
           <div className="grid grid-cols-2 gap-3">
-            {filteredApps.slice(0, 2).map(app => (
-              <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
-                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`} />
-                <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-lg border border-zinc-700/50 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-zinc-600/60 transition-all duration-300 group-active:scale-[0.98]">
-                  <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700`} />
+            {filteredApps.map(app => (
+              <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
+                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 group-active:opacity-30 transition-all duration-200`} />
+                <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
+                  <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500`} />
                   {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
                     <button
                       onClick={(e) => handleQuickAddClick(e, app.id)}
-                      className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 transition-colors z-10"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/60 active:scale-95 transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.3)] z-10"
                     >
-                      <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                      <Plus className="w-3.5 h-3.5 text-zinc-400" />
                     </button>
                   )}
                   <div className="relative h-full flex flex-col justify-between">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_28px_rgba(0,0,0,0.4)] transition-all duration-300 relative overflow-hidden`}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                      <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_10px_32px_rgba(0,0,0,0.5)] transition-all duration-200 relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                      <app.icon className="w-6 h-6 text-white drop-shadow-lg relative z-10" />
                     </div>
                     <div>
-                      <div className="text-base font-bold mb-0.5 text-white">{app.name}</div>
-                      <div className="text-[10px] text-zinc-600 font-medium">Quick access</div>
+                      <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
+                      <div className="text-[9px] text-zinc-600 font-semibold uppercase tracking-wider">Access</div>
                     </div>
                   </div>
                 </div>
               </Link>
             ))}
           </div>
-          {(() => {
-            const app = filteredApps[2];
-            const Icon = app.icon;
-            return (
-              <Link to={createPageUrl(app.id)} className="block group relative">
-                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`} />
-                <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-lg border border-zinc-700/50 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-zinc-600/60 transition-all duration-300 group-active:scale-[0.98]">
-                  <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700`} />
-                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                    <button
-                      onClick={(e) => handleQuickAddClick(e, app.id)}
-                      className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 transition-colors z-10"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                    </button>
-                  )}
+        )}
+
+        {/* Other layout variations unchanged but with same styling updates */}
+        {filteredApps.length === 3 && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              {filteredApps.slice(0, 2).map(app => (
+                <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
+                    {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                      <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 active:scale-95 transition-all z-10">
+                        <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                      </button>
+                    )}
+                    <div className="relative h-full flex flex-col justify-between">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                        <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
+                        <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            {(() => {
+              const app = filteredApps[2];
+              return (
+                <Link to={createPageUrl(app.id)} className="block group relative animate-in fade-in duration-200">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
+                    {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                      <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 z-10">
+                        <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                      </button>
+                    )}
+                    <div className="relative h-full flex flex-col justify-between">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                        <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
+                        <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Similar styling updates for 2 and 1 app layouts... */}
+        {filteredApps.length === 2 && (
+          <div className="grid grid-cols-2 gap-3">
+            {filteredApps.map(app => (
+              <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in duration-200">
+                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
                   <div className="relative h-full flex flex-col justify-between">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_28px_rgba(0,0,0,0.4)] transition-all duration-300 relative overflow-hidden`}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                      <Icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                      <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
                     </div>
                     <div>
-                      <div className="text-base font-bold mb-0.5 text-white">{app.name}</div>
-                      <div className="text-[10px] text-zinc-600 font-medium">Quick access</div>
+                      <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
+                      <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
                     </div>
                   </div>
                 </div>
               </Link>
-            );
-          })()}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      {filteredApps.length === 2 && (
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {filteredApps.map(app => (
-            <Link key={app.id} to={createPageUrl(app.id)} className="group relative">
-              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`} />
-              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-lg border border-zinc-700/50 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-zinc-600/60 transition-all duration-300 group-active:scale-[0.98]">
-                <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700`} />
-                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                  <button
-                    onClick={(e) => handleQuickAddClick(e, app.id)}
-                    className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 transition-colors z-10"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                  </button>
-                )}
+        {filteredApps.length === 1 && (() => {
+          const app = filteredApps[0];
+          return (
+            <Link to={createPageUrl(app.id)} className="block group relative">
+              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+              <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
                 <div className="relative h-full flex flex-col justify-between">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_28px_rgba(0,0,0,0.4)] transition-all duration-300 relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
                     <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
                   </div>
                   <div>
-                    <div className="text-base font-bold mb-0.5 text-white">{app.name}</div>
-                    <div className="text-[10px] text-zinc-600 font-medium">Quick access</div>
+                    <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
+                    <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
                   </div>
                 </div>
               </div>
             </Link>
-          ))}
-        </div>
-      )}
+          );
+        })()}
+      </div>
 
-      {filteredApps.length === 1 && (() => {
-        const app = filteredApps[0];
-        const Icon = app.icon;
-        return (
-          <div className="mb-6">
-            <Link to={createPageUrl(app.id)} className="block group relative">
-              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`} />
-              <div className="relative h-40 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-lg border border-zinc-700/50 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-zinc-600/60 transition-all duration-300 group-active:scale-[0.98]">
-                <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700`} />
-                {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                  <button
-                    onClick={(e) => handleQuickAddClick(e, app.id)}
-                    className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 transition-colors z-10"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                  </button>
-                )}
-                <div className="relative h-full flex flex-col justify-between">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_28px_rgba(0,0,0,0.4)] transition-all duration-300 relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                    <Icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
-                  </div>
-                  <div>
-                    <div className="text-base font-bold mb-0.5 text-white">{app.name}</div>
-                    <div className="text-[10px] text-zinc-600 font-medium">Quick access</div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-        );
-      })()}
-
-
-
-      {/* CEO Mode - TERTIARY (Quieter) */}
+      {/* CEO Mode - TERTIARY (Visually recessed) */}
       <Link to={createPageUrl('CEOMode')} className="block group relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-600/5 to-zinc-700/5 rounded-2xl blur-md opacity-20 group-hover:opacity-30 transition-all duration-500" />
-        <div className="relative h-24 rounded-2xl bg-gradient-to-br from-black/80 via-zinc-950/80 to-black/80 backdrop-blur-md border border-zinc-800/40 p-5 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.4)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.5)] group-hover:border-zinc-700/50 transition-all duration-300 group-active:scale-[0.99]">
-          {/* Depth light */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-zinc-700/5 to-transparent rounded-full blur-2xl" />
-
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-700/3 to-zinc-800/3 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-all duration-300" />
+        <div className="relative h-20 rounded-2xl bg-gradient-to-br from-black/70 via-zinc-950/70 to-black/70 backdrop-blur-md border border-zinc-850/40 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.6)] group-hover:border-zinc-800/50 group-active:scale-[0.995] transition-all duration-150">
           <div className="relative flex items-center justify-between h-full">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-zinc-850 via-zinc-900 to-black flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] border border-zinc-800/40 relative overflow-hidden group-hover:border-zinc-700/50 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/[0.02]" />
-                <Circle className="w-5 h-5 text-zinc-500 relative z-10" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-900 to-black flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.01)] border border-zinc-850/40 relative overflow-hidden">
+                <Circle className="w-4 h-4 text-zinc-600 relative z-10" />
               </div>
               <div>
-                <div className="text-base font-semibold text-zinc-400 mb-0.5">CEO Mode</div>
-                <div className="text-[10px] text-zinc-700 font-medium">Maximum focus</div>
+                <div className="text-sm font-bold text-zinc-500 mb-0.5">CEO Mode</div>
+                <div className="text-[9px] text-zinc-800 font-semibold uppercase tracking-wider">Restricted</div>
               </div>
             </div>
-            <div className="px-3 py-1.5 rounded-md bg-zinc-900/30 border border-zinc-800/30">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-700">
-                Restricted
+            <div className="px-3 py-1.5 rounded-lg bg-zinc-900/40 border border-zinc-850/40 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
+              <div className="text-[9px] font-black uppercase tracking-wider text-zinc-800">
+                Maximum Focus
               </div>
             </div>
           </div>
         </div>
       </Link>
 
-      {/* Slide-in Menu */}
+      {/* Slide-in Menu - Enhanced depth */}
       {showMenu && (
         <>
           <div
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60]"
+            className="fixed inset-0 bg-black/95 backdrop-blur-md z-[60] animate-in fade-in duration-200"
             onClick={() => setShowMenu(false)}
           />
-          <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 backdrop-blur-xl border-r border-zinc-700/50 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[60] p-6 overflow-y-auto">
+          <div className="fixed left-0 top-0 bottom-0 w-80 bg-gradient-to-b from-zinc-900/98 via-zinc-950/98 to-black/98 backdrop-blur-xl border-r border-zinc-700/40 shadow-[20px_0_80px_rgba(0,0,0,0.9)] z-[60] p-6 overflow-y-auto animate-in slide-in-from-left duration-300">
             <button
               onClick={() => setShowMenu(false)}
-              className="absolute top-6 right-6 p-2 hover:bg-zinc-800/50 rounded-lg transition-all duration-200"
+              className="absolute top-6 right-6 p-2 hover:bg-zinc-800/50 rounded-lg transition-all duration-150 active:scale-95"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* User Profile */}
             <div className="mb-8">
-              <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.6)] border-2 border-zinc-700/60 mb-4 mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/5 rounded-full" />
+              <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-800 flex items-center justify-center shadow-[0_12px_40px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.05)] border-2 border-zinc-700/50 mb-4 mx-auto">
                 <span className="text-3xl font-bold bg-gradient-to-br from-white to-zinc-300 bg-clip-text text-transparent">
                   {user?.full_name?.charAt(0) || '?'}
                 </span>
@@ -536,7 +522,7 @@ export default function Home() {
 
             {/* Quick Stats - Intelligent Visual State */}
             <div className="mb-6 grid grid-cols-3 gap-2">
-              {/* Rank - Contextual State */}
+              {/* Rank */}
               <div className="relative group">
                 <div className={`absolute inset-0 rounded-xl blur-lg transition-opacity duration-300 ${
                   (rankData?.rank_level || 1) >= 5 
@@ -566,7 +552,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Streak - Visual Intensity */}
+              {/* Streak */}
               <div className="relative group">
                 <div className={`absolute inset-0 rounded-xl blur-lg transition-all duration-300 ${
                   (streakData?.current_streak || 0) >= 7 
@@ -602,7 +588,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Today's Habits - Progress State */}
+              {/* Today's Habits */}
               <div className="relative group">
                 <div className={`absolute inset-0 rounded-xl blur-lg transition-opacity duration-300 ${
                   (todayHabits || 0) >= 5 
@@ -665,7 +651,7 @@ export default function Home() {
               <Link
                 to={createPageUrl('BiannualReport')}
                 onClick={() => setShowMenu(false)}
-                className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-900/70 transition-all duration-300 relative overflow-hidden"
+                className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative">
@@ -700,7 +686,7 @@ export default function Home() {
                           queryClient.invalidateQueries(['appSettings']);
                         });
                       }}
-                      className={`group w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 relative overflow-hidden ${
+                      className={`group w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-150 active:scale-[0.98] relative overflow-hidden ${
                         isActive
                           ? 'bg-zinc-900/60 border-zinc-700/50 hover:border-zinc-600/50'
                           : 'bg-zinc-950/30 border-zinc-800/30 opacity-40 hover:opacity-70'
@@ -718,7 +704,7 @@ export default function Home() {
                           {app.name}
                         </div>
                       </div>
-                      <div className={`relative w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                      <div className={`relative w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-150 ${
                         isActive ? 'border-green-500 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'border-zinc-700'
                       }`}>
                         {isActive && (
@@ -731,7 +717,7 @@ export default function Home() {
               </div>
 
               <button
-                className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/30 hover:bg-zinc-900/70 transition-all duration-300 relative overflow-hidden"
+                className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg relative">
@@ -748,7 +734,7 @@ export default function Home() {
             <div className="mt-8 pt-6 border-t border-zinc-800/50">
               <button
                 onClick={() => base44.auth.logout()}
-                className="w-full p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 hover:border-red-900/50 transition-all duration-300 font-medium"
+                className="w-full p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 hover:border-red-900/50 active:scale-[0.98] transition-all duration-150 font-medium"
               >
                 Logout
               </button>
