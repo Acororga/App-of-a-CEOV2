@@ -251,7 +251,7 @@ export default function Home() {
       </div>
 
       {/* Main content - ACTION ZONE */}
-      <div className="space-y-6 mb-12">
+      <div className="space-y-6 mb-6">
         {/* Critical Alert - Maximum visual priority */}
         {needsCheckIn && (
           <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
@@ -337,8 +337,7 @@ export default function Home() {
       </div>
 
       {/* NAVIGATION ZONE - Secondary hierarchy */}
-      <div className="space-y-3 mb-8">
-        <div className="text-[10px] text-zinc-700 uppercase tracking-widest font-black mb-4 px-1">Quick Access</div>
+          <div className="space-y-3 mb-6">
         
         {filteredApps.length === 4 && (
           <div className="grid grid-cols-2 gap-3">
@@ -361,8 +360,7 @@ export default function Home() {
                       <app.icon className="w-6 h-6 text-white drop-shadow-lg relative z-10" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
-                      <div className="text-[9px] text-zinc-600 font-semibold uppercase tracking-wider">Access</div>
+                      <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
                   </div>
                 </div>
@@ -474,19 +472,18 @@ export default function Home() {
       {/* CEO Mode - TERTIARY (Visually recessed) */}
       <Link to={createPageUrl('CEOMode')} className="block group relative">
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-700/3 to-zinc-800/3 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-all duration-300" />
-        <div className="relative h-20 rounded-2xl bg-gradient-to-br from-black/70 via-zinc-950/70 to-black/70 backdrop-blur-md border border-zinc-850/40 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.6)] group-hover:border-zinc-800/50 group-active:scale-[0.995] transition-all duration-150">
+        <div className="relative h-16 rounded-2xl bg-gradient-to-br from-black/70 via-zinc-950/70 to-black/70 backdrop-blur-md border border-zinc-850/40 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.6)] group-hover:border-zinc-800/50 group-active:scale-[0.995] transition-all duration-150">
           <div className="relative flex items-center justify-between h-full">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-900 to-black flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.01)] border border-zinc-850/40 relative overflow-hidden">
-                <Circle className="w-4 h-4 text-zinc-600 relative z-10" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-900 to-black flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.01)] border border-zinc-850/40 relative overflow-hidden">
+                <Circle className="w-3.5 h-3.5 text-zinc-600 relative z-10" />
               </div>
               <div>
-                <div className="text-sm font-bold text-zinc-500 mb-0.5">CEO Mode</div>
-                <div className="text-[9px] text-zinc-800 font-semibold uppercase tracking-wider">Restricted</div>
+                <div className="text-sm font-bold text-zinc-500">CEO Mode</div>
               </div>
             </div>
             <div className="px-3 py-1.5 rounded-lg bg-zinc-900/40 border border-zinc-850/40 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-              <div className="text-[9px] font-black uppercase tracking-wider text-zinc-800">
+              <div className="text-[9px] font-black uppercase tracking-wider text-zinc-700">
                 Maximum Focus
               </div>
             </div>

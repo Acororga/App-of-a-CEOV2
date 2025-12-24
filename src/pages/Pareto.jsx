@@ -105,16 +105,11 @@ export default function Pareto() {
         </Link>
 
         <div className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent tracking-tight">
-                FOCUS NOW
-              </h1>
-              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">20% that drives 80%</div>
-            </div>
-            <div className="text-sm font-black text-zinc-800 tracking-widest">80/20</div>
-          </div>
-        </div>
+                <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent tracking-tight">
+                  TO-DO
+                </h1>
+                <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">20% that drives 80%</div>
+              </div>
 
         {/* Add Task Form */}
         {showAddForm && (

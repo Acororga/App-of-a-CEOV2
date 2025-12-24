@@ -1,15 +1,69 @@
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, isSameMonth, isSameDay, isToday, isFuture, isPast, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState('monthly');
+  const [view, setView] = useState('yearly');
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return events?.filter(e => e.event_date === dateStr) || [];
+  };
+
+  const renderYearlyView = () => {
+    const year = currentDate.getFullYear();
+    const months = [];
+    
+    for (let month = 0; month < 12; month++) {
+      const monthDate = new Date(year, month, 1);
+      const monthStart = startOfMonth(monthDate);
+      const monthEnd = endOfMonth(monthStart);
+      const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+      const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+      
+      const days = [];
+      let day = startDate;
+      
+      while (day <= endDate) {
+        const dayEvents = getEventsForDate(day);
+        const isCurrentMonth = isSameMonth(day, monthStart);
+        const isCurrentDay = isToday(day);
+        
+        days.push(
+          <div
+            key={day.toString()}
+            className={`aspect-square flex items-center justify-center text-[10px] font-medium ${
+              !isCurrentMonth ? 'text-zinc-800' : isCurrentDay ? 'bg-blue-500 text-white rounded-full font-bold' : dayEvents.length > 0 ? 'text-blue-400 font-bold' : 'text-zinc-500'
+            }`}
+          >
+            {format(day, 'd')}
+          </div>
+        );
+        day = addDays(day, 1);
+      }
+      
+      months.push(
+        <button
+          key={month} 
+          onClick={() => {
+            setCurrentDate(monthDate);
+            setView('monthly');
+          }}
+          className="p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150"
+        >
+          <div className="text-center font-bold mb-2 text-zinc-400 text-sm">
+            {format(monthDate, 'MMM')}
+          </div>
+          <div className="grid grid-cols-7 gap-0.5">
+            {days}
+          </div>
+        </button>
+      );
+    }
+    
+    return <div className="grid grid-cols-3 gap-3">{months}</div>;
   };
 
   const renderMonthlyView = () => {
@@ -199,51 +253,52 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
     if (view === 'daily') return format(currentDate, 'MMMM d, yyyy');
   };
 
+  const handleBackNavigation = () => {
+    if (view === 'daily') {
+      setView('monthly');
+    } else if (view === 'monthly') {
+      setView('yearly');
+    }
+  };
+
   return (
     <div>
-      {/* View Controls */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-2">
-          {['monthly', 'daily'].map(v => (
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          {(view === 'monthly' || view === 'daily') && (
             <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-150 ${
-                view === v
-                  ? 'bg-white text-black shadow-lg'
-                  : 'bg-zinc-900/60 text-zinc-500 border border-zinc-800/50 hover:text-zinc-300 active:scale-95'
-              }`}
+              onClick={handleBackNavigation}
+              className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
             >
-              {v}
+              <ArrowLeft className="w-4 h-4" />
             </button>
-          ))}
+          )}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={navigatePrev}
+              className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <h2 className="text-lg font-bold min-w-48 text-center">{getHeaderText()}</h2>
+            <button
+              onClick={navigateNext}
+              className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
         <Button
           onClick={onNewEvent}
-          className="bg-white text-black hover:bg-zinc-200 h-10 px-5 text-sm font-bold rounded-xl shadow-[0_8px_24px_rgba(255,255,255,0.12)] active:scale-95 transition-all duration-150"
+          className="bg-white text-black hover:bg-zinc-200 h-9 px-4 text-sm font-bold rounded-xl shadow-[0_8px_24px_rgba(255,255,255,0.12)] active:scale-95 transition-all duration-150"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4 mr-1.5" />
           New
         </Button>
       </div>
 
-      {/* Navigation */}
-      <div className="flex items-center justify-center gap-4 mb-6">
-        <button
-          onClick={navigatePrev}
-          className="p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <h2 className="text-xl font-bold min-w-64 text-center">{getHeaderText()}</h2>
-        <button
-          onClick={navigateNext}
-          className="p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
-
+      {view === 'yearly' && renderYearlyView()}
       {view === 'monthly' && renderMonthlyView()}
       {view === 'daily' && renderDailyView()}
     </div>

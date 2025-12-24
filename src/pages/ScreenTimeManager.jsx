@@ -51,7 +51,7 @@ export default function ScreenTimeManager() {
   const isModerateUsage = (todayScreenTime || 0) > 120 && (todayScreenTime || 0) <= 240;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 pb-6 relative overflow-hidden">
       {/* Noise texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -60,35 +60,37 @@ export default function ScreenTimeManager() {
       }} />
 
       <div className="max-w-2xl mx-auto relative">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
-        </Link>
 
-        <div className="mb-10">
-          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Control Interface
+        <div className="flex items-center justify-between mb-6">
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors duration-150 active:scale-95">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+          
+          <h1 className="text-2xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
+            Screen Time
           </h1>
-          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Screen Time & Focus</div>
+          
+          <div className="w-20" />
         </div>
 
         {/* FOCUS MODE - PRIMARY ACTION */}
-        <div className="mb-12 relative animate-in fade-in zoom-in-95 duration-300">
+        <div className="mb-6 relative animate-in fade-in zoom-in-95 duration-300">
           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-red-500/40 rounded-[32px] blur-3xl opacity-80" />
           <Link
             to={createPageUrl('FocusMode')}
             className="relative block group"
           >
-            <div className="p-10 rounded-[32px] bg-gradient-to-br from-orange-950/95 via-red-950/95 to-orange-950/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_28px_112px_rgba(249,115,22,0.7)] active:scale-[0.98] transition-all duration-200">
+            <div className="p-7 rounded-[32px] bg-gradient-to-br from-orange-950/95 via-red-950/95 to-orange-950/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_28px_112px_rgba(249,115,22,0.7)] active:scale-[0.98] transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] text-orange-400/60 font-black mb-3 uppercase tracking-widest">Start Session</div>
-                  <div className="text-3xl font-black mb-2 text-orange-100 tracking-tight">Focus Mode</div>
-                  <div className="text-xs text-orange-400/60 font-medium">Deep work environment</div>
+                  <div className="text-[10px] text-orange-400/60 font-black mb-2 uppercase tracking-widest">Start Session</div>
+                  <div className="text-2xl font-black mb-1 text-orange-100 tracking-tight">Focus Mode</div>
+                  <div className="text-[11px] text-orange-400/60 font-medium">Deep work environment</div>
                 </div>
-                <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-[0_16px_48px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden">
+                <div className="w-16 h-16 rounded-[20px] bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-[0_16px_48px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/30" />
-                  <Zap className="w-10 h-10 text-white relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
+                  <Zap className="w-8 h-8 text-white relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
                 </div>
               </div>
             </div>
@@ -96,7 +98,7 @@ export default function ScreenTimeManager() {
         </div>
 
         {/* STATS CLUSTER - Grouped visual unit */}
-        <div className="mb-10 relative animate-in fade-in zoom-in-95 duration-300 delay-75">
+        <div className="mb-5 relative animate-in fade-in zoom-in-95 duration-300 delay-75">
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-700/10 to-zinc-600/10 rounded-[28px] blur-2xl" />
           <div className="relative p-6 rounded-[28px] bg-zinc-900/70 backdrop-blur-xl border border-zinc-800/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.02)]">
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -169,7 +171,7 @@ export default function ScreenTimeManager() {
         </div>
 
         {/* SECONDARY ACTIONS - Recessed */}
-        <div className="space-y-3 mb-10">
+        <div className="space-y-3 mb-4">
           <Link
             to={createPageUrl('ScreenTime')}
             className="group relative block"

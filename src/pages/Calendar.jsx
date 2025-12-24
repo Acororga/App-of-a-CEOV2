@@ -44,16 +44,17 @@ export default function Calendar() {
       }} />
 
       <div className="max-w-4xl mx-auto relative">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
-        </Link>
-
-        <div className="mb-10">
-          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
+        <div className="flex items-center justify-between mb-6">
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors duration-150 active:scale-95">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+          
+          <h1 className="text-2xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
             Schedule
           </h1>
-          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Planning Support</div>
+          
+          <div className="w-20" />
         </div>
 
         <CalendarView
