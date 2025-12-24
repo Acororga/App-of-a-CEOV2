@@ -234,27 +234,28 @@ export default function Dashboard() {
           </h1>
         </div>
 
-        <div className="space-y-6">
-          {/* Yesterday's Habits - Validation Box */}
+        <div className="space-y-4">
+          {/* Yesterday's Habits - Critical Alert */}
           {yesterdayVisible && needsYesterdayValidation && yesterdayHabits && yesterdayHabits.length > 0 && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10 rounded-2xl blur-xl" />
-              <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-zinc-300">YESTERDAY'S HABITS</h2>
-                  <Link 
-                    to={createPageUrl('Habits')}
-                    className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-5 h-5 text-zinc-400" />
-                  </Link>
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-600/30 to-orange-600/30 rounded-2xl blur-2xl animate-pulse" />
+              <div className="relative p-5 rounded-2xl bg-gradient-to-br from-red-950/40 via-zinc-900 to-orange-950/40 border-2 border-red-600/30 shadow-[0_0_40px_rgba(220,38,38,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-orange-500 rounded-full shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+                    <h2 className="text-base font-black tracking-tight text-red-100">PENDING VALIDATION</h2>
+                  </div>
+                  <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-red-950/50 border border-red-800/50">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                    <span className="text-[10px] font-bold text-red-300 uppercase tracking-wider">Action Required</span>
+                  </div>
                 </div>
-                <div className="space-y-2 mb-4">
+                <div className="space-y-1.5 mb-3">
                   {yesterdayHabits.map(habit => (
                     <button
                       key={habit.id}
                       onClick={() => toggleYesterdayHabit(habit.id)}
-                      className="w-full flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                      className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 hover:border-red-700/50 hover:bg-zinc-850/60 transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
                     >
                       {tempYesterdayStates[habit.id] ? (
                         <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -350,11 +351,13 @@ export default function Dashboard() {
                   </Link>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {todayHabits && todayHabits.length > 0 ? (
                   todayHabits.map((habit, idx) => {
                     const isCompleted = todayCompletionMap[habit.id];
-                    const completionRate = todayHabits.length > 0 ? (Object.values(todayCompletionMap).filter(Boolean).length / todayHabits.length) : 0;
+                    const totalCompleted = Object.values(todayCompletionMap).filter(Boolean).length;
+                    const completionRate = todayHabits.length > 0 ? (totalCompleted / todayHabits.length) : 0;
+                    const isFirstUncompleted = !isCompleted && Object.keys(todayCompletionMap).slice(0, idx).every(key => todayCompletionMap[key]);
                     
                     return (
                       <button
@@ -363,16 +366,22 @@ export default function Dashboard() {
                           habitId: habit.id, 
                           completed: !todayCompletionMap[habit.id] 
                         })}
-                        className="w-full group relative"
+                        className={`w-full group relative transition-all duration-300 ${isFirstUncompleted ? 'scale-[1.01]' : ''}`}
                       >
+                        {/* Next action highlight */}
+                        {isFirstUncompleted && (
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-sm" />
+                        )}
                         {/* Completion glow */}
                         {isCompleted && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg blur-sm" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-green-500/5 rounded-lg" />
                         )}
                         <div className={`relative flex items-center gap-3 p-3 rounded-lg border transition-all ${
                           isCompleted 
-                            ? 'bg-green-950/20 border-green-800/30' 
-                            : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'
+                            ? 'bg-emerald-950/20 border-emerald-800/40 shadow-[inset_0_1px_0_rgba(16,185,129,0.1)]' 
+                            : isFirstUncompleted
+                            ? 'bg-zinc-900/70 border-blue-700/40 shadow-[0_4px_16px_rgba(59,130,246,0.1),inset_0_1px_0_rgba(255,255,255,0.03)]'
+                            : 'bg-zinc-900/40 border-zinc-800/50 hover:border-zinc-700/60 hover:bg-zinc-900/60'
                         }`}>
                           {isCompleted ? (
                             <div className="relative">
@@ -406,12 +415,18 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* PARETO PRIORITY TASKS */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 rounded-2xl blur-xl" />
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50">
+          {/* PARETO PRIORITY ACTIONS - ELEVATED */}
+          <div className="relative mt-6">
+            <div className="absolute -inset-1 bg-gradient-to-br from-indigo-600/20 via-purple-600/20 to-pink-600/20 rounded-2xl blur-2xl" />
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-850 to-zinc-900 border border-zinc-700/60 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-zinc-300">TOP 5 PRIORITY ACTIONS</h2>
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-8 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 rounded-full shadow-[0_0_16px_rgba(139,92,246,0.4)]" />
+                  <div>
+                    <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">CRITICAL ACTIONS</h2>
+                    <p className="text-[9px] text-zinc-600 font-medium tracking-wide">80/20 PRIORITY</p>
+                  </div>
+                </div>
                 <div className="flex items-center gap-3">
                   <Link 
                     to={createPageUrl('Pareto')}
@@ -427,31 +442,64 @@ export default function Dashboard() {
                   </Link>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {topTasks && topTasks.length > 0 ? (
                   topTasks.map((task, index) => {
-                    const importanceBadge = {
-                      crucial: { text: 'CRUCIAL', color: 'text-red-400 bg-red-950/50' },
-                      essential: { text: 'ESSENTIAL', color: 'text-yellow-400 bg-yellow-950/50' },
-                      average: { text: 'AVERAGE', color: 'text-blue-400 bg-blue-950/50' },
-                      low: { text: 'LOW', color: 'text-zinc-400 bg-zinc-900/50' }
+                    const importanceConfig = {
+                      crucial: { 
+                        badge: 'CRITICAL', 
+                        color: 'text-red-300 bg-red-950/60 border-red-800/60',
+                        glow: 'from-red-600/20 to-orange-600/20',
+                        bar: 'from-red-500 to-orange-500',
+                        scale: index === 0 ? 1.02 : 1
+                      },
+                      essential: { 
+                        badge: 'HIGH', 
+                        color: 'text-yellow-300 bg-yellow-950/60 border-yellow-800/60',
+                        glow: 'from-yellow-600/15 to-amber-600/15',
+                        bar: 'from-yellow-500 to-amber-500',
+                        scale: 1
+                      },
+                      average: { 
+                        badge: 'MEDIUM', 
+                        color: 'text-blue-300 bg-blue-950/60 border-blue-800/60',
+                        glow: 'from-blue-600/10 to-cyan-600/10',
+                        bar: 'from-blue-500 to-cyan-500',
+                        scale: 1
+                      },
+                      low: { 
+                        badge: 'LOW', 
+                        color: 'text-zinc-500 bg-zinc-900/60 border-zinc-800/60',
+                        glow: 'from-zinc-600/5 to-zinc-500/5',
+                        bar: 'from-zinc-500 to-zinc-600',
+                        scale: 0.98
+                      }
                     };
+
+                    const config = importanceConfig[task.importance_level];
 
                     return (
                       <button
                         key={task.id}
                         onClick={() => completeTaskMutation.mutate(task.id)}
-                        className="w-full group text-left"
+                        className="w-full group text-left relative"
+                        style={{ transform: `scale(${config.scale})` }}
                       >
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-green-500/50 transition-all">
-                          <span className="text-sm font-bold text-zinc-600">{index + 1}</span>
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-white mb-1">{task.title}</div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${importanceBadge[task.importance_level].color}`}>
-                                {importanceBadge[task.importance_level].text}
+                        {index === 0 && (
+                          <div className={`absolute -inset-0.5 bg-gradient-to-r ${config.glow} rounded-xl blur-md`} />
+                        )}
+                        <div className={`relative flex items-center gap-3 p-3 rounded-lg bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-600/50 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.03)] overflow-hidden`}>
+                          <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${config.bar}`} />
+                          <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${config.bar} flex items-center justify-center font-black text-white text-sm shadow-lg`}>
+                            {index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-semibold text-white mb-1 truncate">{task.title}</div>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${config.color}`}>
+                                {config.badge}
                               </span>
-                              <span className="text-[10px] text-zinc-600">
+                              <span className="text-[9px] text-zinc-600 font-medium">
                                 {task.time_duration.replace(/_/g, ' ')}
                               </span>
                             </div>

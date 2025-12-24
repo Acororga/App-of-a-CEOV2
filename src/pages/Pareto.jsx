@@ -162,22 +162,30 @@ export default function Pareto() {
       ref={containerRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6"
+      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-4 pt-6"
     >
-      <div className="max-w-6xl mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-6 transition-colors">
+      <div className="max-w-4xl mx-auto">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">Home</span>
         </Link>
 
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-              Pareto Priority Matrix
-            </h1>
-            <div className="text-xs text-zinc-600 font-bold tracking-wider">80/20</div>
+        <div className="mb-3 relative">
+          <div className="absolute -inset-x-4 -inset-y-2 bg-gradient-to-r from-indigo-600/5 via-purple-600/5 to-pink-600/5 blur-2xl" />
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-10 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 rounded-full shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
+              <div>
+                <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
+                  PRIORITY MATRIX
+                </h1>
+                <p className="text-[10px] text-zinc-600 font-bold tracking-wider">80/20 PRINCIPLE</p>
+              </div>
+            </div>
+            <div className="px-3 py-1.5 rounded-lg bg-zinc-900/80 border border-zinc-700/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+              <div className="text-xs text-zinc-400 font-bold tracking-wider">PARETO</div>
+            </div>
           </div>
-          <p className="text-xs text-zinc-600 mb-4">Focus on the 20% that drives 80% of results</p>
 
           {/* Tabs */}
           <div className="flex gap-2">
@@ -286,23 +294,26 @@ export default function Pareto() {
 
 
 
-            {/* Top 5 Tasks List - DECISIVE */}
+            {/* Top 5 Tasks List - COMMAND CENTER */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 rounded-2xl blur-3xl" />
-              <div className="relative">
+              <div className="absolute -inset-1 bg-gradient-to-br from-red-600/15 via-orange-600/15 to-yellow-600/15 rounded-2xl blur-2xl" />
+              <div className="relative p-5 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-850 to-zinc-900 border border-zinc-700/60 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h2 className="text-xl font-black tracking-tight bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent">
-                      FOCUS NOW
-                    </h2>
-                    <p className="text-[10px] text-zinc-600 font-medium mt-0.5">Your highest leverage actions</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-8 bg-gradient-to-b from-red-500 via-orange-500 to-yellow-500 rounded-full shadow-[0_0_16px_rgba(239,68,68,0.5)]" />
+                    <div>
+                      <h2 className="text-xl font-black tracking-tight bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent">
+                        EXECUTE NOW
+                      </h2>
+                      <p className="text-[9px] text-zinc-600 font-bold tracking-wider">HIGHEST IMPACT FIRST</p>
+                    </div>
                   </div>
                   {!showAddForm && (
                     <Button 
                       data-pareto-add
                       onClick={() => setShowAddForm(true)}
                       size="sm"
-                      className="bg-white text-black hover:bg-zinc-200 h-8 text-xs"
+                      className="bg-white text-black hover:bg-zinc-200 h-8 text-xs font-bold shadow-lg"
                     >
                       <Plus className="w-3 h-3 mr-1.5" />
                       Add
@@ -310,49 +321,85 @@ export default function Pareto() {
                   )}
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {topTasks.length > 0 ? (
                     topTasks.map((task, index) => {
-                      const importanceColors = {
-                        crucial: { glow: 'from-red-600/20 to-orange-600/20', border: 'border-red-500/40', accent: 'from-red-500 to-orange-500' },
-                        essential: { glow: 'from-yellow-600/20 to-amber-600/20', border: 'border-yellow-500/40', accent: 'from-yellow-500 to-amber-500' },
-                        average: { glow: 'from-blue-600/15 to-cyan-600/15', border: 'border-blue-500/30', accent: 'from-blue-500 to-cyan-500' },
-                        low: { glow: 'from-zinc-600/10 to-zinc-500/10', border: 'border-zinc-700/30', accent: 'from-zinc-500 to-zinc-600' }
+                      const importanceConfig = {
+                        crucial: { 
+                          glow: 'from-red-600/25 to-orange-600/25', 
+                          accent: 'from-red-500 to-orange-500',
+                          badge: 'CRITICAL',
+                          badgeColor: 'text-red-300 bg-red-950/70 border-red-800/60',
+                          scale: index === 0 ? 1.03 : index === 1 ? 1.01 : 1,
+                          priority: index === 0 ? 'NEXT' : null
+                        },
+                        essential: { 
+                          glow: 'from-yellow-600/20 to-amber-600/20', 
+                          accent: 'from-yellow-500 to-amber-500',
+                          badge: 'HIGH',
+                          badgeColor: 'text-yellow-300 bg-yellow-950/70 border-yellow-800/60',
+                          scale: 1,
+                          priority: null
+                        },
+                        average: { 
+                          glow: 'from-blue-600/15 to-cyan-600/15', 
+                          accent: 'from-blue-500 to-cyan-500',
+                          badge: 'MEDIUM',
+                          badgeColor: 'text-blue-300 bg-blue-950/70 border-blue-800/60',
+                          scale: 0.99,
+                          priority: null
+                        },
+                        low: { 
+                          glow: 'from-zinc-600/10 to-zinc-500/10', 
+                          accent: 'from-zinc-500 to-zinc-600',
+                          badge: 'LOW',
+                          badgeColor: 'text-zinc-500 bg-zinc-900/70 border-zinc-800/60',
+                          scale: 0.97,
+                          priority: null
+                        }
                       };
 
-                      const importanceBadge = {
-                        crucial: { text: 'CRITICAL', color: 'text-red-400 bg-red-950/80 border-red-800/50' },
-                        essential: { text: 'HIGH', color: 'text-yellow-400 bg-yellow-950/80 border-yellow-800/50' },
-                        average: { text: 'MEDIUM', color: 'text-blue-400 bg-blue-950/80 border-blue-800/50' },
-                        low: { text: 'LOW', color: 'text-zinc-500 bg-zinc-900/80 border-zinc-800/50' }
-                      };
-
-                      const colors = importanceColors[task.importance_level];
-                      const badge = importanceBadge[task.importance_level];
+                      const config = importanceConfig[task.importance_level];
 
                       return (
-                        <div key={task.id} className="group relative">
-                          <div className={`absolute inset-0 bg-gradient-to-r ${colors.glow} rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                        <div 
+                          key={task.id} 
+                          className="group relative"
+                          style={{ transform: `scale(${config.scale})`, transformOrigin: 'left center' }}
+                        >
+                          {config.priority && (
+                            <div className={`absolute -inset-0.5 bg-gradient-to-r ${config.glow} rounded-xl blur-md animate-pulse`} />
+                          )}
                           <div 
                             onClick={() => deleteTaskMutation.mutate(task.id)}
-                            className={`relative flex items-center gap-3 p-3 rounded-xl bg-zinc-900/80 backdrop-blur-sm border ${colors.border} hover:border-red-500/60 transition-all cursor-pointer group-hover:bg-zinc-850/80`}
+                            className={`relative flex items-center gap-3 p-3 rounded-xl bg-zinc-900/70 backdrop-blur-sm border border-zinc-800/60 hover:border-red-600/50 transition-all cursor-pointer hover:bg-zinc-850/70 hover:shadow-[0_4px_16px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.03)] overflow-hidden`}
                           >
-                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${colors.accent} flex items-center justify-center font-black text-white text-sm shadow-lg`}>
+                            <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b ${config.accent}`} />
+                            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${config.accent} flex items-center justify-center font-black text-white text-base shadow-lg`}>
                               {index + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-semibold text-white mb-1 truncate">{task.title}</div>
+                              <div className="flex items-center gap-2 mb-1">
+                                {config.priority && (
+                                  <div className="px-1.5 py-0.5 rounded bg-red-500/20 border border-red-500/40">
+                                    <span className="text-[8px] font-black text-red-300 tracking-wider">NEXT</span>
+                                  </div>
+                                )}
+                                <div className="text-sm font-semibold text-white truncate">{task.title}</div>
+                              </div>
                               <div className="flex items-center gap-2">
-                                <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${badge.color}`}>
-                                  {badge.text}
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold ${config.badgeColor}`}>
+                                  {config.badge}
                                 </span>
                                 <span className="text-[9px] text-zinc-600 font-medium">
                                   {task.time_duration.replace(/_/g, ' ')}
                                 </span>
                               </div>
                             </div>
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Trash2 className="w-4 h-4 text-red-500" />
+                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="px-2 py-1 rounded bg-red-950/50 border border-red-800/50">
+                                <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                              </div>
                             </div>
                           </div>
                         </div>
