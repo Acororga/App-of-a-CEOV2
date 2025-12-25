@@ -4,8 +4,17 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
+import { LanguageProvider } from './components/LanguageProvider';
 
 export default function Layout({ children, currentPageName }) {
+  return (
+    <LanguageProvider>
+      <LayoutContent children={children} currentPageName={currentPageName} />
+    </LanguageProvider>
+  );
+}
+
+function LayoutContent({ children, currentPageName }) {
   const [showMenu, setShowMenu] = useState(false);
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
@@ -168,4 +177,5 @@ export default function Layout({ children, currentPageName }) {
       {children}
     </div>
   );
-}
+  }
+  }
