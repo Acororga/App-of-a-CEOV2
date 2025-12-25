@@ -177,5 +177,4 @@ function LayoutContent({ children, currentPageName }) {
       {children}
     </div>
   );
-  }
-  }
+}
