@@ -13,8 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Pareto() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -101,14 +103,14 @@ export default function Pareto() {
       <div className="max-w-2xl mx-auto relative">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
+          <span className="text-sm font-medium">{t('home')}</span>
         </Link>
 
         <div className="mb-10">
                 <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent tracking-tight">
-                  TO-DO
+                  {t('todo')}
                 </h1>
-                <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">20% that drives 80%</div>
+                <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">{t('twentyEightyRule')}</div>
               </div>
 
         {/* Add Task Form */}
@@ -117,7 +119,7 @@ export default function Pareto() {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-[24px] blur-2xl" />
             <form onSubmit={handleSubmit} className="relative p-6 rounded-[24px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)]">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-black tracking-tight">New Task</h3>
+                <h3 className="text-base font-black tracking-tight">{t('newTask')}</h3>
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
@@ -132,7 +134,7 @@ export default function Pareto() {
                   <Input
                     value={newTask.title}
                     onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                    placeholder="What needs to be done?"
+                    placeholder={t('whatNeedsToBeDone')}
                     className="bg-zinc-900/80 border-zinc-700/50 h-12 text-base placeholder:text-zinc-600 focus:border-white/30 transition-all"
                     autoFocus
                   />
@@ -148,10 +150,10 @@ export default function Pareto() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="crucial">🔴 Crucial</SelectItem>
-                        <SelectItem value="essential">🟡 Essential</SelectItem>
-                        <SelectItem value="average">🔵 Average</SelectItem>
-                        <SelectItem value="low">⚪ Low</SelectItem>
+                        <SelectItem value="crucial">🔴 {t('crucial')}</SelectItem>
+                        <SelectItem value="essential">🟡 {t('essential')}</SelectItem>
+                        <SelectItem value="average">🔵 {t('average')}</SelectItem>
+                        <SelectItem value="low">⚪ {t('low')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -165,12 +167,12 @@ export default function Pareto() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="less_than_30min">&lt;30min</SelectItem>
-                        <SelectItem value="1_hour">1 hour</SelectItem>
-                        <SelectItem value="2_hours">2 hours</SelectItem>
-                        <SelectItem value="half_day">Half day</SelectItem>
-                        <SelectItem value="1_day">1 day</SelectItem>
-                        <SelectItem value="several_days">Multi-day</SelectItem>
+                        <SelectItem value="less_than_30min">{t('lessThan30min')}</SelectItem>
+                        <SelectItem value="1_hour">{t('oneHour')}</SelectItem>
+                        <SelectItem value="2_hours">{t('twoHours')}</SelectItem>
+                        <SelectItem value="half_day">{t('halfDay')}</SelectItem>
+                        <SelectItem value="1_day">{t('oneDay')}</SelectItem>
+                        <SelectItem value="several_days">{t('multiDay')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -181,7 +183,7 @@ export default function Pareto() {
                   disabled={!newTask.title.trim() || createTaskMutation.isPending}
                   className="w-full bg-white text-black hover:bg-zinc-200 h-12 text-base font-bold rounded-xl active:scale-[0.98] transition-all duration-150"
                 >
-                  {createTaskMutation.isPending ? 'Adding...' : 'Add Task'}
+                  {createTaskMutation.isPending ? `${t('add')}...` : t('addTask')}
                 </Button>
               </div>
             </form>
@@ -192,23 +194,23 @@ export default function Pareto() {
         {topThree.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-1 h-8 bg-gradient-to-b from-red-500 to-orange-500 rounded-full shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
-                <h2 className="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-                  DO THIS NOW
-                </h2>
-              </div>
-              {!showAddForm && (
-                <Button 
-                  data-pareto-add
-                  onClick={() => setShowAddForm(true)}
-                  size="sm"
-                  className="bg-white text-black hover:bg-zinc-200 h-9 px-4 text-xs font-bold rounded-xl active:scale-95 transition-all duration-150"
-                >
-                  <Plus className="w-3.5 h-3.5 mr-1.5" />
-                  Add
-                </Button>
-              )}
+            <div className="flex items-center gap-3">
+              <div className="w-1 h-8 bg-gradient-to-b from-red-500 to-orange-500 rounded-full shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+              <h2 className="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
+                {t('doThisNow')}
+              </h2>
+            </div>
+            {!showAddForm && (
+              <Button 
+                data-pareto-add
+                onClick={() => setShowAddForm(true)}
+                size="sm"
+                className="bg-white text-black hover:bg-zinc-200 h-9 px-4 text-xs font-bold rounded-xl active:scale-95 transition-all duration-150"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1.5" />
+                {t('add')}
+              </Button>
+            )}
             </div>
             
             <div className="space-y-4">
@@ -279,7 +281,7 @@ export default function Pareto() {
           <div className="relative">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-0.5 h-6 bg-zinc-800 rounded-full" />
-              <h2 className="text-sm font-bold text-zinc-600 tracking-tight uppercase">Other Tasks</h2>
+              <h2 className="text-sm font-bold text-zinc-600 tracking-tight uppercase">{t('otherTasks')}</h2>
             </div>
             
             <div className="space-y-2">
@@ -330,14 +332,14 @@ export default function Pareto() {
             <div className="absolute inset-0 bg-gradient-to-r from-zinc-700/10 to-zinc-600/10 rounded-[24px] blur-2xl" />
             <div className="relative text-center py-24 px-6 rounded-[24px] bg-zinc-900/50 border border-zinc-800/50">
               <Zap className="w-16 h-16 mx-auto mb-6 text-zinc-700" />
-              <div className="text-lg font-bold text-zinc-500 mb-2">No priorities set</div>
-              <div className="text-sm text-zinc-700 mb-6">Focus on what truly matters</div>
+              <div className="text-lg font-bold text-zinc-500 mb-2">{t('noPrioritiesSet')}</div>
+              <div className="text-sm text-zinc-700 mb-6">{t('focusOnWhatMatters')}</div>
               <Button 
                 onClick={() => setShowAddForm(true)}
                 className="bg-white text-black hover:bg-zinc-200 h-12 px-6 text-sm font-bold rounded-xl active:scale-95 transition-all duration-150"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add First Task
+                {t('addFirstTask')}
               </Button>
             </div>
           </div>
@@ -351,7 +353,7 @@ export default function Pareto() {
               className="px-5 py-3 rounded-xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 text-sm font-semibold text-zinc-400 hover:text-zinc-300 active:scale-95 transition-all duration-150"
             >
               <Plus className="w-4 h-4 inline mr-2" />
-              Add Task
+              {t('addTask')}
             </button>
           </div>
         )}

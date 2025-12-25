@@ -9,8 +9,10 @@ import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
 import HabitModal from '../components/habits/HabitModal';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Habits() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('grid');
@@ -183,11 +185,11 @@ export default function Habits() {
         <div className="flex items-center justify-between mb-6">
           <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors duration-150 active:scale-95">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Home</span>
+            <span className="text-sm font-medium">{t('home')}</span>
           </Link>
-          
+
           <h1 className="text-2xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Habits
+            {t('habits')}
           </h1>
           
           <div className="w-20" />
@@ -202,7 +204,7 @@ export default function Habits() {
                 className="px-4 py-2 rounded-xl bg-white text-black font-bold text-sm hover:bg-zinc-200 active:scale-95 transition-all duration-150 shadow-lg flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Habit
+                {t('habit')}
               </button>
             </div>
 
@@ -213,7 +215,7 @@ export default function Habits() {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-zinc-800/50">
-                      <th className="text-left py-3 px-4 text-zinc-600 font-black uppercase tracking-wider">Habit</th>
+                      <th className="text-left py-3 px-4 text-zinc-600 font-black uppercase tracking-wider">{t('habit')}</th>
                       {[1,2,3,4,5,6,0].map(i => (
                         <th key={i} className="text-center py-3 px-2 text-zinc-600 font-black uppercase tracking-wider w-10">
                           {getDayAbbrev(i === 0 ? 6 : i - 1)}
@@ -271,9 +273,9 @@ export default function Habits() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <div className="text-[10px] text-zinc-600 font-semibold uppercase tracking-wider mb-1">
-                      {format(weekStart, 'MMM d')} - {format(addDays(weekStart, 6), 'MMM d')}
-                    </div>
-                    <h2 className="text-lg font-black text-zinc-200 tracking-tight">WEEK SCORE</h2>
+                        {format(weekStart, 'MMM d')} - {format(addDays(weekStart, 6), 'MMM d')}
+                      </div>
+                      <h2 className="text-lg font-black text-zinc-200 tracking-tight">{t('weekScore')}</h2>
                   </div>
                   <div className="text-right">
                     <div className={`text-5xl font-black leading-none mb-1 ${
@@ -283,7 +285,7 @@ export default function Habits() {
                     }`}>
                       {weeklyScore?.success_percentage || 0}
                     </div>
-                    <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Percent</div>
+                    <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">{t('percent')}</div>
                   </div>
                 </div>
                 
@@ -305,7 +307,7 @@ export default function Habits() {
                     {weeklyScore?.total_completed || 0} / {weeklyScore?.total_expected || 0}
                   </span>
                   <span className="text-[10px] text-zinc-600 font-medium">
-                    Target {weeklyScore?.threshold_percentage || 90}%
+                    {t('target')} {weeklyScore?.threshold_percentage || 90}%
                   </span>
                 </div>
               </div>
@@ -317,7 +319,7 @@ export default function Habits() {
                 onClick={() => setActiveTab('goals')}
                 className="text-xs text-zinc-700 hover:text-zinc-500 font-medium transition-colors"
               >
-                Swipe right for Goals & Contract →
+                {t('swipeRightForGoals')}
               </button>
             </div>
           </div>
@@ -330,7 +332,7 @@ export default function Habits() {
                 className="px-4 py-2 rounded-xl bg-white text-black font-bold text-sm hover:bg-zinc-200 active:scale-95 transition-all duration-150 shadow-lg flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Goal
+                {t('goal')}
               </button>
             </div>
 
@@ -404,7 +406,7 @@ export default function Habits() {
                       type="text"
                       value={contractForm.reward_text}
                       onChange={(e) => setContractForm(prev => ({ ...prev, reward_text: e.target.value }))}
-                      placeholder="Reward if successful"
+                      placeholder={t('rewardIfSuccessful')}
                       className="w-full p-3 rounded-xl bg-black/40 border border-zinc-800/50 text-white text-sm placeholder:text-zinc-700 focus:border-green-500/50 focus:outline-none transition-all"
                     />
 
@@ -412,13 +414,13 @@ export default function Habits() {
                       type="text"
                       value={contractForm.sanction_text}
                       onChange={(e) => setContractForm(prev => ({ ...prev, sanction_text: e.target.value }))}
-                      placeholder="Sanction if you fail"
+                      placeholder={t('sanctionIfFail')}
                       className="w-full p-3 rounded-xl bg-black/40 border border-zinc-800/50 text-white text-sm placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none transition-all"
                     />
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Threshold</span>
+                        <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">{t('threshold')}</span>
                         <span className="text-xl font-black text-white">
                           {contractForm.success_threshold_percentage}%
                         </span>
@@ -443,24 +445,24 @@ export default function Habits() {
                         disabled={updateContractMutation.isPending}
                         className="w-full bg-white text-black hover:bg-zinc-200 h-10 text-xs font-bold rounded-xl active:scale-[0.98] transition-all duration-150"
                       >
-                        {updateContractMutation.isPending ? 'Committing...' : 'Commit Contract'}
+                        {updateContractMutation.isPending ? t('committing') : t('commitContract')}
                       </Button>
                     )}
                   </div>
                 ) : (
                   <div className="space-y-2">
                     <div className="p-4 rounded-xl bg-green-950/40 border-2 border-green-800/50 shadow-[inset_0_2px_6px_rgba(0,0,0,0.3)]">
-                      <div className="text-[9px] text-green-500 font-black mb-1 uppercase tracking-wider">✓ Reward</div>
+                      <div className="text-[9px] text-green-500 font-black mb-1 uppercase tracking-wider">✓ {t('reward')}</div>
                       <div className="text-xs text-green-200 font-medium">{weeklyContract.reward_text}</div>
                     </div>
-                    
+
                     <div className="p-4 rounded-xl bg-red-950/40 border-2 border-red-800/50 shadow-[inset_0_2px_6px_rgba(0,0,0,0.3)]">
-                      <div className="text-[9px] text-red-500 font-black mb-1 uppercase tracking-wider">⚠ Sanction</div>
+                      <div className="text-[9px] text-red-500 font-black mb-1 uppercase tracking-wider">⚠ {t('sanction')}</div>
                       <div className="text-xs text-red-200 font-medium">{weeklyContract.sanction_text}</div>
                     </div>
 
                     <div className="text-[10px] text-zinc-700 text-center font-medium pt-1">
-                      Locked until next week
+                      {t('lockedUntilNextWeek')}
                     </div>
                   </div>
                 )}
@@ -473,7 +475,7 @@ export default function Habits() {
                 onClick={() => setActiveTab('grid')}
                 className="text-xs text-zinc-700 hover:text-zinc-500 font-medium transition-colors"
               >
-                ← Swipe left for Habits Grid
+                {t('swipeLeftForHabits')}
               </button>
             </div>
           </div>

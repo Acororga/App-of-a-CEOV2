@@ -149,7 +149,32 @@ const translations = {
     halfDay: "Half day",
     oneDay: "1 day",
     multiDay: "Multi-day",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "Not scheduled",
+
+    // CEO Mode
+    onceActivatedCannotExit: "Once activated, exit is impossible until timer expires.",
+
+    // Biannual Report
+    monthReport: "6-Month Report",
+    viewProgress: "View your progress",
+
+    // Leaderboard
+    leaderboard: "Leaderboard",
+    global: "Global",
+    friends: "Friends",
+    addFriends: "Add Friends",
+
+    // Week days full
+    mondayFull: "Monday",
+    tuesdayFull: "Tuesday",
+    wednesdayFull: "Wednesday",
+    thursdayFull: "Thursday",
+    fridayFull: "Friday",
+    saturdayFull: "Saturday",
+    sundayFull: "Sunday",
+    },
   
   fr: {
     // Navigation & Common
@@ -299,7 +324,32 @@ const translations = {
     halfDay: "Demi-journée",
     oneDay: "1 jour",
     multiDay: "Plusieurs jours",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "Non programmé",
+
+    // CEO Mode
+    onceActivatedCannotExit: "Une fois activé, la sortie est impossible jusqu'à l'expiration du minuteur.",
+
+    // Biannual Report
+    monthReport: "Rapport semestriel",
+    viewProgress: "Voir votre progression",
+
+    // Leaderboard
+    leaderboard: "Classement",
+    global: "Global",
+    friends: "Amis",
+    addFriends: "Ajouter des amis",
+
+    // Week days full
+    mondayFull: "Lundi",
+    tuesdayFull: "Mardi",
+    wednesdayFull: "Mercredi",
+    thursdayFull: "Jeudi",
+    fridayFull: "Vendredi",
+    saturdayFull: "Samedi",
+    sundayFull: "Dimanche",
+    },
   
   zh: {
     // Navigation & Common
@@ -449,7 +499,32 @@ const translations = {
     halfDay: "半天",
     oneDay: "1天",
     multiDay: "多天",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "未安排",
+
+    // CEO Mode
+    onceActivatedCannotExit: "一旦激活，在计时器到期之前无法退出。",
+
+    // Biannual Report
+    monthReport: "六个月报告",
+    viewProgress: "查看您的进度",
+
+    // Leaderboard
+    leaderboard: "排行榜",
+    global: "全球",
+    friends: "朋友",
+    addFriends: "添加朋友",
+
+    // Week days full
+    mondayFull: "星期一",
+    tuesdayFull: "星期二",
+    wednesdayFull: "星期三",
+    thursdayFull: "星期四",
+    fridayFull: "星期五",
+    saturdayFull: "星期六",
+    sundayFull: "星期日",
+    },
   
   hi: {
     // Navigation & Common
@@ -599,7 +674,32 @@ const translations = {
     halfDay: "आधा दिन",
     oneDay: "1 दिन",
     multiDay: "कई दिन",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "अनुसूचित नहीं",
+
+    // CEO Mode
+    onceActivatedCannotExit: "एक बार सक्रिय होने पर, टाइमर समाप्त होने तक बाहर निकलना असंभव है।",
+
+    // Biannual Report
+    monthReport: "6 महीने की रिपोर्ट",
+    viewProgress: "अपनी प्रगति देखें",
+
+    // Leaderboard
+    leaderboard: "लीडरबोर्ड",
+    global: "वैश्विक",
+    friends: "मित्र",
+    addFriends: "मित्र जोड़ें",
+
+    // Week days full
+    mondayFull: "सोमवार",
+    tuesdayFull: "मंगलवार",
+    wednesdayFull: "बुधवार",
+    thursdayFull: "गुरुवार",
+    fridayFull: "शुक्रवार",
+    saturdayFull: "शनिवार",
+    sundayFull: "रविवार",
+    },
   
   es: {
     // Navigation & Common
@@ -749,7 +849,32 @@ const translations = {
     halfDay: "Media jornada",
     oneDay: "1 día",
     multiDay: "Varios días",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "No programado",
+
+    // CEO Mode
+    onceActivatedCannotExit: "Una vez activado, es imposible salir hasta que expire el temporizador.",
+
+    // Biannual Report
+    monthReport: "Informe de 6 meses",
+    viewProgress: "Ver tu progreso",
+
+    // Leaderboard
+    leaderboard: "Clasificación",
+    global: "Global",
+    friends: "Amigos",
+    addFriends: "Añadir amigos",
+
+    // Week days full
+    mondayFull: "Lunes",
+    tuesdayFull: "Martes",
+    wednesdayFull: "Miércoles",
+    thursdayFull: "Jueves",
+    fridayFull: "Viernes",
+    saturdayFull: "Sábado",
+    sundayFull: "Domingo",
+    },
   
   ar: {
     // Navigation & Common
@@ -899,7 +1024,32 @@ const translations = {
     halfDay: "نصف يوم",
     oneDay: "يوم واحد",
     multiDay: "عدة أيام",
-  },
+
+    // Pareto/Priority
+    nothingScheduled: "غير مجدول",
+
+    // CEO Mode
+    onceActivatedCannotExit: "بمجرد التفعيل، يستحيل الخروج حتى انتهاء المؤقت.",
+
+    // Biannual Report
+    monthReport: "تقرير 6 أشهر",
+    viewProgress: "عرض تقدمك",
+
+    // Leaderboard
+    leaderboard: "لوحة المتصدرين",
+    global: "عالمي",
+    friends: "الأصدقاء",
+    addFriends: "إضافة أصدقاء",
+
+    // Week days full
+    mondayFull: "الإثنين",
+    tuesdayFull: "الثلاثاء",
+    wednesdayFull: "الأربعاء",
+    thursdayFull: "الخميس",
+    fridayFull: "الجمعة",
+    saturdayFull: "السبت",
+    sundayFull: "الأحد",
+    },
 };
 
 const LanguageContext = createContext();
