@@ -14,6 +14,9 @@ export default function SettingsLanguage() {
     { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
     { code: 'es', name: 'Spanish', nativeName: 'Español' },
     { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+    { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
+    { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+    { code: 'pt', name: 'Portuguese', nativeName: 'Português' },
   ];
 
   return (
