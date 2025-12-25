@@ -8,6 +8,7 @@ import { ArrowLeft, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { differenceInSeconds, parseISO } from 'date-fns';
 import { useLanguage } from '../components/LanguageProvider';
+import CooldownScreen from '../components/blocking/CooldownScreen';
 
 export default function FocusMode() {
   const { t } = useLanguage();
@@ -99,16 +100,28 @@ export default function FocusMode() {
       queryClient.invalidateQueries(['winStreak']);
       queryClient.invalidateQueries(['activeSessions']);
       setActiveSession(null);
+      setShowCooldown(false);
       navigate(createPageUrl('Home'));
     }
   });
+
+  const [showCooldown, setShowCooldown] = useState(false);
 
   const handleExit = () => {
     setShowExitConfirm(true);
   };
 
   const confirmExit = () => {
+    setShowExitConfirm(false);
+    setShowCooldown(true);
+  };
+
+  const handleCooldownComplete = () => {
     exitMutation.mutate(activeSession.id);
+  };
+
+  const handleCooldownCancel = () => {
+    setShowCooldown(false);
   };
 
   const formatTime = (seconds) => {
@@ -143,6 +156,16 @@ export default function FocusMode() {
 
   // Active session state
   if (activeSession && timeRemaining > 0) {
+    if (showCooldown) {
+      return (
+        <CooldownScreen
+          onComplete={handleCooldownComplete}
+          onCancel={handleCooldownCancel}
+          message="Exiting Focus Mode..."
+        />
+      );
+    }
+
     return (
       <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white flex flex-col items-center justify-center p-6">
         {showExitConfirm ? (

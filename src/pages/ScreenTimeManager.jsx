@@ -186,8 +186,8 @@ export default function ScreenTimeManager() {
                   <Ban className="w-6 h-6 text-white relative z-10" />
                 </div>
                 <div>
-                  <div className="font-bold text-sm text-white mb-0.5">{t('blockApps')}</div>
-                  <div className="text-xs text-zinc-600 font-medium">{(blockedApps?.length || 0) + (blockedSites?.length || 0)}</div>
+                  <div className="font-bold text-sm text-white mb-0.5">{t('blockApps')} & Sites</div>
+                  <div className="text-xs text-zinc-600 font-medium">{(blockedApps?.length || 0) + (blockedSites?.length || 0)} {t('blocked')}</div>
                 </div>
               </div>
               <div className="text-xs text-zinc-700">→</div>
@@ -205,6 +205,23 @@ export default function ScreenTimeManager() {
                 <div>
                   <div className="font-bold text-sm text-white mb-0.5">{t('leaderboard')}</div>
                   <div className="text-xs text-zinc-600 font-medium">{t('globalRankings')}</div>
+                </div>
+              </div>
+              <div className="text-xs text-zinc-700">→</div>
+            </div>
+          </Link>
+
+          <Link to={createPageUrl('BlockingDemo')} className="group relative block">
+            <div className="absolute inset-0 bg-purple-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
+            <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
+                  <Shield className="w-6 h-6 text-white relative z-10" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-white mb-0.5">Blocking Preview</div>
+                  <div className="text-xs text-zinc-600 font-medium">See how blocking works</div>
                 </div>
               </div>
               <div className="text-xs text-zinc-700">→</div>

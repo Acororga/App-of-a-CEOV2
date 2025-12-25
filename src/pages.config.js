@@ -12,14 +12,15 @@ import Rank from './pages/Rank';
 import Rewards from './pages/Rewards';
 import ScreenTime from './pages/ScreenTime';
 import ScreenTimeManager from './pages/ScreenTimeManager';
-import WinStreak from './pages/WinStreak';
 import Settings from './pages/Settings';
-import SettingsLanguage from './pages/SettingsLanguage';
-import SettingsPrivacy from './pages/SettingsPrivacy';
-import SettingsPermissions from './pages/SettingsPermissions';
-import SettingsTerms from './pages/SettingsTerms';
-import SettingsDeletion from './pages/SettingsDeletion';
 import SettingsContact from './pages/SettingsContact';
+import SettingsDeletion from './pages/SettingsDeletion';
+import SettingsLanguage from './pages/SettingsLanguage';
+import SettingsPermissions from './pages/SettingsPermissions';
+import SettingsPrivacy from './pages/SettingsPrivacy';
+import SettingsTerms from './pages/SettingsTerms';
+import WinStreak from './pages/WinStreak';
+import BlockingDemo from './pages/BlockingDemo';
 import __Layout from './Layout.jsx';
 
 
@@ -38,14 +39,15 @@ export const PAGES = {
     "Rewards": Rewards,
     "ScreenTime": ScreenTime,
     "ScreenTimeManager": ScreenTimeManager,
-    "WinStreak": WinStreak,
     "Settings": Settings,
-    "SettingsLanguage": SettingsLanguage,
-    "SettingsPrivacy": SettingsPrivacy,
-    "SettingsPermissions": SettingsPermissions,
-    "SettingsTerms": SettingsTerms,
-    "SettingsDeletion": SettingsDeletion,
     "SettingsContact": SettingsContact,
+    "SettingsDeletion": SettingsDeletion,
+    "SettingsLanguage": SettingsLanguage,
+    "SettingsPermissions": SettingsPermissions,
+    "SettingsPrivacy": SettingsPrivacy,
+    "SettingsTerms": SettingsTerms,
+    "WinStreak": WinStreak,
+    "BlockingDemo": BlockingDemo,
 }
 
 export const pagesConfig = {
