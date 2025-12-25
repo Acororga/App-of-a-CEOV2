@@ -516,7 +516,9 @@ export default function Home() {
                       <div className="relative h-full flex flex-col justify-between">
                         <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
                           <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                          <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                          <div className="relative z-10">
+                            {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
+                          </div>
                         </div>
                         <div className="text-sm font-bold text-white">{app.name}</div>
                       </div>
@@ -545,7 +547,9 @@ export default function Home() {
                     <div className="relative h-full flex flex-col justify-between">
                       <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
                         <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                        <div className="relative z-10">
+                          {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
+                        </div>
                       </div>
                       <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
@@ -572,7 +576,9 @@ export default function Home() {
                 <div className="relative h-full flex flex-col justify-between">
                   <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
                     <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                    <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                    <div className="relative z-10">
+                      {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
+                    </div>
                   </div>
                   <div className="text-sm font-bold text-white">{app.name}</div>
                 </div>
