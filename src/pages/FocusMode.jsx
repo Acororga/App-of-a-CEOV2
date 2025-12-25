@@ -7,8 +7,10 @@ import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { differenceInSeconds, parseISO } from 'date-fns';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function FocusMode() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [duration, setDuration] = useState(45);

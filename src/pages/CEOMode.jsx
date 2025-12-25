@@ -6,8 +6,10 @@ import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Circle, Phone, MessageSquare, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { differenceInMinutes, addMinutes, parseISO } from 'date-fns';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function CEOMode() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [duration, setDuration] = useState(() => {
@@ -190,7 +192,7 @@ export default function CEOMode() {
       <div className="max-w-md mx-auto relative">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-8 transition-colors duration-150 active:scale-95">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
+          <span className="text-sm font-medium">{t('home')}</span>
         </Link>
 
         <div className="text-center mb-16">
@@ -199,16 +201,16 @@ export default function CEOMode() {
             <Circle className="relative w-20 h-20 text-zinc-700" strokeWidth={1} />
           </div>
           <h1 className="text-5xl font-black mb-4 tracking-tighter bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            CEO MODE
+            {t('ceoMode')}
           </h1>
           <p className="text-zinc-600 font-medium text-sm max-w-xs mx-auto leading-relaxed">
-            Maximum focus. Zero distractions. No escape until complete.
+            {t('maximumFocus')}. {t('onceActivatedCannotExit')}
           </p>
         </div>
 
         {/* Duration Selection - Clear, decisive */}
         <div className="mb-12">
-          <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">Duration</div>
+          <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">{t('duration')}</div>
           <div className="grid grid-cols-3 gap-3">
             {[30, 60, 90, 120, 180, 240].map(mins => (
               <button
@@ -228,13 +230,13 @@ export default function CEOMode() {
 
         <div className="mb-12">
           <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">
-            Approved Apps (3)
+            {t('approvedApps')} (3)
           </div>
           <div className="space-y-2">
             {[
-              { icon: Phone, label: 'Phone' },
-              { icon: MessageSquare, label: 'Messages' },
-              { icon: CalendarIcon, label: 'Calendar' }
+              { icon: Phone, label: t('phone') },
+              { icon: MessageSquare, label: t('messages') },
+              { icon: CalendarIcon, label: t('calendar') }
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
                 <Icon className="w-5 h-5 text-zinc-600" strokeWidth={2} />
@@ -246,7 +248,7 @@ export default function CEOMode() {
 
         <div className="bg-zinc-950/80 border border-zinc-900/60 rounded-2xl p-5 mb-10 shadow-[inset_0_2px_12px_rgba(0,0,0,0.6)]">
           <div className="text-xs text-zinc-600 font-medium leading-relaxed">
-            <span className="font-black text-zinc-500">⚠</span> Once activated, exit is impossible until timer expires.
+            <span className="font-black text-zinc-500">⚠</span> {t('onceActivatedCannotExit')}
           </div>
         </div>
 
@@ -255,7 +257,7 @@ export default function CEOMode() {
           disabled={startMutation.isPending}
           className="w-full bg-white text-black hover:bg-zinc-200 h-14 text-base font-black rounded-2xl shadow-[0_12px_48px_rgba(255,255,255,0.12)] hover:shadow-[0_16px_64px_rgba(255,255,255,0.18)] active:scale-[0.97] transition-all duration-150"
         >
-          {startMutation.isPending ? 'ACTIVATING...' : `ACTIVATE ${formatTime(duration)}`}
+          {startMutation.isPending ? t('activating') : `${t('activate')} ${formatTime(duration)}`}
         </Button>
       </div>
     </div>

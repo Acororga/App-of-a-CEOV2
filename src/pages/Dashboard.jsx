@@ -11,8 +11,10 @@ import { base44 } from '@/api/base44Client';
 import { format, subDays } from 'date-fns';
 import { ArrowLeft, CheckCircle2, Circle, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [yesterdayVisible, setYesterdayVisible] = useState(true);
   const [tempYesterdayStates, setTempYesterdayStates] = useState({});
@@ -185,14 +187,14 @@ export default function Dashboard() {
       <div className="max-w-2xl mx-auto">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
+          <span className="text-sm font-medium">{t('home')}</span>
         </Link>
 
         <div className="mb-10 relative">
           <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Control Center
+            {t('controlCenter')}
           </h1>
-          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Today's Focus</div>
+          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">{t('todaysFocus')}</div>
         </div>
 
         {/* ACTION ZONE - Layered visual hierarchy */}

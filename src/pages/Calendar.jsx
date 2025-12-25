@@ -6,8 +6,10 @@ import { base44 } from '@/api/base44Client';
 import { ArrowLeft } from 'lucide-react';
 import EventModal from '../components/calendar/EventModal';
 import CalendarView from '../components/calendar/CalendarView';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Calendar() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [showEventModal, setShowEventModal] = useState(false);
   const [prefilledEvent, setPrefilledEvent] = useState(null);
@@ -47,11 +49,11 @@ export default function Calendar() {
         <div className="flex items-center justify-between mb-6">
           <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors duration-150 active:scale-95">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Home</span>
+            <span className="text-sm font-medium">{t('home')}</span>
           </Link>
           
           <h1 className="text-2xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Schedule
+            {t('schedule')}
           </h1>
           
           <div className="w-20" />

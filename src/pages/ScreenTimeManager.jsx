@@ -5,8 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getTodayScreenTime, getAverageScreenTime, getOrCreateWinStreak } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Target, Flame, Trophy, Crown, Ban, Zap } from 'lucide-react';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function ScreenTimeManager() {
+  const { t } = useLanguage();
   const { data: todayScreenTime } = useQuery({
     queryKey: ['todayScreenTime'],
     queryFn: getTodayScreenTime
@@ -64,11 +66,11 @@ export default function ScreenTimeManager() {
         <div className="flex items-center justify-between mb-6">
           <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors duration-150 active:scale-95">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Home</span>
+            <span className="text-sm font-medium">{t('home')}</span>
           </Link>
           
           <h1 className="text-2xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Screen Time
+            {t('screenTime')}
           </h1>
           
           <div className="w-20" />
@@ -84,9 +86,9 @@ export default function ScreenTimeManager() {
             <div className="p-7 rounded-[32px] bg-gradient-to-br from-orange-950/95 via-red-950/95 to-orange-950/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_28px_112px_rgba(249,115,22,0.7)] active:scale-[0.98] transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] text-orange-400/60 font-black mb-2 uppercase tracking-widest">Start Session</div>
-                  <div className="text-2xl font-black mb-1 text-orange-100 tracking-tight">Focus Mode</div>
-                  <div className="text-[11px] text-orange-400/60 font-medium">Deep work environment</div>
+                  <div className="text-[10px] text-orange-400/60 font-black mb-2 uppercase tracking-widest">{t('startSession')}</div>
+                  <div className="text-2xl font-black mb-1 text-orange-100 tracking-tight">{t('focusMode')}</div>
+                  <div className="text-[11px] text-orange-400/60 font-medium">{t('deepWorkEnvironment')}</div>
                 </div>
                 <div className="w-16 h-16 rounded-[20px] bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-[0_16px_48px_rgba(249,115,22,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/30" />
@@ -114,7 +116,7 @@ export default function ScreenTimeManager() {
                   isModerateUsage ? 'bg-yellow-950/50 border-yellow-700/50' :
                   'bg-red-950/50 border-red-700/50'
                 }`}>
-                  <div className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-2">Today</div>
+                  <div className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-2">{t('today')}</div>
                   <div className={`text-4xl font-black mb-1 ${
                     isGoodUsage ? 'text-emerald-300' :
                     isModerateUsage ? 'text-yellow-300' :
@@ -130,7 +132,7 @@ export default function ScreenTimeManager() {
               <div className="relative">
                 <div className="absolute inset-0 bg-zinc-600/15 rounded-2xl blur-xl opacity-50" />
                 <div className="relative p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800/50 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]">
-                  <div className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-2">7-Day Avg</div>
+                  <div className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-2">{t('avgUsage').split(' ')[0]}</div>
                   <div className="text-4xl font-black text-zinc-400 mb-1">
                     {Math.round(avgScreenTime || 0)}
                   </div>
@@ -147,7 +149,7 @@ export default function ScreenTimeManager() {
                   <div className="flex items-center gap-3">
                     <Crown className="w-5 h-5 text-yellow-500/80" />
                     <div>
-                      <div className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Rank</div>
+                      <div className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">{t('rank')}</div>
                       <div className="text-sm font-bold text-yellow-400">{rankData?.rank_name || 'Panda'}</div>
                     </div>
                   </div>
@@ -160,8 +162,8 @@ export default function ScreenTimeManager() {
                   <div className="flex items-center gap-3">
                     <Flame className="w-5 h-5 text-orange-500/80" />
                     <div>
-                      <div className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">Streak</div>
-                      <div className="text-sm font-bold text-orange-400">{streak?.current_streak || 0} days</div>
+                      <div className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider">{t('streak')}</div>
+                      <div className="text-sm font-bold text-orange-400">{streak?.current_streak || 0}</div>
                     </div>
                   </div>
                 </div>
@@ -184,8 +186,8 @@ export default function ScreenTimeManager() {
                   <Ban className="w-6 h-6 text-white relative z-10" />
                 </div>
                 <div>
-                  <div className="font-bold text-sm text-white mb-0.5">Block Apps</div>
-                  <div className="text-xs text-zinc-600 font-medium">{(blockedApps?.length || 0) + (blockedSites?.length || 0)} blocked</div>
+                  <div className="font-bold text-sm text-white mb-0.5">{t('blockApps')}</div>
+                  <div className="text-xs text-zinc-600 font-medium">{(blockedApps?.length || 0) + (blockedSites?.length || 0)}</div>
                 </div>
               </div>
               <div className="text-xs text-zinc-700">→</div>
@@ -201,8 +203,8 @@ export default function ScreenTimeManager() {
                   <Trophy className="w-6 h-6 text-white relative z-10" />
                 </div>
                 <div>
-                  <div className="font-bold text-sm text-white mb-0.5">Leaderboard</div>
-                  <div className="text-xs text-zinc-600 font-medium">Global rankings</div>
+                  <div className="font-bold text-sm text-white mb-0.5">{t('leaderboard')}</div>
+                  <div className="text-xs text-zinc-600 font-medium">{t('global')}</div>
                 </div>
               </div>
               <div className="text-xs text-zinc-700">→</div>
