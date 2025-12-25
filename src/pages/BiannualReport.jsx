@@ -1,25 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, TrendingUp, Target, Clock, Smartphone, CheckSquare, ListTodo } from 'lucide-react';
-import { format, subDays, differenceInDays } from 'date-fns';
+import { ArrowLeft, ChevronRight, ChevronLeft } from 'lucide-react';
+import { format, subDays, differenceInDays, startOfMonth, endOfMonth, eachMonthOfInterval } from 'date-fns';
 
 export default function BiannualReport() {
+  const [currentPage, setCurrentPage] = useState(0);
+
   const { data: reportData } = useQuery({
     queryKey: ['biannualReport'],
     queryFn: async () => {
       const user = await base44.auth.me();
       const sixMonthsAgo = subDays(new Date(), 180);
+      const threeMonthsAgo = subDays(new Date(), 90);
       
       // Focus sessions
       const focusSessions = await base44.entities.FocusSession.filter({
         created_by: user.email
       });
       const recentSessions = focusSessions.filter(s => new Date(s.start_time) >= sixMonthsAgo);
+      const firstHalf = focusSessions.filter(s => new Date(s.start_time) >= sixMonthsAgo && new Date(s.start_time) < threeMonthsAgo);
+      const secondHalf = focusSessions.filter(s => new Date(s.start_time) >= threeMonthsAgo);
       const completedSessions = recentSessions.filter(s => s.completed);
       const totalFocusHours = completedSessions.reduce((sum, s) => sum + (s.duration_minutes / 60), 0);
+      const firstHalfHours = firstHalf.filter(s => s.completed).reduce((sum, s) => sum + (s.duration_minutes / 60), 0);
+      const secondHalfHours = secondHalf.filter(s => s.completed).reduce((sum, s) => sum + (s.duration_minutes / 60), 0);
+      const focusTrend = firstHalfHours > 0 ? ((secondHalfHours - firstHalfHours) / firstHalfHours) * 100 : 0;
       
       // CEO mode sessions
       const ceoSessions = await base44.entities.CEOModeSession.filter({
@@ -48,6 +56,8 @@ export default function BiannualReport() {
         created_by: user.email
       });
       const recentCompletions = completions.filter(c => new Date(c.date) >= sixMonthsAgo && c.completed);
+      const firstHalfCompletions = completions.filter(c => new Date(c.date) >= sixMonthsAgo && new Date(c.date) < threeMonthsAgo && c.completed);
+      const secondHalfCompletions = completions.filter(c => new Date(c.date) >= threeMonthsAgo && c.completed);
       
       // Habit success by category
       const objectives = await base44.entities.Objective.filter({ 
@@ -71,12 +81,20 @@ export default function BiannualReport() {
       const expectedCompletions = habits.length * daysActive;
       const habitSuccessRate = expectedCompletions > 0 ? (recentCompletions.length / expectedCompletions) * 100 : 0;
       
+      const firstHalfExpected = habits.length * 90;
+      const secondHalfExpected = habits.length * 90;
+      const firstHalfRate = firstHalfExpected > 0 ? (firstHalfCompletions.length / firstHalfExpected) * 100 : 0;
+      const secondHalfRate = secondHalfExpected > 0 ? (secondHalfCompletions.length / secondHalfExpected) * 100 : 0;
+      const habitTrend = firstHalfRate > 0 ? secondHalfRate - firstHalfRate : 0;
+      
       // Pareto tasks
       const paretoTasks = await base44.entities.ParetoTask.filter({
         created_by: user.email,
         completed: true
       });
       const recentTasks = paretoTasks.filter(t => t.completed_date && new Date(t.completed_date) >= sixMonthsAgo);
+      const firstHalfTasks = paretoTasks.filter(t => t.completed_date && new Date(t.completed_date) >= sixMonthsAgo && new Date(t.completed_date) < threeMonthsAgo);
+      const secondHalfTasks = paretoTasks.filter(t => t.completed_date && new Date(t.completed_date) >= threeMonthsAgo);
       
       // Productivity Index from Pareto Matrix
       const crucialShort = recentTasks.filter(t => t.importance_level === 'crucial' && (t.time_duration === 'less_than_30min' || t.time_duration === '1_hour')).length;
@@ -88,6 +106,8 @@ export default function BiannualReport() {
       const totalTasks = recentTasks.length;
       const highImpactScore = totalTasks > 0 ? ((crucialShort + crucialLong + essentialShort + essentialLong) / totalTasks) * 100 : 0;
       const quickWinsScore = totalTasks > 0 ? (crucialShort / totalTasks) * 100 : 0;
+      
+      const paretoTaskTrend = firstHalfTasks.length > 0 ? ((secondHalfTasks.length - firstHalfTasks.length) / firstHalfTasks.length) * 100 : 0;
       
       // Screen Time
       const screenLogs = await base44.entities.ScreenTimeLog.filter({
@@ -110,6 +130,35 @@ export default function BiannualReport() {
         if (!categoryBreakdown[category]) categoryBreakdown[category] = 0;
         categoryBreakdown[category] += log.duration_seconds / 3600;
       });
+      
+      // Generate dominant insight
+      const insights = [];
+      
+      if (habitTrend < -15) {
+        insights.push({ priority: 1, text: `Habit consistency declined ${Math.abs(Math.round(habitTrend))}%. Recommit to one core habit this week.` });
+      } else if (habitTrend > 15) {
+        insights.push({ priority: 2, text: `Habit execution improved ${Math.round(habitTrend)}%. Maintain this momentum.` });
+      }
+      
+      if (highImpactScore < 50) {
+        insights.push({ priority: 1, text: `Only ${Math.round(highImpactScore)}% of tasks are high-impact. Eliminate low-priority work.` });
+      } else if (highImpactScore > 80) {
+        insights.push({ priority: 2, text: `${Math.round(highImpactScore)}% high-impact focus maintained. You're optimizing well.` });
+      }
+      
+      if (focusTrend < -20) {
+        insights.push({ priority: 1, text: `Deep work decreased ${Math.abs(Math.round(focusTrend))}%. Schedule protected focus blocks.` });
+      }
+      
+      if (avgDailyMinutes > 180 && categoryBreakdown['Social Media'] > totalScreenSeconds / 7200) {
+        insights.push({ priority: 1, text: `Screen time high at ${Math.round(avgDailyMinutes)}m/day. Block social media during work hours.` });
+      }
+      
+      if (paretoTaskTrend > 30) {
+        insights.push({ priority: 2, text: `Task velocity increased ${Math.round(paretoTaskTrend)}%. Keep shipping.` });
+      }
+      
+      const dominantInsight = insights.sort((a, b) => a.priority - b.priority)[0]?.text || 'Continue building consistency across all areas.';
       
       return {
         totalFocusHours: Math.round(totalFocusHours),
@@ -136,76 +185,60 @@ export default function BiannualReport() {
           essentialShort,
           essentialLong,
           lowPriority
-        }
+        },
+        focusTrend: Math.round(focusTrend),
+        habitTrend: Math.round(habitTrend),
+        paretoTaskTrend: Math.round(paretoTaskTrend),
+        dominantInsight,
+        totalCompletedSessions: completedSessions.length,
+        totalCEOSessions: completedCEO.length
       };
     }
   });
 
-  // Calculate strengths and improvements
-  const getStrengthsAndImprovements = () => {
-    if (!reportData) return { strengths: [], improvements: [] };
-    
-    const strengths = [];
-    const improvements = [];
-    
-    if (reportData.currentStreak >= 30) {
-      strengths.push({ icon: '🔥', text: `${reportData.currentStreak}-day win streak` });
-    } else if (reportData.currentStreak < 7) {
-      improvements.push({ icon: '🔥', text: 'Build a longer win streak' });
+  const pages = [
+    {
+      id: 'executive',
+      title: 'Executive Snapshot',
+      subtitle: 'Last 6 months'
+    },
+    {
+      id: 'trends',
+      title: 'Trend Evolution',
+      subtitle: 'First 90d vs. Last 90d'
+    },
+    {
+      id: 'habits',
+      title: 'Habits & Consistency',
+      subtitle: 'Performance by objective'
+    },
+    {
+      id: 'focus',
+      title: 'Focus & Discipline',
+      subtitle: 'Deep work patterns'
+    },
+    {
+      id: 'pareto',
+      title: 'Pareto & Priorities',
+      subtitle: 'Task impact distribution'
+    },
+    {
+      id: 'insight',
+      title: 'Key Insight',
+      subtitle: 'What matters most'
     }
+  ];
+
+  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, pages.length - 1));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 0));
+
+  const renderPage = () => {
+    const page = pages[currentPage];
     
-    if (reportData.productivityIndex >= 70) {
-      strengths.push({ icon: '🎯', text: `${reportData.productivityIndex}% high-impact tasks` });
-    } else {
-      improvements.push({ icon: '🎯', text: 'Focus on high-impact activities' });
-    }
-    
-    if (reportData.habitSuccessRate >= 80) {
-      strengths.push({ icon: '✅', text: `${reportData.habitSuccessRate}% habit success` });
-    } else {
-      improvements.push({ icon: '✅', text: 'Improve habit consistency' });
-    }
-    
-    if (reportData.avgDailyScreenMinutes <= 120) {
-      strengths.push({ icon: '📱', text: 'Excellent screen time control' });
-    } else if (reportData.avgDailyScreenMinutes >= 240) {
-      improvements.push({ icon: '📱', text: 'Reduce daily screen time' });
-    }
-    
-    return { strengths, improvements };
-  };
-
-  const { strengths, improvements } = getStrengthsAndImprovements();
-
-  const getLifetimeComparison = () => {
-    const hours = reportData?.lifetimeScreenHours || 0;
-    if (hours >= 20000) return 'learn 3 new languages fluently';
-    if (hours >= 10000) return 'become an expert in any field';
-    if (hours >= 5000) return 'learn 2 new languages';
-    if (hours >= 2000) return 'master a new skill';
-    return 'develop a meaningful hobby';
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6">
-      <div className="max-w-2xl mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
-        </Link>
-
-        <div className="text-center mb-12">
-          <div className="text-6xl mb-4">📊</div>
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Your 6-Month Report
-          </h1>
-          <p className="text-zinc-500">Data-driven insights on your productivity</p>
-        </div>
-
-        {/* Rank & Level */}
-        <div className="mb-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-600/20 to-yellow-600/20 rounded-3xl blur-2xl" />
-          <div className="relative p-8 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700/50 text-center">
+    if (page.id === 'executive') {
+      return (
+        <div className="space-y-12">
+          <div className="text-center">
             <div className="text-7xl mb-4">
               {reportData?.rankName === 'Bronze' && '🥉'}
               {reportData?.rankName === 'Silver' && '🥈'}
@@ -215,187 +248,235 @@ export default function BiannualReport() {
               {reportData?.rankName === 'Batman' && '🦇'}
               {reportData?.rankName === 'CEO' && '👑'}
             </div>
-            <div className="text-3xl font-bold mb-2">{reportData?.rankName || 'Bronze'}</div>
-            <div className="text-sm text-zinc-500">Current Rank</div>
+            <div className="text-4xl font-bold mb-2">{reportData?.rankName || 'Bronze'}</div>
+            <div className="text-sm text-zinc-600">Current Rank</div>
           </div>
-        </div>
 
-        {/* Screen Time Analysis */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Smartphone className="w-5 h-5 text-blue-500" />
-            <h2 className="text-xl font-bold">Screen Time Analysis</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <div className="text-2xl font-bold">{reportData?.avgDailyScreenMinutes || 0}m</div>
-                  <div className="text-sm text-zinc-500">Daily Average</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold">{reportData?.avgWeeklyScreenHours || 0}h</div>
-                  <div className="text-sm text-zinc-500">Weekly Average</div>
-                </div>
-              </div>
-              
-              <div className="p-4 rounded-xl bg-red-950/30 border border-red-900/50">
-                <div className="text-sm text-red-300 mb-2">
-                  ⚠️ <span className="font-semibold">Lifetime Projection</span>
-                </div>
-                <div className="text-xs text-red-400">
-                  At this rate, you'll spend <span className="font-bold">{reportData?.lifetimeScreenYears || 0} years</span> ({reportData?.lifetimeScreenHours?.toLocaleString() || 0} hours) on your phone. With that time, you could {getLifetimeComparison()}.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Productivity Index */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <ListTodo className="w-5 h-5 text-purple-500" />
-            <h2 className="text-xl font-bold">Productivity Index</h2>
-          </div>
-          
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-            <div className="text-center mb-6">
-              <div className="text-5xl font-bold mb-2">{reportData?.productivityIndex || 0}%</div>
-              <div className="text-sm text-zinc-500">High-Impact Focus</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-1">{reportData?.totalFocusHours || 0}h</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Deep Work</div>
             </div>
             
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Crucial & Quick</span>
-                <span className="font-semibold">{reportData?.paretoBreakdown?.crucialShort || 0} tasks</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Crucial & Long</span>
-                <span className="font-semibold">{reportData?.paretoBreakdown?.crucialLong || 0} tasks</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Essential & Quick</span>
-                <span className="font-semibold">{reportData?.paretoBreakdown?.essentialShort || 0} tasks</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Essential & Long</span>
-                <span className="font-semibold">{reportData?.paretoBreakdown?.essentialLong || 0} tasks</span>
-              </div>
-              <div className="flex justify-between text-zinc-600">
-                <span>Low Priority</span>
-                <span>{reportData?.paretoBreakdown?.lowPriority || 0} tasks</span>
-              </div>
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-1">{reportData?.habitSuccessRate || 0}%</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Habits</div>
             </div>
             
-            <div className="mt-4 p-3 rounded-lg bg-zinc-900/50">
-              <div className="text-xs text-zinc-500">
-                🎯 Quick wins rate: <span className="font-bold text-white">{reportData?.quickWinsRate || 0}%</span>
-              </div>
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-1">{reportData?.productivityIndex || 0}%</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">High-Impact</div>
+            </div>
+            
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-1">{reportData?.completedTasks || 0}</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Tasks Done</div>
             </div>
           </div>
         </div>
-
-        {/* Habit Success by Category */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckSquare className="w-5 h-5 text-green-500" />
-            <h2 className="text-xl font-bold">Habit Success by Category</h2>
+      );
+    }
+    
+    if (page.id === 'trends') {
+      return (
+        <div className="space-y-8">
+          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+            <div className="flex items-baseline justify-between mb-2">
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">Deep Work</div>
+              <div className={`text-2xl font-bold ${reportData?.focusTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {reportData?.focusTrend >= 0 ? '+' : ''}{reportData?.focusTrend || 0}%
+              </div>
+            </div>
+            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
           </div>
-          
+
+          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+            <div className="flex items-baseline justify-between mb-2">
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">Habit Execution</div>
+              <div className={`text-2xl font-bold ${reportData?.habitTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {reportData?.habitTrend >= 0 ? '+' : ''}{reportData?.habitTrend || 0}%
+              </div>
+            </div>
+            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+            <div className="flex items-baseline justify-between mb-2">
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">Task Velocity</div>
+              <div className={`text-2xl font-bold ${reportData?.paretoTaskTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {reportData?.paretoTaskTrend >= 0 ? '+' : ''}{reportData?.paretoTaskTrend || 0}%
+              </div>
+            </div>
+            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (page.id === 'habits') {
+      return (
+        <div className="space-y-6">
+          <div className="text-center mb-8">
+            <div className="text-5xl font-bold mb-2">{reportData?.habitSuccessRate || 0}%</div>
+            <div className="text-sm text-zinc-600">Overall Completion Rate</div>
+          </div>
+
           <div className="space-y-3">
-            {reportData?.categoryStats && Object.entries(reportData.categoryStats).map(([category, rate]) => (
-              <div key={category} className="p-4 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">{category}</span>
-                  <span className="text-lg font-bold">{rate}%</span>
+            {reportData?.categoryStats && Object.entries(reportData.categoryStats)
+              .sort((a, b) => b[1] - a[1])
+              .map(([category, rate]) => (
+                <div key={category} className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-zinc-300">{category}</span>
+                    <span className={`text-xl font-bold ${rate >= 80 ? 'text-green-400' : rate >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
+                      {rate}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-zinc-950 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all ${rate >= 80 ? 'bg-green-500' : rate >= 60 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                      style={{ width: `${rate}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-2 bg-zinc-950 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full transition-all ${
-                      rate >= 80 ? 'bg-green-500' : rate >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${rate}%` }}
-                  />
-                </div>
-              </div>
+              ))}
+          </div>
+        </div>
+      );
+    }
+    
+    if (page.id === 'focus') {
+      return (
+        <div className="space-y-8">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-2">{reportData?.totalCompletedSessions || 0}</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Focus Sessions</div>
+            </div>
+            
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-4xl font-bold mb-2">{reportData?.currentStreak || 0}</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">Win Streak</div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+            <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Screen Time</div>
+            <div className="text-3xl font-bold mb-1">{reportData?.avgDailyScreenMinutes || 0}m</div>
+            <div className="text-xs text-zinc-600">Daily average</div>
+          </div>
+
+          {reportData?.totalCEOHours > 0 && (
+            <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+              <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">CEO Mode</div>
+              <div className="text-3xl font-bold mb-1">{reportData?.totalCEOHours || 0}h</div>
+              <div className="text-xs text-zinc-600">Maximum focus hours</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    if (page.id === 'pareto') {
+      return (
+        <div className="space-y-8">
+          <div className="text-center mb-8">
+            <div className="text-5xl font-bold mb-2">{reportData?.productivityIndex || 0}%</div>
+            <div className="text-sm text-zinc-600">High-Impact Work</div>
+          </div>
+
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
+              <span className="text-zinc-400">Crucial</span>
+              <span className="text-xl font-bold">{(reportData?.paretoBreakdown?.crucialShort || 0) + (reportData?.paretoBreakdown?.crucialLong || 0)}</span>
+            </div>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
+              <span className="text-zinc-400">Essential</span>
+              <span className="text-xl font-bold">{(reportData?.paretoBreakdown?.essentialShort || 0) + (reportData?.paretoBreakdown?.essentialLong || 0)}</span>
+            </div>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40 opacity-40">
+              <span className="text-zinc-600">Low Priority</span>
+              <span className="text-xl font-bold text-zinc-600">{reportData?.paretoBreakdown?.lowPriority || 0}</span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-green-950/20 border border-green-900/40">
+            <div className="text-xs text-green-400">
+              Quick wins: <span className="font-bold">{reportData?.quickWinsRate || 0}%</span> of tasks
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (page.id === 'insight') {
+      return (
+        <div className="space-y-8">
+          <div className="p-8 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
+            <div className="text-sm text-zinc-600 uppercase tracking-wider mb-6">Dominant Insight</div>
+            <div className="text-lg leading-relaxed text-zinc-200">
+              {reportData?.dominantInsight || 'Continue building consistency across all areas.'}
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/30">
+            <div className="text-xs text-zinc-600 uppercase tracking-wider mb-3">Report Period</div>
+            <div className="text-sm text-zinc-400">
+              {reportData?.daysActive || 0} days tracked
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white p-6 flex flex-col">
+      <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-400 mb-8 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-medium">Home</span>
+        </Link>
+
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold mb-2 text-zinc-100">
+            {pages[currentPage].title}
+          </h1>
+          <p className="text-sm text-zinc-600">{pages[currentPage].subtitle}</p>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center">
+          {renderPage()}
+        </div>
+
+        <div className="mt-12 flex items-center justify-between">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 0}
+            className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-900 transition-all"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div className="flex gap-1.5">
+            {pages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentPage(idx)}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentPage ? 'w-8 bg-zinc-400' : 'w-1.5 bg-zinc-800'
+                }`}
+              />
             ))}
           </div>
-        </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-            <div className="text-3xl font-bold mb-1">{reportData?.currentStreak || 0}</div>
-            <div className="text-sm text-zinc-500">Day Win Streak</div>
-          </div>
-          
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-            <div className="text-3xl font-bold mb-1">{reportData?.totalFocusHours || 0}h</div>
-            <div className="text-sm text-zinc-500">Focus Mode</div>
-          </div>
-          
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-            <div className="text-3xl font-bold mb-1">{reportData?.habitSuccessRate || 0}%</div>
-            <div className="text-sm text-zinc-500">Overall Habits</div>
-          </div>
-          
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700/50">
-            <div className="text-3xl font-bold mb-1">{reportData?.completedTasks || 0}</div>
-            <div className="text-sm text-zinc-500">Tasks Done</div>
-          </div>
-        </div>
-
-        {/* Strengths */}
-        {strengths.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-green-500" />
-              <h2 className="text-xl font-bold">Your Strengths</h2>
-            </div>
-            <div className="space-y-3">
-              {strengths.map((strength, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-green-950/30 border border-green-900/50">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{strength.icon}</span>
-                    <span className="text-green-300">{strength.text}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Areas for Improvement */}
-        {improvements.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5 text-blue-500" />
-              <h2 className="text-xl font-bold">Growth Opportunities</h2>
-            </div>
-            <div className="space-y-3">
-              {improvements.map((improvement, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-blue-950/30 border border-blue-900/50">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{improvement.icon}</span>
-                    <span className="text-blue-300">{improvement.text}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Motivational Message */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl" />
-          <div className="relative p-6 rounded-2xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700/50 text-center">
-            <div className="text-2xl mb-3">⚡</div>
-            <div className="text-lg font-semibold mb-2">Keep Pushing Forward!</div>
-            <div className="text-sm text-zinc-400">
-              You've been active for {reportData?.daysActive || 0} days. Every day is a step toward becoming the best version of yourself.
-            </div>
-          </div>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === pages.length - 1}
+            className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-900 transition-all"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>
