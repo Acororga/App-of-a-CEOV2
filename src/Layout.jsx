@@ -5,7 +5,6 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './components/LanguageProvider';
-import RankOverlay from './components/RankOverlay';
 
 export default function Layout({ children, currentPageName }) {
   return (
@@ -66,7 +65,6 @@ function LayoutContent({ children, currentPageName }) {
   if (currentPageName === 'Home') {
     return (
       <div className="min-h-screen bg-black text-white relative">
-        <RankOverlay />
         {/* User Icon - Top Left */}
         <button
           onClick={() => setShowMenu(true)}
@@ -178,8 +176,7 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
-      <RankOverlay />
+    <div className="min-h-screen bg-black text-white">
       {children}
     </div>
   );
