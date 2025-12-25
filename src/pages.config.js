@@ -15,6 +15,11 @@ import ScreenTimeManager from './pages/ScreenTimeManager';
 import WinStreak from './pages/WinStreak';
 import Settings from './pages/Settings';
 import SettingsLanguage from './pages/SettingsLanguage';
+import SettingsPrivacy from './pages/SettingsPrivacy';
+import SettingsPermissions from './pages/SettingsPermissions';
+import SettingsTerms from './pages/SettingsTerms';
+import SettingsDeletion from './pages/SettingsDeletion';
+import SettingsContact from './pages/SettingsContact';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +41,11 @@ export const PAGES = {
     "WinStreak": WinStreak,
     "Settings": Settings,
     "SettingsLanguage": SettingsLanguage,
+    "SettingsPrivacy": SettingsPrivacy,
+    "SettingsPermissions": SettingsPermissions,
+    "SettingsTerms": SettingsTerms,
+    "SettingsDeletion": SettingsDeletion,
+    "SettingsContact": SettingsContact,
 }
 
 export const pagesConfig = {
