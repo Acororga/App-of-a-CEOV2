@@ -325,36 +325,38 @@ export default function Home() {
       </div>
 
       {/* NAVIGATION ZONE - Dynamic Grid Layout */}
-          <div className="space-y-3 mb-6">
-
+      <div className="space-y-3 mb-6">
         {/* 4 apps: 2x2 grid */}
         {filteredApps.length === 4 && (
           <div className="grid grid-cols-2 gap-3">
-            {filteredApps.map(app => (
-              <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
-                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 group-active:opacity-30 transition-all duration-200`} />
-                <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
-                  <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500`} />
-                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                    <button
-                      onClick={(e) => handleQuickAddClick(e, app.id)}
-                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/60 active:scale-95 transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.3)] z-10"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-zinc-400" />
-                    </button>
-                  )}
-                  <div className="relative h-full flex flex-col justify-between">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_10px_32px_rgba(0,0,0,0.5)] transition-all duration-200 relative overflow-hidden`}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                      <app.icon className="w-6 h-6 text-white drop-shadow-lg relative z-10" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">{app.name}</div>
+            {filteredApps.map(app => {
+              const AppIcon = app.icon;
+              return (
+                <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 group-active:opacity-30 transition-all duration-200`} />
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
+                    <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500`} />
+                    {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                      <button
+                        onClick={(e) => handleQuickAddClick(e, app.id)}
+                        className="absolute top-3 right-3 p-1.5 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/60 active:scale-95 transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.3)] z-10"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-zinc-400" />
+                      </button>
+                    )}
+                    <div className="relative h-full flex flex-col justify-between">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_10px_32px_rgba(0,0,0,0.5)] transition-all duration-200 relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                        <AppIcon className="w-6 h-6 text-white drop-shadow-lg relative z-10" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-white">{app.name}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
 
@@ -362,27 +364,64 @@ export default function Home() {
         {filteredApps.length === 3 && (
           <div className="space-y-3">
             {/* First app takes full width */}
-            <Link to={createPageUrl(filteredApps[0].id)} className="block group relative animate-in fade-in zoom-in-95 duration-200">
-              <div className={`absolute inset-0 bg-gradient-to-br ${filteredApps[0].gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
-              <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
-                {(filteredApps[0].id === 'Pareto' || filteredApps[0].id === 'Habits' || filteredApps[0].id === 'Calendar') && (
-                  <button onClick={(e) => handleQuickAddClick(e, filteredApps[0].id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 active:scale-95 transition-all z-10">
-                    <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                  </button>
-                )}
-                <div className="relative h-full flex flex-col justify-between">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${filteredApps[0].colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                    <filteredApps[0].icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+            {(() => {
+              const app = filteredApps[0];
+              const AppIcon = app.icon;
+              return (
+                <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in zoom-in-95 duration-200">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
+                    {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                      <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 active:scale-95 transition-all z-10">
+                        <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                      </button>
+                    )}
+                    <div className="relative h-full flex flex-col justify-between">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                        <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                      </div>
+                      <div className="text-sm font-bold text-white">{app.name}</div>
+                    </div>
                   </div>
-                  <div className="text-sm font-bold text-white">{filteredApps[0].name}</div>
-                </div>
-              </div>
-            </Link>
+                </Link>
+              );
+            })()}
             {/* Last 2 apps in grid */}
             <div className="grid grid-cols-2 gap-3">
-              {filteredApps.slice(1).map(app => (
-                <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
+              {filteredApps.slice(1).map(app => {
+                const AppIcon = app.icon;
+                return (
+                  <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                    <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
+                      {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                        <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 z-10">
+                          <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                        </button>
+                      )}
+                      <div className="relative h-full flex flex-col justify-between">
+                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
+                          <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
+                          <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                        </div>
+                        <div className="text-sm font-bold text-white">{app.name}</div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 2 apps: column layout (1-1-1-1 pattern) */}
+        {filteredApps.length === 2 && (
+          <div className="space-y-3">
+            {filteredApps.map(app => {
+              const AppIcon = app.icon;
+              return (
+                <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in duration-200">
                   <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
                   <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
                     {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
@@ -393,39 +432,14 @@ export default function Home() {
                     <div className="relative h-full flex flex-col justify-between">
                       <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
                         <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                        <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
                       </div>
                       <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
                   </div>
                 </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 2 apps: column layout (1-1-1-1 pattern) */}
-        {filteredApps.length === 2 && (
-          <div className="space-y-3">
-            {filteredApps.map(app => (
-              <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in duration-200">
-                <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
-                <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
-                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                    <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 z-10">
-                      <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                    </button>
-                  )}
-                  <div className="relative h-full flex flex-col justify-between">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                      <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
-                    </div>
-                    <div className="text-sm font-bold text-white">{app.name}</div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
 
