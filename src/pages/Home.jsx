@@ -171,10 +171,121 @@ export default function Home() {
   };
 
   const apps = [
-    { id: 'Pareto', name: t('todo'), icon: ClipboardList, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
-    { id: 'Habits', name: t('habits'), icon: CheckSquare, gradient: 'from-emerald-600/20 to-teal-600/20', colors: 'from-emerald-500 to-teal-600', glow: 'from-emerald-600/10 to-teal-600/10' },
-    { id: 'Calendar', name: t('schedule'), icon: Calendar, gradient: 'from-pink-600/20 to-rose-600/20', colors: 'from-pink-500 to-rose-600', glow: 'from-pink-600/10 to-rose-600/10' },
-    { id: 'ScreenTimeManager', name: t('screenTime'), icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
+    { 
+      id: 'Pareto', 
+      name: t('todo'), 
+      icon: ClipboardList, 
+      gradient: 'from-indigo-600/20 to-purple-600/20', 
+      colors: 'from-indigo-500 to-purple-600', 
+      glow: 'from-indigo-600/10 to-purple-600/10',
+      customIcon: (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/20 to-purple-500/20 rounded-lg blur-md" />
+          <div className="relative flex flex-col gap-0.5">
+            <div className="flex gap-0.5">
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-300" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-400" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-400" />
+            </div>
+            <div className="flex gap-0.5">
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-300" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-500" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-300" />
+            </div>
+            <div className="flex gap-0.5">
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-400" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-400" />
+              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-300" />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    { 
+      id: 'Habits', 
+      name: t('habits'), 
+      icon: CheckSquare, 
+      gradient: 'from-emerald-600/20 to-teal-600/20', 
+      colors: 'from-emerald-500 to-teal-600', 
+      glow: 'from-emerald-600/10 to-teal-600/10',
+      customIcon: (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-lg blur-md" />
+          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="8.5" stroke="url(#grad-emerald)" strokeWidth="2" strokeDasharray="3 2" />
+            <path d="M8 12l2.5 2.5L16 9" stroke="url(#grad-emerald-check)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <defs>
+              <linearGradient id="grad-emerald" x1="4" y1="4" x2="20" y2="20">
+                <stop offset="0%" stopColor="#34d399" />
+                <stop offset="100%" stopColor="#14b8a6" />
+              </linearGradient>
+              <linearGradient id="grad-emerald-check" x1="8" y1="9" x2="16" y2="14">
+                <stop offset="0%" stopColor="#6ee7b7" />
+                <stop offset="100%" stopColor="#5eead4" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      )
+    },
+    { 
+      id: 'Calendar', 
+      name: t('schedule'), 
+      icon: Calendar, 
+      gradient: 'from-pink-600/20 to-rose-600/20', 
+      colors: 'from-pink-500 to-rose-600', 
+      glow: 'from-pink-600/10 to-rose-600/10',
+      customIcon: (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-rose-500/20 rounded-lg blur-md" />
+          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="5" width="16" height="16" rx="2" stroke="url(#grad-pink)" strokeWidth="2" />
+            <line x1="4" y1="9" x2="20" y2="9" stroke="url(#grad-pink)" strokeWidth="2" />
+            <line x1="8" y1="3" x2="8" y2="7" stroke="url(#grad-pink)" strokeWidth="2" strokeLinecap="round" />
+            <line x1="16" y1="3" x2="16" y2="7" stroke="url(#grad-pink)" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="8" cy="13" r="1" fill="#fda4af" />
+            <circle cx="12" cy="13" r="1" fill="#fb7185" />
+            <circle cx="16" cy="13" r="1" fill="#fda4af" />
+            <circle cx="8" cy="17" r="1" fill="#fda4af" />
+            <circle cx="12" cy="17" r="1" fill="#fda4af" />
+            <defs>
+              <linearGradient id="grad-pink" x1="4" y1="5" x2="20" y2="21">
+                <stop offset="0%" stopColor="#f472b6" />
+                <stop offset="100%" stopColor="#fb7185" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      )
+    },
+    { 
+      id: 'ScreenTimeManager', 
+      name: t('screenTime'), 
+      icon: Shield, 
+      gradient: 'from-red-600/20 to-orange-600/20', 
+      colors: 'from-red-500 to-orange-600', 
+      glow: 'from-red-600/10 to-orange-600/10',
+      customIcon: (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 to-orange-500/20 rounded-lg blur-md" />
+          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z" stroke="url(#grad-red)" strokeWidth="2" strokeLinejoin="round" />
+            <circle cx="12" cy="12" r="3" stroke="url(#grad-red-inner)" strokeWidth="1.5" />
+            <path d="M12 9v3l2 2" stroke="url(#grad-red-inner)" strokeWidth="1.5" strokeLinecap="round" />
+            <defs>
+              <linearGradient id="grad-red" x1="4" y1="2" x2="20" y2="22">
+                <stop offset="0%" stopColor="#f87171" />
+                <stop offset="100%" stopColor="#fb923c" />
+              </linearGradient>
+              <linearGradient id="grad-red-inner" x1="9" y1="9" x2="15" y2="15">
+                <stop offset="0%" stopColor="#fca5a5" />
+                <stop offset="100%" stopColor="#fdba74" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      )
+    }
   ];
 
   const filteredApps = apps.filter(app => activeApps.includes(app.id));
@@ -347,7 +458,9 @@ export default function Home() {
                     <div className="relative h-full flex flex-col justify-between">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_10px_32px_rgba(0,0,0,0.5)] transition-all duration-200 relative overflow-hidden`}>
                         <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <AppIcon className="w-6 h-6 text-white drop-shadow-lg relative z-10" />
+                        <div className="relative z-10">
+                          {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-lg" />}
+                        </div>
                       </div>
                       <div>
                         <div className="text-sm font-bold text-white">{app.name}</div>

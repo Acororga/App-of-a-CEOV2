@@ -121,23 +121,23 @@ export default function Pareto() {
     }
   };
 
-  // Categorize tasks for Pareto Matrix (based on urgency = time + importance)
-  const urgentImportant = (tasks || []).filter(t => 
+  // Categorize tasks for Pareto Matrix (based on QUICK TO DO + IMPORTANCE)
+  const quickImportant = (tasks || []).filter(t => 
     (t.importance_level === 'crucial' || t.importance_level === 'essential') &&
     (t.time_duration === 'less_than_30min' || t.time_duration === '1_hour')
   );
   
-  const notUrgentImportant = (tasks || []).filter(t => 
+  const slowImportant = (tasks || []).filter(t => 
     (t.importance_level === 'crucial' || t.importance_level === 'essential') &&
     (t.time_duration === '2_hours' || t.time_duration === 'half_day' || t.time_duration === '1_day' || t.time_duration === 'several_days')
   );
   
-  const urgentNotImportant = (tasks || []).filter(t => 
+  const quickNotImportant = (tasks || []).filter(t => 
     (t.importance_level === 'average' || t.importance_level === 'low') &&
     (t.time_duration === 'less_than_30min' || t.time_duration === '1_hour')
   );
   
-  const notUrgentNotImportant = (tasks || []).filter(t => 
+  const slowNotImportant = (tasks || []).filter(t => 
     (t.importance_level === 'average' || t.importance_level === 'low') &&
     (t.time_duration === '2_hours' || t.time_duration === 'half_day' || t.time_duration === '1_day' || t.time_duration === 'several_days')
   );
@@ -453,111 +453,132 @@ export default function Pareto() {
 
         {/* Matrix View */}
         {activeTab === 'matrix' && (
-          <div className="space-y-3">
+          <div className="space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
                 Pareto Matrix
               </h1>
-              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Eisenhower Decision Matrix</div>
+              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Impact vs Time Investment</div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {/* Quadrant 1: Urgent & Important (DO) */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl blur-xl" />
-                <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-red-700/40 min-h-[280px]">
-                  <div className="mb-3">
-                    <div className="text-xs font-black text-red-300 uppercase tracking-wider mb-1">DO</div>
-                    <div className="text-[10px] text-red-400/60">Urgent & Important</div>
-                  </div>
-                  <div className="space-y-2">
-                    {urgentImportant.map(task => (
-                      <button
-                        key={task.id}
-                        onClick={() => deleteTaskMutation.mutate(task.id)}
-                        className="w-full text-left p-3 rounded-lg bg-red-950/30 border border-red-900/30 hover:border-red-800/50 hover:bg-red-950/50 active:scale-[0.98] transition-all"
-                      >
-                        <div className="text-xs font-semibold text-red-200 truncate">{task.title}</div>
-                      </button>
-                    ))}
-                    {urgentImportant.length === 0 && (
-                      <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
-                    )}
-                  </div>
+            {/* Matrix with visible axes */}
+            <div className="relative">
+              {/* Vertical Axis Label */}
+              <div className="absolute -left-16 top-1/2 -translate-y-1/2 -rotate-90 origin-center">
+                <div className="text-xs font-black text-zinc-600 uppercase tracking-wider whitespace-nowrap">
+                  ← Low Impact • High Impact →
                 </div>
               </div>
 
-              {/* Quadrant 2: Not Urgent but Important (SCHEDULE) */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl" />
-                <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-blue-700/40 min-h-[280px]">
-                  <div className="mb-3">
-                    <div className="text-xs font-black text-blue-300 uppercase tracking-wider mb-1">SCHEDULE</div>
-                    <div className="text-[10px] text-blue-400/60">Not Urgent, Important</div>
-                  </div>
-                  <div className="space-y-2">
-                    {notUrgentImportant.map(task => (
-                      <button
-                        key={task.id}
-                        onClick={() => deleteTaskMutation.mutate(task.id)}
-                        className="w-full text-left p-3 rounded-lg bg-blue-950/30 border border-blue-900/30 hover:border-blue-800/50 hover:bg-blue-950/50 active:scale-[0.98] transition-all"
-                      >
-                        <div className="text-xs font-semibold text-blue-200 truncate">{task.title}</div>
-                      </button>
-                    ))}
-                    {notUrgentImportant.length === 0 && (
-                      <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
-                    )}
-                  </div>
+              {/* Horizontal Axis Label */}
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                <div className="text-xs font-black text-zinc-600 uppercase tracking-wider whitespace-nowrap">
+                  ← Quick • Takes Time →
                 </div>
               </div>
 
-              {/* Quadrant 3: Urgent but Not Important (DELEGATE) */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl" />
-                <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-yellow-700/40 min-h-[280px]">
-                  <div className="mb-3">
-                    <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">DELEGATE</div>
-                    <div className="text-[10px] text-yellow-400/60">Urgent, Not Important</div>
-                  </div>
-                  <div className="space-y-2">
-                    {urgentNotImportant.map(task => (
-                      <button
-                        key={task.id}
-                        onClick={() => deleteTaskMutation.mutate(task.id)}
-                        className="w-full text-left p-3 rounded-lg bg-yellow-950/30 border border-yellow-900/30 hover:border-yellow-800/50 hover:bg-yellow-950/50 active:scale-[0.98] transition-all"
-                      >
-                        <div className="text-xs font-semibold text-yellow-200 truncate">{task.title}</div>
-                      </button>
-                    ))}
-                    {urgentNotImportant.length === 0 && (
-                      <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
-                    )}
+              {/* Axis Lines */}
+              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-zinc-800/50" />
+              <div className="absolute top-1/2 left-0 right-0 h-px bg-zinc-800/50" />
+
+              <div className="grid grid-cols-2 gap-3">
+                {/* Quadrant 1: Quick & Important (DO NOW) */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl blur-xl" />
+                  <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-red-700/40 min-h-[280px]">
+                    <div className="mb-3">
+                      <div className="text-xs font-black text-red-300 uppercase tracking-wider mb-1">DO NOW</div>
+                      <div className="text-[10px] text-red-400/60">Quick • High Impact</div>
+                    </div>
+                    <div className="space-y-2">
+                      {quickImportant.map(task => (
+                        <button
+                          key={task.id}
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          className="w-full text-left p-3 rounded-lg bg-red-950/30 border border-red-900/30 hover:border-red-800/50 hover:bg-red-950/50 active:scale-[0.98] transition-all"
+                        >
+                          <div className="text-xs font-semibold text-red-200 truncate">{task.title}</div>
+                        </button>
+                      ))}
+                      {quickImportant.length === 0 && (
+                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Quadrant 4: Not Urgent & Not Important (DELETE) */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-600/20 to-zinc-500/20 rounded-2xl blur-xl" />
-                <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-zinc-700/40 min-h-[280px]">
-                  <div className="mb-3">
-                    <div className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">DELETE</div>
-                    <div className="text-[10px] text-zinc-500/60">Not Urgent, Not Important</div>
+                {/* Quadrant 2: Takes Time & Important (PLAN) */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl" />
+                  <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-blue-700/40 min-h-[280px]">
+                    <div className="mb-3">
+                      <div className="text-xs font-black text-blue-300 uppercase tracking-wider mb-1">PLAN</div>
+                      <div className="text-[10px] text-blue-400/60">Takes Time • High Impact</div>
+                    </div>
+                    <div className="space-y-2">
+                      {slowImportant.map(task => (
+                        <button
+                          key={task.id}
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          className="w-full text-left p-3 rounded-lg bg-blue-950/30 border border-blue-900/30 hover:border-blue-800/50 hover:bg-blue-950/50 active:scale-[0.98] transition-all"
+                        >
+                          <div className="text-xs font-semibold text-blue-200 truncate">{task.title}</div>
+                        </button>
+                      ))}
+                      {slowImportant.length === 0 && (
+                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    {notUrgentNotImportant.map(task => (
-                      <button
-                        key={task.id}
-                        onClick={() => deleteTaskMutation.mutate(task.id)}
-                        className="w-full text-left p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/30 hover:border-zinc-700/50 hover:bg-zinc-900/50 active:scale-[0.98] transition-all"
-                      >
-                        <div className="text-xs font-semibold text-zinc-400 truncate">{task.title}</div>
-                      </button>
-                    ))}
-                    {notUrgentNotImportant.length === 0 && (
-                      <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
-                    )}
+                </div>
+
+                {/* Quadrant 3: Quick & Low Impact (DELEGATE) */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl" />
+                  <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-yellow-700/40 min-h-[280px]">
+                    <div className="mb-3">
+                      <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">DELEGATE</div>
+                      <div className="text-[10px] text-yellow-400/60">Quick • Low Impact</div>
+                    </div>
+                    <div className="space-y-2">
+                      {quickNotImportant.map(task => (
+                        <button
+                          key={task.id}
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          className="w-full text-left p-3 rounded-lg bg-yellow-950/30 border border-yellow-900/30 hover:border-yellow-800/50 hover:bg-yellow-950/50 active:scale-[0.98] transition-all"
+                        >
+                          <div className="text-xs font-semibold text-yellow-200 truncate">{task.title}</div>
+                        </button>
+                      ))}
+                      {quickNotImportant.length === 0 && (
+                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quadrant 4: Takes Time & Low Impact (ELIMINATE) */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-zinc-600/20 to-zinc-500/20 rounded-2xl blur-xl" />
+                  <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-zinc-700/40 min-h-[280px]">
+                    <div className="mb-3">
+                      <div className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">ELIMINATE</div>
+                      <div className="text-[10px] text-zinc-500/60">Takes Time • Low Impact</div>
+                    </div>
+                    <div className="space-y-2">
+                      {slowNotImportant.map(task => (
+                        <button
+                          key={task.id}
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          className="w-full text-left p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/30 hover:border-zinc-700/50 hover:bg-zinc-900/50 active:scale-[0.98] transition-all"
+                        >
+                          <div className="text-xs font-semibold text-zinc-400 truncate">{task.title}</div>
+                        </button>
+                      ))}
+                      {slowNotImportant.length === 0 && (
+                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
