@@ -179,24 +179,28 @@ export default function Home() {
       colors: 'from-indigo-500 to-purple-600', 
       glow: 'from-indigo-600/10 to-purple-600/10',
       customIcon: (
-        <div className="relative w-full h-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/20 to-purple-500/20 rounded-lg blur-md" />
-          <div className="relative flex flex-col gap-0.5">
-            <div className="flex gap-0.5">
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-300" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-400" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-400" />
-            </div>
-            <div className="flex gap-0.5">
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-300" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-500" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-300" />
-            </div>
-            <div className="flex gap-0.5">
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-400" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-purple-400" />
-              <div className="w-1.5 h-1.5 rounded-[2px] bg-indigo-300" />
-            </div>
+        <div className="relative w-full h-full">
+          {/* Premium Container with Grain Texture */}
+          <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-[#5b4fb8] to-[#7c3aed] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]" 
+               style={{
+                 backgroundImage: `
+                   linear-gradient(135deg, #5b4fb8 0%, #7c3aed 100%),
+                   url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+                 `,
+                 backgroundBlendMode: 'overlay, normal'
+               }}>
+            {/* Top-left light */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+            {/* Bottom-right shadow */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
+          </div>
+          
+          {/* Icon Symbol - Monochrome, slightly off-center */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, -0.5px)' }}>
+            <svg className="w-[58%] h-[58%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" opacity="0.9"/>
+              <path d="M9 14l2 2 4-4" opacity="0.85" strokeWidth="2.8"/>
+            </svg>
           </div>
         </div>
       )
@@ -209,22 +213,29 @@ export default function Home() {
       colors: 'from-emerald-500 to-teal-600', 
       glow: 'from-emerald-600/10 to-teal-600/10',
       customIcon: (
-        <div className="relative w-full h-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-lg blur-md" />
-          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="8.5" stroke="url(#grad-emerald)" strokeWidth="2" strokeDasharray="3 2" />
-            <path d="M8 12l2.5 2.5L16 9" stroke="url(#grad-emerald-check)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            <defs>
-              <linearGradient id="grad-emerald" x1="4" y1="4" x2="20" y2="20">
-                <stop offset="0%" stopColor="#34d399" />
-                <stop offset="100%" stopColor="#14b8a6" />
-              </linearGradient>
-              <linearGradient id="grad-emerald-check" x1="8" y1="9" x2="16" y2="14">
-                <stop offset="0%" stopColor="#6ee7b7" />
-                <stop offset="100%" stopColor="#5eead4" />
-              </linearGradient>
-            </defs>
-          </svg>
+        <div className="relative w-full h-full">
+          {/* Premium Container with Grain Texture */}
+          <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-[#10b981] to-[#14b8a6] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]" 
+               style={{
+                 backgroundImage: `
+                   linear-gradient(135deg, #10b981 0%, #14b8a6 100%),
+                   url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+                 `,
+                 backgroundBlendMode: 'overlay, normal'
+               }}>
+            {/* Top-left light */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+            {/* Bottom-right shadow */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
+          </div>
+          
+          {/* Icon Symbol - Monochrome, slightly off-center */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, 0.5px)' }}>
+            <svg className="w-[56%] h-[56%] opacity-95" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="#f8f8f8" strokeWidth="2.2" strokeDasharray="2.5 3" opacity="0.85"/>
+              <path d="M8 12.5l2.5 2.5L16.5 9" stroke="#f8f8f8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
+            </svg>
+          </div>
         </div>
       )
     },
@@ -236,25 +247,36 @@ export default function Home() {
       colors: 'from-pink-500 to-rose-600', 
       glow: 'from-pink-600/10 to-rose-600/10',
       customIcon: (
-        <div className="relative w-full h-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-rose-500/20 rounded-lg blur-md" />
-          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
-            <rect x="4" y="5" width="16" height="16" rx="2" stroke="url(#grad-pink)" strokeWidth="2" />
-            <line x1="4" y1="9" x2="20" y2="9" stroke="url(#grad-pink)" strokeWidth="2" />
-            <line x1="8" y1="3" x2="8" y2="7" stroke="url(#grad-pink)" strokeWidth="2" strokeLinecap="round" />
-            <line x1="16" y1="3" x2="16" y2="7" stroke="url(#grad-pink)" strokeWidth="2" strokeLinecap="round" />
-            <circle cx="8" cy="13" r="1" fill="#fda4af" />
-            <circle cx="12" cy="13" r="1" fill="#fb7185" />
-            <circle cx="16" cy="13" r="1" fill="#fda4af" />
-            <circle cx="8" cy="17" r="1" fill="#fda4af" />
-            <circle cx="12" cy="17" r="1" fill="#fda4af" />
-            <defs>
-              <linearGradient id="grad-pink" x1="4" y1="5" x2="20" y2="21">
-                <stop offset="0%" stopColor="#f472b6" />
-                <stop offset="100%" stopColor="#fb7185" />
-              </linearGradient>
-            </defs>
-          </svg>
+        <div className="relative w-full h-full">
+          {/* Premium Container with Grain Texture */}
+          <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-[#ec4899] to-[#f43f5e] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]" 
+               style={{
+                 backgroundImage: `
+                   linear-gradient(135deg, #ec4899 0%, #f43f5e 100%),
+                   url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+                 `,
+                 backgroundBlendMode: 'overlay, normal'
+               }}>
+            {/* Top-left light */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+            {/* Bottom-right shadow */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
+          </div>
+          
+          {/* Icon Symbol - Monochrome, slightly off-center */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, 0px)' }}>
+            <svg className="w-[58%] h-[58%] opacity-95" viewBox="0 0 24 24" fill="none">
+              <rect x="4" y="6" width="16" height="15" rx="2" stroke="#f8f8f8" strokeWidth="2.2" opacity="0.88"/>
+              <line x1="4" y1="10" x2="20" y2="10" stroke="#f8f8f8" strokeWidth="2.2" opacity="0.88"/>
+              <line x1="8" y1="3" x2="8" y2="7" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" opacity="0.88"/>
+              <line x1="16" y1="3" x2="16" y2="7" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" opacity="0.88"/>
+              <circle cx="8.5" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.75"/>
+              <circle cx="12" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.85"/>
+              <circle cx="15.5" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.75"/>
+              <circle cx="8.5" cy="17" r="1.2" fill="#f8f8f8" opacity="0.70"/>
+              <circle cx="12" cy="17" r="1.2" fill="#f8f8f8" opacity="0.70"/>
+            </svg>
+          </div>
         </div>
       )
     },
@@ -266,23 +288,30 @@ export default function Home() {
       colors: 'from-red-500 to-orange-600', 
       glow: 'from-red-600/10 to-orange-600/10',
       customIcon: (
-        <div className="relative w-full h-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 to-orange-500/20 rounded-lg blur-md" />
-          <svg className="w-6 h-6 relative" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z" stroke="url(#grad-red)" strokeWidth="2" strokeLinejoin="round" />
-            <circle cx="12" cy="12" r="3" stroke="url(#grad-red-inner)" strokeWidth="1.5" />
-            <path d="M12 9v3l2 2" stroke="url(#grad-red-inner)" strokeWidth="1.5" strokeLinecap="round" />
-            <defs>
-              <linearGradient id="grad-red" x1="4" y1="2" x2="20" y2="22">
-                <stop offset="0%" stopColor="#f87171" />
-                <stop offset="100%" stopColor="#fb923c" />
-              </linearGradient>
-              <linearGradient id="grad-red-inner" x1="9" y1="9" x2="15" y2="15">
-                <stop offset="0%" stopColor="#fca5a5" />
-                <stop offset="100%" stopColor="#fdba74" />
-              </linearGradient>
-            </defs>
-          </svg>
+        <div className="relative w-full h-full">
+          {/* Premium Container with Grain Texture */}
+          <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-[#ef4444] to-[#f97316] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]" 
+               style={{
+                 backgroundImage: `
+                   linear-gradient(135deg, #ef4444 0%, #f97316 100%),
+                   url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+                 `,
+                 backgroundBlendMode: 'overlay, normal'
+               }}>
+            {/* Top-left light */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+            {/* Bottom-right shadow */}
+            <div className="absolute inset-0 rounded-[15px] bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
+          </div>
+          
+          {/* Icon Symbol - Monochrome, slightly off-center */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, -0.5px)' }}>
+            <svg className="w-[60%] h-[60%] opacity-95" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" stroke="#f8f8f8" strokeWidth="2.2" strokeLinejoin="round" opacity="0.88"/>
+              <circle cx="12" cy="12.5" r="3" stroke="#f8f8f8" strokeWidth="2" opacity="0.82"/>
+              <path d="M12 9.5v3.5l2 2" stroke="#f8f8f8" strokeWidth="2.2" strokeLinecap="round" opacity="0.85"/>
+            </svg>
+          </div>
         </div>
       )
     }
@@ -456,11 +485,8 @@ export default function Home() {
                       </button>
                     )}
                     <div className="relative h-full flex flex-col justify-between">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_10px_32px_rgba(0,0,0,0.5)] transition-all duration-200 relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <div className="relative z-10">
-                          {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-lg" />}
-                        </div>
+                      <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                        {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-lg" />}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-white">{app.name}</div>
@@ -514,11 +540,8 @@ export default function Home() {
                         </button>
                       )}
                       <div className="relative h-full flex flex-col justify-between">
-                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                          <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                          <div className="relative z-10">
-                            {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
-                          </div>
+                        <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                          {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
                         </div>
                         <div className="text-sm font-bold text-white">{app.name}</div>
                       </div>
