@@ -26,32 +26,71 @@ export default function Dashboard() {
   today.setHours(0, 0, 0, 0);
   const yesterday = subDays(today, 1);
 
-  const [todayHabits, setTodayHabits] = React.useState(null);
-  const [todayCompletions, setTodayCompletions] = React.useState(null);
-  const [yesterdayHabits, setYesterdayHabits] = React.useState(null);
-  const [yesterdayCompletions, setYesterdayCompletions] = React.useState(null);
+  const [todayHabitsWithCompletions, setTodayHabitsWithCompletions] = React.useState([]);
+  const [pendingYesterdayHabits, setPendingYesterdayHabits] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     let mounted = true;
     
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+        const user = await base44.auth.me();
+        
+        // Step 1: Ensure today's habits are scheduled
         await ensureHabitsScheduled(today);
+        
+        // Step 2: Transition yesterday's scheduled to pending_validation
         await transitionScheduledToPending(yesterday);
         
-        const tHabits = await getHabitsForDate(today);
-        const tCompletions = await getHabitCompletionsForDate(today);
-        const yHabits = await getHabitsForDate(yesterday);
-        const yCompletions = await getHabitCompletionsForDate(yesterday);
+        // Step 3: Fetch today's data
+        const todayHabits = await getHabitsForDate(today);
+        const todayCompletions = await getHabitCompletionsForDate(today);
+        
+        // Step 4: Get today's scheduled completions with habit details
+        const scheduledCompletions = todayCompletions.filter(c => c.state === 'scheduled');
+        const todayHabitsData = todayHabits.map(habit => {
+          const completion = scheduledCompletions.find(c => c.habit_id === habit.id);
+          return {
+            ...habit,
+            completionId: completion?.id,
+            state: completion?.state || 'not_scheduled'
+          };
+        });
+        
+        // Step 5: Fetch yesterday's pending validations
+        const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
+        const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+        
+        // Step 6: Get habit details for pending validations
+        const allHabits = await base44.entities.Habit.filter({ 
+          created_by: user.email 
+        });
+        
+        const pendingWithHabits = pendingCompletions.map(completion => {
+          const habit = allHabits.find(h => h.id === completion.habit_id);
+          return {
+            completionId: completion.id,
+            habitId: completion.habit_id,
+            habitTitle: habit?.title || 'Unknown Habit',
+            completed: completion.completed || false,
+            date: completion.date
+          };
+        });
         
         if (!mounted) return;
         
-        setTodayHabits(tHabits);
-        setTodayCompletions(tCompletions);
-        setYesterdayHabits(yHabits);
-        setYesterdayCompletions(yCompletions);
+        setTodayHabitsWithCompletions(todayHabitsData);
+        setPendingYesterdayHabits(pendingWithHabits);
+        setIsLoading(false);
+        
+        console.log('=== Dashboard Data ===');
+        console.log('Today habits:', todayHabitsData.length);
+        console.log('Pending yesterday:', pendingWithHabits.length);
       } catch (error) {
         console.error('Error fetching habits:', error);
+        if (mounted) setIsLoading(false);
       }
     };
     
@@ -98,19 +137,23 @@ export default function Dashboard() {
 
   const validateYesterdayMutation = useMutation({
     mutationFn: async () => {
-      if (!yesterdayHabits) return;
-      const promises = yesterdayHabits.map(habit => 
-        checkInHabit(habit.id, yesterday, tempYesterdayStates[habit.id] || false)
+      if (!pendingYesterdayHabits || pendingYesterdayHabits.length === 0) return;
+      const promises = pendingYesterdayHabits.map(item => 
+        checkInHabit(item.habitId, yesterday, tempYesterdayStates[item.habitId] || false)
       );
       await Promise.all(promises);
     },
     onSuccess: async () => {
-      const yCompletions = await getHabitCompletionsForDate(yesterday);
-      setYesterdayCompletions(yCompletions);
       queryClient.invalidateQueries(['weeklyScore']);
       queryClient.invalidateQueries(['weekData']);
+      queryClient.invalidateQueries(['needsCheckIn']);
       setYesterdayVisible(false);
       setTempYesterdayStates({});
+      
+      // Reload data to update UI
+      const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
+      const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+      setPendingYesterdayHabits([]);
     }
   });
 
@@ -134,36 +177,19 @@ export default function Dashboard() {
     }
   });
 
-  const todayCompletionMap = {};
-  if (todayCompletions) {
-    todayCompletions.forEach(c => {
-      todayCompletionMap[c.habit_id] = c.completed;
-    });
-  }
-
-  const yesterdayCompletionMap = {};
-  if (yesterdayCompletions) {
-    yesterdayCompletions.forEach(c => {
-      yesterdayCompletionMap[c.habit_id] = c.completed;
-    });
-  }
-
   const needsYesterdayValidation = React.useMemo(() => {
-    if (!yesterdayCompletions) return false;
-    const pendingValidation = yesterdayCompletions.filter(c => c.state === 'pending_validation');
-    return pendingValidation.length > 0;
-  }, [yesterdayCompletions]);
+    return pendingYesterdayHabits.length > 0;
+  }, [pendingYesterdayHabits]);
 
   React.useEffect(() => {
-    if (yesterdayHabits && yesterdayHabits.length > 0) {
+    if (pendingYesterdayHabits && pendingYesterdayHabits.length > 0) {
       const initialStates = {};
-      yesterdayHabits.forEach(habit => {
-        const completion = yesterdayCompletions?.find(c => c.habit_id === habit.id);
-        initialStates[habit.id] = completion ? completion.completed : false;
+      pendingYesterdayHabits.forEach(item => {
+        initialStates[item.habitId] = item.completed;
       });
       setTempYesterdayStates(initialStates);
     }
-  }, [yesterdayHabits, yesterdayCompletions]);
+  }, [pendingYesterdayHabits]);
 
   // Reset visual marks for today at midnight
   React.useEffect(() => {
@@ -200,7 +226,7 @@ export default function Dashboard() {
         {/* ACTION ZONE - Layered visual hierarchy */}
         <div className="space-y-8 mb-16">
           {/* Yesterday Habits Validation Card - MANDATORY BLOCKING */}
-          {yesterdayVisible && needsYesterdayValidation && yesterdayHabits && yesterdayHabits.length > 0 && (
+          {yesterdayVisible && needsYesterdayValidation && (
             <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-red-500/40 rounded-[32px] blur-3xl opacity-80 animate-pulse" />
               <div className="relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.5),0_0_0_1px_rgba(249,115,22,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
@@ -209,13 +235,13 @@ export default function Dashboard() {
                   <div className="text-xs text-orange-400/60 font-medium">Complete validation to continue</div>
                 </div>
                 <div className="space-y-2 mb-6">
-                  {yesterdayHabits.map(habit => (
+                  {pendingYesterdayHabits.map(item => (
                     <button
-                      key={habit.id}
-                      onClick={() => toggleYesterdayHabit(habit.id)}
+                      key={item.completionId}
+                      onClick={() => toggleYesterdayHabit(item.habitId)}
                       className="w-full flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 active:scale-[0.98] transition-all duration-150"
                     >
-                      {tempYesterdayStates[habit.id] ? (
+                      {tempYesterdayStates[item.habitId] ? (
                         <div className="relative">
                           <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md" />
                           <CheckCircle2 className="relative w-6 h-6 text-green-400 flex-shrink-0" />
@@ -223,8 +249,8 @@ export default function Dashboard() {
                       ) : (
                         <Circle className="w-6 h-6 text-zinc-600 flex-shrink-0" />
                       )}
-                      <span className={`text-sm font-medium ${tempYesterdayStates[habit.id] ? 'text-zinc-500 line-through' : 'text-white'}`}>
-                        {habit.title}
+                      <span className={`text-sm font-medium ${tempYesterdayStates[item.habitId] ? 'text-zinc-500 line-through' : 'text-white'}`}>
+                        {item.habitTitle}
                       </span>
                     </button>
                   ))}
@@ -255,8 +281,12 @@ export default function Dashboard() {
                 </Link>
               </div>
               <div className="space-y-2">
-                {todayHabits && todayHabits.length > 0 ? (
-                  todayHabits.map((habit, idx) => {
+                {isLoading ? (
+                  <div className="text-center py-12 text-zinc-600 text-sm font-medium">
+                    {t('loading')}...
+                  </div>
+                ) : todayHabitsWithCompletions && todayHabitsWithCompletions.length > 0 ? (
+                  todayHabitsWithCompletions.map((habit, idx) => {
                     const isMarked = todayMarkedHabits[habit.id];
                     
                     return (
