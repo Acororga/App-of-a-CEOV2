@@ -4,7 +4,7 @@ import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { getTodayScreenTime, getAverageScreenTime, getOrCreateWinStreak } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Target, Flame, Trophy, Crown, Ban, Zap } from 'lucide-react';
+import { ArrowLeft, Target, Flame, Trophy, Crown, Ban, Zap, Shield } from 'lucide-react';
 import { useLanguage } from '../components/LanguageProvider';
 
 export default function ScreenTimeManager() {
