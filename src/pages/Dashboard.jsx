@@ -22,9 +22,14 @@ export default function Dashboard() {
   const [tempYesterdayStates, setTempYesterdayStates] = useState({});
   const [todayMarkedHabits, setTodayMarkedHabits] = useState({});
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = subDays(today, 1);
+  // FIXED: Create dates once, not on every render
+  const today = React.useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  
+  const yesterday = React.useMemo(() => subDays(today, 1), [today]);
 
   const [todayHabitsWithCompletions, setTodayHabitsWithCompletions] = React.useState([]);
   const [pendingYesterdayHabits, setPendingYesterdayHabits] = React.useState([]);
@@ -86,7 +91,13 @@ export default function Dashboard() {
         setIsLoading(false);
         
         console.log('=== Dashboard Data ===');
-        console.log('Today habits:', todayHabitsData.length);
+        console.log('Today date:', format(today, 'yyyy-MM-dd'), 'Day of week:', today.getDay());
+        console.log('All habits for today from getHabitsForDate:', todayHabits.length);
+        console.log('Today completions fetched:', todayCompletions.length);
+        console.log('Scheduled completions:', scheduledCompletions.length);
+        console.log('Final todayHabitsData:', todayHabitsData.length);
+        console.log('Yesterday date:', format(yesterday, 'yyyy-MM-dd'));
+        console.log('Yesterday completions:', yesterdayCompletions.length);
         console.log('Pending yesterday:', pendingWithHabits.length);
       } catch (error) {
         console.error('Error fetching habits:', error);
@@ -99,7 +110,7 @@ export default function Dashboard() {
     return () => {
       mounted = false;
     };
-  }, [today.getTime(), yesterday.getTime()]);
+  }, []); // FIXED: Run once on mount, dates don't change
 
   const { data: topTasks } = useQuery({
     queryKey: ['topTasks'],
