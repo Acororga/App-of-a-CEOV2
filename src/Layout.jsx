@@ -5,17 +5,21 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './components/LanguageProvider';
+import { RankAmbientProvider, useRankAmbient } from './components/RankAmbientProvider';
 
 export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
-      <LayoutContent children={children} currentPageName={currentPageName} />
+      <RankAmbientProvider>
+        <LayoutContent children={children} currentPageName={currentPageName} />
+      </RankAmbientProvider>
     </LanguageProvider>
   );
 }
 
 function LayoutContent({ children, currentPageName }) {
   const { t } = useLanguage();
+  const { ambientStyles } = useRankAmbient();
   const [showMenu, setShowMenu] = useState(false);
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();

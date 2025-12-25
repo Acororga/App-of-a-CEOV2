@@ -14,9 +14,11 @@ import EventModal from '../components/calendar/EventModal';
 import OnboardingTutorial from '../components/OnboardingTutorial';
 import OnboardingQuestionnaire from '../components/OnboardingQuestionnaire';
 import { useLanguage } from '../components/LanguageProvider';
+import { useRankAmbient } from '../components/RankAmbientProvider';
 
 export default function Home() {
   const { t } = useLanguage();
+  const { ambientStyles, isCEO } = useRankAmbient();
   const [user, setUser] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showFocusModal, setShowFocusModal] = useState(false);
@@ -177,40 +179,16 @@ export default function Home() {
 
   const filteredApps = apps.filter(app => activeApps.includes(app.id));
 
-  const getRankBackground = () => {
-    const rankLevel = rankData?.rank_level || 1;
-    
-    const backgrounds = {
-      1: { branches: 'from-amber-700/20 via-orange-600/20 to-amber-800/20' },
-      2: { branches: 'from-gray-400/20 via-gray-500/20 to-gray-400/20' },
-      3: { branches: 'from-yellow-500/20 via-yellow-600/20 to-yellow-400/20' },
-      4: { branches: 'from-cyan-300/20 via-slate-400/20 to-cyan-300/20' },
-      5: { branches: 'from-blue-300/20 via-cyan-400/20 to-blue-300/20' },
-      6: { branches: 'from-zinc-900/30 via-black/30 to-zinc-900/30' },
-      7: { branches: 'from-yellow-500/30 via-yellow-600/30 to-yellow-500/30' }
-    };
-    
-    return backgrounds[rankLevel] || backgrounds[1];
-  };
 
-  const bgStyle = getRankBackground();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
       {/* Noise texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         backgroundRepeat: 'repeat',
         backgroundSize: '128px 128px'
       }} />
-
-      {/* Rank ambient light */}
-      {isScreenTimeActive && (
-        <>
-          <div className={`absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl ${bgStyle.branches} rounded-full blur-[120px] opacity-30 pointer-events-none`} />
-          <div className={`absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr ${bgStyle.branches} rounded-full blur-[120px] opacity-30 pointer-events-none`} />
-        </>
-      )}
 
       {/* Header */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
@@ -243,7 +221,11 @@ export default function Home() {
           {/* Focus Mode Quick Button */}
           <button
             onClick={() => setShowFocusModal(true)}
-            className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex items-center justify-center shadow-[0_8px_32px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group"
+            className={`w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group ${
+              isCEO 
+                ? 'bg-gradient-to-br from-yellow-500 via-yellow-600 to-amber-600 shadow-[0_8px_32px_rgba(234,179,8,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(234,179,8,0.6)]'
+                : 'bg-gradient-to-br from-orange-500 via-red-500 to-red-600 shadow-[0_8px_32px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(239,68,68,0.6)]'
+            }`}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -281,10 +263,14 @@ export default function Home() {
           to={createPageUrl('Dashboard')}
           className="block group relative animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-[32px] blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" />
+          <div className="absolute inset-0 rounded-[32px] blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" style={{
+            background: `linear-gradient(to bottom right, rgba(${ambientStyles.accentRgb}, 0.3), rgba(${ambientStyles.accentRgb}, 0.2))`
+          }} />
           <div className="relative h-44 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/60 p-7 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(59,130,246,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:shadow-[0_24px_96px_rgba(59,130,246,0.3),0_0_0_1px_rgba(59,130,246,0.15)] group-active:scale-[0.99] transition-all duration-200">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/8 via-transparent to-purple-600/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute -top-32 -right-32 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-700" />
+            <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-700" style={{
+              background: `linear-gradient(to bottom right, rgba(${ambientStyles.accentRgb}, 0.2), rgba(${ambientStyles.accentRgb}, 0.15))`
+            }} />
 
             <div className="relative flex items-center justify-between h-full">
               <div className="flex items-center gap-6">
@@ -469,19 +455,31 @@ export default function Home() {
 
       {/* CEO Mode - TERTIARY (Visually recessed) */}
       <Link to={createPageUrl('CEOMode')} className="block group relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-700/3 to-zinc-800/3 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-all duration-300" />
-        <div className="relative h-16 rounded-2xl bg-gradient-to-br from-black/70 via-zinc-950/70 to-black/70 backdrop-blur-md border border-zinc-850/40 p-4 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.6)] group-hover:border-zinc-800/50 group-active:scale-[0.995] transition-all duration-150">
+        <div className={`absolute inset-0 rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-all duration-300 ${
+          isCEO ? 'bg-gradient-to-br from-yellow-600/20 to-amber-600/20' : 'bg-gradient-to-br from-zinc-700/3 to-zinc-800/3'
+        }`} />
+        <div className={`relative h-16 rounded-2xl backdrop-blur-md p-4 overflow-hidden group-active:scale-[0.995] transition-all duration-150 ${
+          isCEO 
+            ? 'bg-gradient-to-br from-yellow-950/30 via-amber-950/30 to-yellow-950/30 border border-yellow-900/30 shadow-[0_4px_16px_rgba(234,179,8,0.15),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(234,179,8,0.25)] group-hover:border-yellow-800/40'
+            : 'bg-gradient-to-br from-black/70 via-zinc-950/70 to-black/70 border border-zinc-850/40 shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.01)] group-hover:shadow-[0_6px_24px_rgba(0,0,0,0.6)] group-hover:border-zinc-800/50'
+        }`}>
           <div className="relative flex items-center justify-between h-full">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-900 to-black flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.01)] border border-zinc-850/40 relative overflow-hidden">
-                <Circle className="w-3.5 h-3.5 text-zinc-600 relative z-10" />
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.01)] border relative overflow-hidden ${
+                isCEO 
+                  ? 'bg-gradient-to-br from-yellow-900 via-yellow-900 to-amber-900 border-yellow-800/40'
+                  : 'bg-gradient-to-br from-zinc-900 via-zinc-900 to-black border-zinc-850/40'
+              }`}>
+                <Circle className={`w-3.5 h-3.5 relative z-10 ${isCEO ? 'text-yellow-600' : 'text-zinc-600'}`} />
               </div>
               <div>
-                <div className="text-sm font-bold text-zinc-500">{t('ceoMode')}</div>
+                <div className={`text-sm font-bold ${isCEO ? 'text-yellow-400' : 'text-zinc-500'}`}>{t('ceoMode')}</div>
               </div>
             </div>
-            <div className="px-3 py-1.5 rounded-lg bg-zinc-900/40 border border-zinc-850/40 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-              <div className="text-[9px] font-black uppercase tracking-wider text-zinc-700">
+            <div className={`px-3 py-1.5 rounded-lg border shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] ${
+              isCEO ? 'bg-yellow-950/30 border-yellow-900/40' : 'bg-zinc-900/40 border-zinc-850/40'
+            }`}>
+              <div className={`text-[9px] font-black uppercase tracking-wider ${isCEO ? 'text-yellow-600' : 'text-zinc-700'}`}>
                 {t('maximumFocus')}
               </div>
             </div>

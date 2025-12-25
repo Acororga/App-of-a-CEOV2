@@ -1,4 +1,5 @@
 import BiannualReport from './pages/BiannualReport';
+import BlockingDemo from './pages/BlockingDemo';
 import CEOMode from './pages/CEOMode';
 import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
@@ -20,12 +21,12 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
-import BlockingDemo from './pages/BlockingDemo';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "BiannualReport": BiannualReport,
+    "BlockingDemo": BlockingDemo,
     "CEOMode": CEOMode,
     "Calendar": Calendar,
     "Dashboard": Dashboard,
@@ -47,7 +48,6 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
-    "BlockingDemo": BlockingDemo,
 }
 
 export const pagesConfig = {
