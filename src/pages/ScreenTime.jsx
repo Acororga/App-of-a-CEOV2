@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Plus, Trash2, Shield, Globe } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Shield, Globe, Coffee, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '../components/LanguageProvider';
 import AddTimeModal from '../components/blocking/AddTimeModal';
+import RestPeriodModal from '../components/blocking/RestPeriodModal';
+import RestPeriodActivation from '../components/blocking/RestPeriodActivation';
+import { format, parseISO, isBefore, isAfter } from 'date-fns';
 
 export default function ScreenTime() {
   const { t } = useLanguage();
@@ -15,6 +18,8 @@ export default function ScreenTime() {
   const [showAddApp, setShowAddApp] = useState(false);
   const [showAddWebsite, setShowAddWebsite] = useState(false);
   const [showAddTimeModal, setShowAddTimeModal] = useState(null);
+  const [showRestPeriodModal, setShowRestPeriodModal] = useState(false);
+  const [activatingRestPeriod, setActivatingRestPeriod] = useState(null);
   const [newAppName, setNewAppName] = useState('');
   const [newWebsiteUrl, setNewWebsiteUrl] = useState('');
 
@@ -31,6 +36,27 @@ export default function ScreenTime() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.BlockedWebsite.filter({ created_by: user.email });
+    }
+  });
+
+  const { data: restPeriods } = useQuery({
+    queryKey: ['restPeriods'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.RestPeriod.filter({ created_by: user.email });
+    }
+  });
+
+  const { data: isInFocusMode } = useQuery({
+    queryKey: ['isInFocusMode'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const sessions = await base44.entities.FocusSession.filter({
+        created_by: user.email,
+        completed: false,
+        early_exit: false
+      });
+      return sessions.length > 0;
     }
   });
 
@@ -114,6 +140,72 @@ export default function ScreenTime() {
       setShowAddTimeModal(null);
     }
   };
+
+  const scheduleRestPeriodMutation = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return await base44.entities.RestPeriod.create({
+        ...data,
+        status: 'scheduled',
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['restPeriods']);
+      setShowRestPeriodModal(false);
+    }
+  });
+
+  const activateRestPeriodMutation = useMutation({
+    mutationFn: async (periodId) => {
+      await base44.entities.RestPeriod.update(periodId, {
+        status: 'active',
+        activated_at: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['restPeriods']);
+      setActivatingRestPeriod(null);
+    }
+  });
+
+  const cancelRestPeriodMutation = useMutation({
+    mutationFn: async (periodId) => {
+      await base44.entities.RestPeriod.update(periodId, {
+        status: 'cancelled'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['restPeriods']);
+    }
+  });
+
+  const handleScheduleRestPeriod = (data) => {
+    scheduleRestPeriodMutation.mutate(data);
+  };
+
+  const handleActivateRestPeriod = (period) => {
+    setActivatingRestPeriod(period);
+  };
+
+  const handleConfirmActivation = () => {
+    if (activatingRestPeriod) {
+      activateRestPeriodMutation.mutate(activatingRestPeriod.id);
+    }
+  };
+
+  const handleCancelActivation = () => {
+    setActivatingRestPeriod(null);
+  };
+
+  const now = new Date();
+  const scheduledRestPeriods = restPeriods?.filter(p => {
+    if (p.status !== 'scheduled') return false;
+    const startTime = parseISO(p.scheduled_start_time);
+    return isBefore(now, startTime) || (isBefore(startTime, now) && isBefore(now, new Date(startTime.getTime() + 10 * 60 * 1000)));
+  }) || [];
+
+  const activeRestPeriod = restPeriods?.find(p => p.status === 'active');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 pb-12 relative overflow-hidden">
@@ -222,6 +314,83 @@ export default function ScreenTime() {
           </div>
         </div>
 
+        {/* Rest Periods Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
+              <Coffee className="w-4 h-4 text-blue-400" />
+              Rest Periods
+            </h2>
+            <button
+              onClick={() => setShowRestPeriodModal(true)}
+              className="px-3 py-2 rounded-lg bg-white text-black text-xs font-bold hover:bg-zinc-200 active:scale-95 transition-all duration-150 flex items-center gap-1.5"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Schedule Break
+            </button>
+          </div>
+
+          {activeRestPeriod && (
+            <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-blue-700/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-500/40 flex items-center justify-center">
+                  <Coffee className="w-5 h-5 text-blue-400 animate-pulse" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-bold text-blue-300">Active Rest Period</div>
+                  <div className="text-xs text-blue-400/60">{activeRestPeriod.reason}</div>
+                  <div className="text-xs text-blue-500/70 mt-1">{activeRestPeriod.duration_minutes} minutes - All restrictions paused</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            {scheduledRestPeriods.map(period => {
+              const startTime = parseISO(period.scheduled_start_time);
+              const canActivateNow = isBefore(startTime, now);
+              
+              return (
+                <div key={period.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
+                  <div className="w-10 h-10 rounded-lg bg-blue-950/40 border border-blue-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
+                    <Coffee className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-white truncate">{period.reason}</div>
+                    <div className="text-xs text-zinc-600">
+                      {format(startTime, 'MMM d, h:mm a')} • {period.duration_minutes} min
+                    </div>
+                  </div>
+                  {canActivateNow ? (
+                    <button
+                      onClick={() => handleActivateRestPeriod(period)}
+                      className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white transition-all active:scale-95 flex items-center gap-1"
+                    >
+                      <Play className="w-3 h-3" />
+                      Start
+                    </button>
+                  ) : (
+                    <div className="text-xs text-zinc-600 px-3">
+                      Scheduled
+                    </div>
+                  )}
+                  <button
+                    onClick={() => cancelRestPeriodMutation.mutate(period.id)}
+                    className="p-2 hover:bg-red-950/30 rounded-lg transition-all active:scale-95 opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500/70" />
+                  </button>
+                </div>
+              );
+            })}
+            {scheduledRestPeriods.length === 0 && (
+              <div className="text-center py-8 text-zinc-600 text-sm">
+                No scheduled breaks. Schedule breaks at least 2 hours in advance.
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Blocked Websites Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -314,6 +483,21 @@ export default function ScreenTime() {
           entityType={showAddTimeModal.type}
           onAddTime={handleAddTime}
           onClose={() => setShowAddTimeModal(null)}
+        />
+      )}
+
+      <RestPeriodModal
+        open={showRestPeriodModal}
+        onClose={() => setShowRestPeriodModal(false)}
+        onSchedule={handleScheduleRestPeriod}
+        isInFocusMode={isInFocusMode || false}
+      />
+
+      {activatingRestPeriod && (
+        <RestPeriodActivation
+          restPeriod={activatingRestPeriod}
+          onConfirm={handleConfirmActivation}
+          onCancel={handleCancelActivation}
         />
       )}
     </div>
