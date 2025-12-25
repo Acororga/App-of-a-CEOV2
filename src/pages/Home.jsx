@@ -552,9 +552,8 @@ export default function Home() {
                       </button>
                     )}
                     <div className="relative h-full flex flex-col justify-between">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                      <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                        {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
                       </div>
                       <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
@@ -841,9 +840,32 @@ export default function Home() {
                 className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                  <BarChart3 className="w-5 h-5 text-white relative z-10" />
+                <div className="relative w-10 h-10 group/icon">
+                  {/* Ambient shadow */}
+                  <div className="absolute inset-0 rounded-[10px] bg-black/40 blur-sm" style={{ transform: 'translateY(1.5px)' }} />
+                  
+                  {/* Container */}
+                  <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-[#6b21a8] to-[#581c87] shadow-[0_0.5px_1px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.2)] group-active/icon:shadow-[0_0.5px_1px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)] transition-shadow duration-100"
+                       style={{
+                         backgroundImage: `
+                           linear-gradient(135deg, rgba(107, 33, 168, 0.95) 0%, rgba(88, 28, 135, 0.95) 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")
+                         `,
+                         backgroundBlendMode: 'normal, overlay'
+                       }}>
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-white/12 via-transparent to-transparent" />
+                    <div className="absolute inset-[0.5px] rounded-[9.5px] bg-gradient-to-b from-white/7 to-transparent" style={{ height: '40%' }} />
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-t from-black/12 via-transparent to-transparent" />
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0px, -0.5px)' }}>
+                    <svg className="w-[52%] h-[52%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                      <line x1="12" y1="20" x2="12" y2="10" />
+                      <line x1="18" y1="20" x2="18" y2="4" />
+                      <line x1="6" y1="20" x2="6" y2="16" />
+                    </svg>
+                  </div>
                 </div>
                 <div className="flex-1">
                   <div className="font-semibold">{t('sixMonthReport')}</div>
@@ -882,9 +904,68 @@ export default function Home() {
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/[0.02] to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       )}
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} flex items-center justify-center shadow-md relative ${!isActive && 'opacity-40'}`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                        <Icon className="w-4 h-4 text-white relative z-10" />
+                      <div className={`relative w-8 h-8 group/appicon ${!isActive && 'opacity-40'}`}>
+                        {/* Ambient shadow */}
+                        <div className="absolute inset-0 rounded-[8px] bg-black/35 blur-sm" style={{ transform: 'translateY(1px)' }} />
+                        
+                        {/* Container */}
+                        <div className={`absolute inset-0 rounded-[8px] bg-gradient-to-br shadow-[0_0.5px_1px_rgba(0,0,0,0.35),0_1.5px_5px_rgba(0,0,0,0.2)] group-active/appicon:shadow-[0_0.5px_1px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)] transition-shadow duration-100 ${
+                          app.id === 'Pareto' ? 'from-[#64748b] to-[#475569]' :
+                          app.id === 'Habits' ? 'from-[#0f766e] to-[#115e59]' :
+                          app.id === 'Calendar' ? 'from-[#9f1239] to-[#881337]' :
+                          'from-[#b45309] to-[#92400e]'
+                        }`}
+                             style={{
+                               backgroundImage: `
+                                 linear-gradient(135deg, ${
+                                   app.id === 'Pareto' ? 'rgba(100, 116, 139, 0.95) 0%, rgba(71, 85, 105, 0.95) 100%' :
+                                   app.id === 'Habits' ? 'rgba(15, 118, 110, 0.95) 0%, rgba(17, 94, 89, 0.95) 100%' :
+                                   app.id === 'Calendar' ? 'rgba(159, 18, 57, 0.95) 0%, rgba(136, 19, 55, 0.95) 100%' :
+                                   'rgba(180, 83, 9, 0.95) 0%, rgba(146, 64, 14, 0.95) 100%'
+                                 }),
+                                 url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")
+                               `,
+                               backgroundBlendMode: 'normal, overlay'
+                             }}>
+                          <div className="absolute inset-0 rounded-[8px] bg-gradient-to-br from-white/12 via-transparent to-transparent" />
+                          <div className="absolute inset-[0.5px] rounded-[7.5px] bg-gradient-to-b from-white/7 to-transparent" style={{ height: '38%' }} />
+                          <div className="absolute inset-0 rounded-[8px] bg-gradient-to-t from-black/12 via-transparent to-transparent" />
+                        </div>
+                        
+                        {/* Icon Symbol */}
+                        <div className="absolute inset-0 flex items-center justify-center" style={{ 
+                          transform: app.id === 'Pareto' ? 'translate(0px, -0.5px)' :
+                                    app.id === 'Habits' ? 'translate(-0.5px, 0px)' :
+                                    app.id === 'Calendar' ? 'translate(0.5px, -0.5px)' :
+                                    'translate(-0.5px, 0px)'
+                        }}>
+                          {app.id === 'Pareto' && (
+                            <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                              <path d="M14 2v6h6M9 13h6M9 17h6" opacity="0.85" />
+                            </svg>
+                          )}
+                          {app.id === 'Habits' && (
+                            <svg className="w-[58%] h-[58%]" viewBox="0 0 24 24" fill="none" opacity="0.92">
+                              <circle cx="12" cy="12" r="9.5" stroke="#f5f5f4" strokeWidth="2" />
+                              <path d="M8 12l3 3 5-6" stroke="#f5f5f4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          )}
+                          {app.id === 'Calendar' && (
+                            <svg className="w-[58%] h-[58%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                              <rect x="3" y="4" width="18" height="18" rx="2" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                              <line x1="8" y1="2" x2="8" y2="6" />
+                              <line x1="16" y1="2" x2="16" y2="6" />
+                            </svg>
+                          )}
+                          {app.id === 'ScreenTimeManager' && (
+                            <svg className="w-[57%] h-[57%]" viewBox="0 0 24 24" fill="none" opacity="0.92">
+                              <path d="M12 2L4 7v6c0 5.5 3.5 10.2 8 12 4.5-1.8 8-6.5 8-12V7l-8-5z" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              <circle cx="12" cy="11" r="2.5" stroke="#f5f5f4" strokeWidth="1.8" />
+                            </svg>
+                          )}
+                        </div>
                       </div>
                       <div className="text-left flex-1">
                         <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
@@ -909,9 +990,31 @@ export default function Home() {
                 className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-blue-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                  <SettingsIcon className="w-5 h-5 text-white relative z-10" />
+                <div className="relative w-10 h-10 group/icon">
+                  {/* Ambient shadow */}
+                  <div className="absolute inset-0 rounded-[10px] bg-black/40 blur-sm" style={{ transform: 'translateY(1.5px)' }} />
+                  
+                  {/* Container */}
+                  <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-[#475569] to-[#334155] shadow-[0_0.5px_1px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.2)] group-active/icon:shadow-[0_0.5px_1px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)] transition-shadow duration-100"
+                       style={{
+                         backgroundImage: `
+                           linear-gradient(135deg, rgba(71, 85, 105, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")
+                         `,
+                         backgroundBlendMode: 'normal, overlay'
+                       }}>
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-white/12 via-transparent to-transparent" />
+                    <div className="absolute inset-[0.5px] rounded-[9.5px] bg-gradient-to-b from-white/7 to-transparent" style={{ height: '40%' }} />
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-t from-black/12 via-transparent to-transparent" />
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, 0px)' }}>
+                    <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.2-4.2l4.2-4.2" strokeWidth="1.8" />
+                    </svg>
+                  </div>
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-semibold">{t('settingsAndLegal')}</div>
