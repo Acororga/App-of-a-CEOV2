@@ -119,9 +119,35 @@ function LayoutContent({ children, currentPageName }) {
                 <Link
                   to={createPageUrl('BiannualReport')}
                   onClick={() => setShowMenu(false)}
-                  className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                  className="group flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all active:scale-[0.98]"
                 >
-                  <BarChart3 className="w-5 h-5 text-purple-400" />
+                  <div className="relative w-10 h-10 group/icon">
+                    {/* Ambient shadow */}
+                    <div className="absolute inset-0 rounded-[10px] bg-black/40 blur-sm" style={{ transform: 'translateY(1.5px)' }} />
+                    
+                    {/* Container */}
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-[#6b21a8] to-[#581c87] shadow-[0_0.5px_1px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.2)] group-active/icon:shadow-[0_0.5px_1px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)] transition-shadow duration-100"
+                         style={{
+                           backgroundImage: `
+                             linear-gradient(135deg, rgba(107, 33, 168, 0.95) 0%, rgba(88, 28, 135, 0.95) 100%),
+                             url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")
+                           `,
+                           backgroundBlendMode: 'normal, overlay'
+                         }}>
+                      <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-white/12 via-transparent to-transparent" />
+                      <div className="absolute inset-[0.5px] rounded-[9.5px] bg-gradient-to-b from-white/7 to-transparent" style={{ height: '40%' }} />
+                      <div className="absolute inset-0 rounded-[10px] bg-gradient-to-t from-black/12 via-transparent to-transparent" />
+                    </div>
+                    
+                    {/* Icon */}
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0px, -0.5px)' }}>
+                      <svg className="w-[52%] h-[52%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                        <line x1="12" y1="20" x2="12" y2="10" />
+                        <line x1="18" y1="20" x2="18" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="16" />
+                      </svg>
+                    </div>
+                  </div>
                   <div>
                     <div className="font-semibold">{t('sixMonthReport')}</div>
                     <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
@@ -163,9 +189,34 @@ function LayoutContent({ children, currentPageName }) {
                 <Link
                   to={createPageUrl('Settings')}
                   onClick={() => setShowMenu(false)}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                  className="group w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all active:scale-[0.98]"
                 >
-                  <FileText className="w-5 h-5 text-green-400" />
+                  <div className="relative w-10 h-10 group/icon">
+                    {/* Ambient shadow */}
+                    <div className="absolute inset-0 rounded-[10px] bg-black/40 blur-sm" style={{ transform: 'translateY(1.5px)' }} />
+                    
+                    {/* Container */}
+                    <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-[#475569] to-[#334155] shadow-[0_0.5px_1px_rgba(0,0,0,0.4),0_2px_6px_rgba(0,0,0,0.2)] group-active/icon:shadow-[0_0.5px_1px_rgba(0,0,0,0.3),0_1px_3px_rgba(0,0,0,0.15)] transition-shadow duration-100"
+                         style={{
+                           backgroundImage: `
+                             linear-gradient(135deg, rgba(71, 85, 105, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%),
+                             url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulature type='fractalNoise' baseFrequency='0.95' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")
+                           `,
+                           backgroundBlendMode: 'normal, overlay'
+                         }}>
+                      <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-white/12 via-transparent to-transparent" />
+                      <div className="absolute inset-[0.5px] rounded-[9.5px] bg-gradient-to-b from-white/7 to-transparent" style={{ height: '40%' }} />
+                      <div className="absolute inset-0 rounded-[10px] bg-gradient-to-t from-black/12 via-transparent to-transparent" />
+                    </div>
+                    
+                    {/* Icon */}
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, 0px)' }}>
+                      <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none" stroke="#f5f5f4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.2-4.2l4.2-4.2" strokeWidth="1.8" />
+                      </svg>
+                    </div>
+                  </div>
                   <div className="text-left">
                     <div className="font-semibold">{t('settingsAndLegal')}</div>
                     <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
