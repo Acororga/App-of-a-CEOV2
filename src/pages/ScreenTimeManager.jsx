@@ -204,7 +204,7 @@ export default function ScreenTimeManager() {
                 </div>
                 <div>
                   <div className="font-bold text-sm text-white mb-0.5">{t('leaderboard')}</div>
-                  <div className="text-xs text-zinc-600 font-medium">{t('global')}</div>
+                  <div className="text-xs text-zinc-600 font-medium">{t('globalRankings')}</div>
                 </div>
               </div>
               <div className="text-xs text-zinc-700">→</div>
@@ -214,7 +214,7 @@ export default function ScreenTimeManager() {
 
         <div className="p-4 rounded-xl bg-zinc-950/60 border border-zinc-900/50 shadow-[inset_0_2px_8px_rgba(0,0,0,0.5)]">
           <div className="text-[10px] text-zinc-700 leading-relaxed font-medium">
-            <span className="font-black text-zinc-600">Note:</span> Full blocking requires OS permissions. Use as tracking tool.
+            <span className="font-black text-zinc-600">{t('note')}:</span> {t('fullBlockingNote')}
           </div>
         </div>
       </div>

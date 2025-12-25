@@ -130,12 +130,12 @@ export default function FocusMode() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">⭐</div>
-          <h1 className="text-3xl font-bold mb-4">SESSION COMPLETE</h1>
+          <h1 className="text-3xl font-bold mb-4">{t('sessionComplete')}</h1>
           <div className="text-6xl font-bold text-green-500 mb-2">
             🔥 {(streak?.current_streak || 0) + 1}
           </div>
-          <div className="text-gray-400 mb-8">Win Streak</div>
-          <div className="text-sm text-gray-500">Returning to home...</div>
+          <div className="text-gray-400 mb-8">{t('winStreak')}</div>
+          <div className="text-sm text-gray-500">{t('returningHome')}</div>
         </div>
       </div>
     );
@@ -149,27 +149,27 @@ export default function FocusMode() {
           <div className="max-w-md w-full">
             <div className="bg-gray-900 border border-red-900 rounded-2xl p-8">
               <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-center mb-4">EXIT FOCUS MODE?</h2>
+              <h2 className="text-2xl font-bold text-center mb-4">{t('exitFocusMode')}</h2>
               <p className="text-gray-400 text-center mb-2">
-                This will RESET your
+                {t('thisWillReset')}
               </p>
               <p className="text-3xl font-bold text-red-500 text-center mb-6">
-                {streak?.current_streak || 0}-day Win Streak
+                {streak?.current_streak || 0}{t('dayWinStreak')}
               </p>
-              <p className="text-gray-400 text-center mb-8">to ZERO</p>
+              <p className="text-gray-400 text-center mb-8">{t('toZero')}</p>
               <div className="flex gap-3">
                 <Button
                   onClick={() => setShowExitConfirm(false)}
                   variant="outline"
                   className="flex-1 bg-transparent border-gray-700 hover:bg-gray-800"
                 >
-                  Stay Focused
+                  {t('stayFocused')}
                 </Button>
                 <Button
                   onClick={confirmExit}
                   className="flex-1 bg-red-600 hover:bg-red-700"
                 >
-                  Yes, Exit
+                  {t('yesExit')}
                 </Button>
               </div>
             </div>
@@ -188,12 +188,12 @@ export default function FocusMode() {
                 />
               </div>
             </div>
-            <p className="text-gray-400 mb-16 text-center">Stay focused. You got this.</p>
+            <p className="text-gray-400 mb-16 text-center">{t('stayFocusedMsg')}</p>
             <button
               onClick={handleExit}
               className="text-sm text-gray-600 hover:text-gray-400 transition-colors"
             >
-              Exit Session
+              {t('exitSession')}
             </button>
           </>
         )}
@@ -207,13 +207,13 @@ export default function FocusMode() {
       <div className="max-w-md mx-auto">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
+          <span className="text-sm">{t('home')}</span>
         </Link>
 
         <div className="text-center mb-12">
           <Target className="w-16 h-16 mx-auto mb-6 text-purple-500" />
-          <h1 className="text-3xl font-bold mb-4">ENTER THE ZONE</h1>
-          <p className="text-gray-400">Select duration</p>
+          <h1 className="text-3xl font-bold mb-4">{t('enterTheZone')}</h1>
+          <p className="text-gray-400">{t('selectDuration')}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-8">
@@ -228,19 +228,19 @@ export default function FocusMode() {
               }`}
             >
               <div className="text-2xl font-bold">{mins}</div>
-              <div className="text-xs text-gray-400">min</div>
+              <div className="text-xs text-gray-400">{t('min')}</div>
             </button>
           ))}
         </div>
 
         <div className="mb-8">
-          <label className="block text-sm text-gray-400 mb-2">Custom duration</label>
+          <label className="block text-sm text-gray-400 mb-2">{t('customDuration')}</label>
           <input
             type="number"
             value={duration}
             onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value) || 1))}
             className="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-600"
-            placeholder="Minutes"
+            placeholder={t('minutes')}
           />
         </div>
 
@@ -248,16 +248,16 @@ export default function FocusMode() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
-              <div className="font-semibold text-red-400 mb-1">WARNING</div>
+              <div className="font-semibold text-red-400 mb-1">{t('warning')}</div>
               <div className="text-sm text-gray-400">
-                Early exit will RESET your Win Streak to ZERO
+                {t('earlyExitWarning')}
               </div>
             </div>
           </div>
         </div>
 
         <div className="text-center mb-6">
-          <div className="text-sm text-gray-500 mb-2">Current Streak</div>
+          <div className="text-sm text-gray-500 mb-2">{t('currentStreak')}</div>
           <div className="flex items-center justify-center gap-2">
             <span className="text-4xl">🔥</span>
             <span className="text-4xl font-bold">{streak?.current_streak || 0}</span>
@@ -269,7 +269,7 @@ export default function FocusMode() {
           disabled={startMutation.isPending}
           className="w-full bg-purple-600 hover:bg-purple-700 h-12 text-base font-semibold"
         >
-          {startMutation.isPending ? 'Starting...' : 'BEGIN FOCUS MODE'}
+          {startMutation.isPending ? t('starting') : t('beginFocusMode')}
         </Button>
       </div>
     </div>

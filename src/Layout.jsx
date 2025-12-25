@@ -15,6 +15,7 @@ export default function Layout({ children, currentPageName }) {
 }
 
 function LayoutContent({ children, currentPageName }) {
+  const { t } = useLanguage();
   const [showMenu, setShowMenu] = useState(false);
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
@@ -51,10 +52,10 @@ function LayoutContent({ children, currentPageName }) {
   });
 
   const availableApps = [
-    { id: 'Pareto', name: 'To-Do Matrix', icon: ClipboardList },
-    { id: 'Habits', name: 'Habits & Productivity', icon: CheckSquare },
-    { id: 'Calendar', name: 'Schedule', icon: CalendarIcon },
-    { id: 'ScreenTimeManager', name: 'Screen Time Manager', icon: Shield }
+    { id: 'Pareto', name: t('todo'), icon: ClipboardList },
+    { id: 'Habits', name: t('habits'), icon: CheckSquare },
+    { id: 'Calendar', name: t('schedule'), icon: CalendarIcon },
+    { id: 'ScreenTimeManager', name: t('screenTime'), icon: Shield }
   ];
 
   useEffect(() => {
@@ -107,13 +108,13 @@ function LayoutContent({ children, currentPageName }) {
                 >
                   <BarChart3 className="w-5 h-5 text-purple-400" />
                   <div>
-                    <div className="font-semibold">6-Month Report</div>
-                    <div className="text-xs text-zinc-500">View your progress</div>
+                    <div className="font-semibold">{t('sixMonthReport')}</div>
+                    <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
                   </div>
                 </Link>
 
                 <div className="space-y-2">
-                  <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">Active Apps</div>
+                  <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">{t('activeApps')}</div>
                   {availableApps.map(app => {
                     const currentApps = appSettings?.active_apps || [];
                     const isActive = currentApps.includes(app.id);
@@ -144,15 +145,17 @@ function LayoutContent({ children, currentPageName }) {
                   })}
                 </div>
 
-                <button
+                <Link
+                  to={createPageUrl('Settings')}
+                  onClick={() => setShowMenu(false)}
                   className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
                   <FileText className="w-5 h-5 text-green-400" />
                   <div className="text-left">
-                    <div className="font-semibold">Privacy Policy</div>
-                    <div className="text-xs text-zinc-500">Terms & conditions</div>
+                    <div className="font-semibold">{t('settingsAndLegal')}</div>
+                    <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
                   </div>
-                </button>
+                </Link>
               </div>
 
               <div className="mt-8 pt-8 border-t border-zinc-800">
@@ -160,7 +163,7 @@ function LayoutContent({ children, currentPageName }) {
                   onClick={() => base44.auth.logout()}
                   className="w-full p-3 rounded-lg bg-red-950/30 border border-red-900/50 text-red-400 hover:bg-red-950/50 transition-colors"
                 >
-                  Logout
+                  {t('logout')}
                 </button>
               </div>
             </div>

@@ -13,8 +13,10 @@ import HabitModal from '../components/habits/HabitModal';
 import EventModal from '../components/calendar/EventModal';
 import OnboardingTutorial from '../components/OnboardingTutorial';
 import OnboardingQuestionnaire from '../components/OnboardingQuestionnaire';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Home() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showFocusModal, setShowFocusModal] = useState(false);
@@ -167,10 +169,10 @@ export default function Home() {
   };
 
   const apps = [
-    { id: 'Pareto', name: 'To-Do', icon: ClipboardList, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
-    { id: 'Habits', name: 'Habits', icon: CheckSquare, gradient: 'from-emerald-600/20 to-teal-600/20', colors: 'from-emerald-500 to-teal-600', glow: 'from-emerald-600/10 to-teal-600/10' },
-    { id: 'Calendar', name: 'Schedule', icon: Calendar, gradient: 'from-pink-600/20 to-rose-600/20', colors: 'from-pink-500 to-rose-600', glow: 'from-pink-600/10 to-rose-600/10' },
-    { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
+    { id: 'Pareto', name: t('todo'), icon: ClipboardList, gradient: 'from-indigo-600/20 to-purple-600/20', colors: 'from-indigo-500 to-purple-600', glow: 'from-indigo-600/10 to-purple-600/10' },
+    { id: 'Habits', name: t('habits'), icon: CheckSquare, gradient: 'from-emerald-600/20 to-teal-600/20', colors: 'from-emerald-500 to-teal-600', glow: 'from-emerald-600/10 to-teal-600/10' },
+    { id: 'Calendar', name: t('schedule'), icon: Calendar, gradient: 'from-pink-600/20 to-rose-600/20', colors: 'from-pink-500 to-rose-600', glow: 'from-pink-600/10 to-rose-600/10' },
+    { id: 'ScreenTimeManager', name: t('screenTime'), icon: Shield, gradient: 'from-red-600/20 to-orange-600/20', colors: 'from-red-500 to-orange-600', glow: 'from-red-600/10 to-orange-600/10' }
   ];
 
   const filteredApps = apps.filter(app => activeApps.includes(app.id));
@@ -291,8 +293,8 @@ export default function Home() {
                   <BarChart3 className="w-10 h-10 text-white relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
                 </div>
                 <div>
-                  <div className="text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">Dashboard</div>
-                  <div className="text-xs text-zinc-500 font-medium">Your daily control center</div>
+                  <div className="text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">{t('dashboard')}</div>
+                  <div className="text-xs text-zinc-500 font-medium">{t('yourDailyControlCenter')}</div>
                 </div>
               </div>
               <div className="flex items-center gap-5">
@@ -322,7 +324,7 @@ export default function Home() {
                       ? 'from-blue-200 to-blue-400'
                       : 'from-white to-zinc-400'
                   }`}>{todayHabits || 0}</div>
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-black">Habits</div>
+                  <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
                 </div>
                 {needsCheckIn && (
                   <div className="relative flex items-center gap-1">
@@ -475,12 +477,12 @@ export default function Home() {
                 <Circle className="w-3.5 h-3.5 text-zinc-600 relative z-10" />
               </div>
               <div>
-                <div className="text-sm font-bold text-zinc-500">CEO Mode</div>
+                <div className="text-sm font-bold text-zinc-500">{t('ceoMode')}</div>
               </div>
             </div>
             <div className="px-3 py-1.5 rounded-lg bg-zinc-900/40 border border-zinc-850/40 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
               <div className="text-[9px] font-black uppercase tracking-wider text-zinc-700">
-                Maximum Focus
+                {t('maximumFocus')}
               </div>
             </div>
           </div>
@@ -652,18 +654,18 @@ export default function Home() {
                   <BarChart3 className="w-5 h-5 text-white relative z-10" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold">6-Month Report</div>
-                  <div className="text-xs text-zinc-500">Your progress overview</div>
+                  <div className="font-semibold">{t('sixMonthReport')}</div>
+                  <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
                 </div>
               </Link>
 
               <div className="space-y-2">
-                <div className="text-[10px] text-zinc-600 uppercase tracking-wider font-bold mb-3 px-1">Active Apps</div>
+                <div className="text-[10px] text-zinc-600 uppercase tracking-wider font-bold mb-3 px-1">{t('activeApps')}</div>
                 {[
-                  { id: 'Pareto', name: 'To-Do', icon: ClipboardList, color: 'from-indigo-500 to-purple-600' },
-                  { id: 'Habits', name: 'Habits', icon: CheckSquare, color: 'from-emerald-500 to-teal-600' },
-                  { id: 'Calendar', name: 'Schedule', icon: Calendar, color: 'from-pink-500 to-rose-600' },
-                  { id: 'ScreenTimeManager', name: 'Screen Time', icon: Shield, color: 'from-red-500 to-orange-600' }
+                  { id: 'Pareto', name: t('todo'), icon: ClipboardList, color: 'from-indigo-500 to-purple-600' },
+                  { id: 'Habits', name: t('habits'), icon: CheckSquare, color: 'from-emerald-500 to-teal-600' },
+                  { id: 'Calendar', name: t('schedule'), icon: Calendar, color: 'from-pink-500 to-rose-600' },
+                  { id: 'ScreenTimeManager', name: t('screenTime'), icon: Shield, color: 'from-red-500 to-orange-600' }
                 ].map(app => {
                   const currentApps = appSettingsData?.active_apps || [];
                   const isActive = currentApps.includes(app.id);
@@ -720,8 +722,8 @@ export default function Home() {
                   <SettingsIcon className="w-5 h-5 text-white relative z-10" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="font-semibold">Settings & Legal</div>
-                  <div className="text-xs text-zinc-500">Privacy, terms & more</div>
+                  <div className="font-semibold">{t('settingsAndLegal')}</div>
+                  <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
                 </div>
               </Link>
             </div>
@@ -731,7 +733,7 @@ export default function Home() {
                 onClick={() => base44.auth.logout()}
                 className="w-full p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 hover:border-red-900/50 active:scale-[0.98] transition-all duration-150 font-medium"
               >
-                Logout
+                {t('logout')}
               </button>
             </div>
           </div>

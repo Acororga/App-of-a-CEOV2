@@ -206,8 +206,8 @@ export default function Dashboard() {
               <div className="relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.5),0_0_0_1px_rgba(249,115,22,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-xl font-black text-orange-200 mb-1 tracking-tight">YESTERDAY</h2>
-                    <div className="text-xs text-orange-400/60 font-medium">Validation required</div>
+                    <h2 className="text-xl font-black text-orange-200 mb-1 tracking-tight">{t('yesterday')}</h2>
+                    <div className="text-xs text-orange-400/60 font-medium">{t('validationRequired')}</div>
                   </div>
                   <Link 
                     to={createPageUrl('Habits')}
@@ -243,7 +243,7 @@ export default function Dashboard() {
                   className="w-full bg-white text-black hover:bg-zinc-200 h-14 text-base font-bold rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] active:scale-[0.98] transition-all duration-150"
                 >
                   <Check className="w-5 h-5 mr-2" />
-                  {validateYesterdayMutation.isPending ? 'Validating...' : 'Validate Yesterday'}
+                  {validateYesterdayMutation.isPending ? t('validating') : t('validateYesterday')}
                 </Button>
               </div>
             </div>
@@ -333,7 +333,7 @@ export default function Dashboard() {
                   })
                 ) : (
                   <div className="text-center py-12 text-zinc-600 text-sm font-medium">
-                    No habits today
+                    {t('noHabitsToday')}
                   </div>
                 )}
               </div>
@@ -346,12 +346,12 @@ export default function Dashboard() {
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[28px] blur-2xl opacity-60" />
               <div className="relative p-7 rounded-[28px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">PRIORITIES</h2>
+                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">{t('priorities')}</h2>
                   <Link 
                     to={createPageUrl('Pareto')}
                     className="text-xs text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
                   >
-                    View All →
+                    {t('viewAll')} →
                   </Link>
                 </div>
                 <div className="space-y-2">
