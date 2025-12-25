@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { ArrowLeft, Globe, Shield, FileText, Trash2, Mail } from 'lucide-react';
-import { useLanguage } from '../utils/i18n';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function Settings() {
   const { t } = useLanguage();

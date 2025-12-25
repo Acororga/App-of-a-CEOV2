@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { ArrowLeft, Check } from 'lucide-react';
-import { useLanguage } from '../utils/i18n';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function SettingsLanguage() {
   const { t, language, changeLanguage } = useLanguage();
