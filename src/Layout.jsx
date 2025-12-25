@@ -68,7 +68,18 @@ function LayoutContent({ children, currentPageName }) {
 
   if (currentPageName === 'Home') {
     return (
-      <div className="min-h-screen bg-black text-white relative">
+      <div className="min-h-screen bg-black text-white relative overflow-hidden">
+        {ambientStyles.ceoGlow ? (
+          <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute inset-0 border-[3px] border-yellow-500/25 rounded-none shadow-[inset_0_0_60px_rgba(234,179,8,0.15)]" />
+          </div>
+        ) : (
+          <>
+            {ambientStyles.topRightOrnament}
+            {ambientStyles.bottomLeftOrnament}
+          </>
+        )}
+        
         {/* User Icon - Top Left */}
         <button
           onClick={() => setShowMenu(true)}
@@ -180,7 +191,17 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {ambientStyles.ceoGlow ? (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 border-[3px] border-yellow-500/25 rounded-none shadow-[inset_0_0_60px_rgba(234,179,8,0.15)]" />
+        </div>
+      ) : (
+        <>
+          {ambientStyles.topRightOrnament}
+          {ambientStyles.bottomLeftOrnament}
+        </>
+      )}
       {children}
     </div>
   );
