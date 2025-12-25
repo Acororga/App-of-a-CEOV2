@@ -64,34 +64,84 @@ export default function SettingsDeletion() {
             </div>
           </div>
 
-          <div className="prose prose-sm prose-invert max-w-none">
-            <div className="space-y-4 text-zinc-400 text-sm leading-relaxed">
-              <h2 className="text-white text-base font-bold mt-6 mb-3">What Will Be Deleted</h2>
-              <ul className="list-disc list-inside space-y-1 text-zinc-400">
-                <li>Your account and profile information</li>
-                <li>All habits and habit completion records</li>
-                <li>All tasks and to-do items</li>
-                <li>Calendar events and reminders</li>
-                <li>Screen time logs and statistics</li>
-                <li>Focus session history</li>
-                <li>Weekly contracts and scores</li>
-                <li>Rank and streak data</li>
-              </ul>
+          <div className="space-y-5">
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  What Will Be Deleted
+                </h2>
+                <ul className="space-y-2 text-zinc-400 text-xs">
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Your account and profile information</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>All habits and habit completion records</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>All tasks and to-do items</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Calendar events and reminders</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Screen time logs and statistics</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Focus session history</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Weekly contracts and scores</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Rank and streak data</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Data Retention</h2>
-              <p>
-                After deletion, your data will be permanently removed from our active systems within 30 days. Some anonymized aggregated data may be retained for statistical purposes but will not be personally identifiable.
-              </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  Data Retention
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  After deletion, your data will be permanently removed from our active systems within 30 days. Some anonymized aggregated data may be retained for statistical purposes but will not be personally identifiable.
+                </p>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Alternative: Export Your Data</h2>
-              <p>
-                Before deleting your account, you may want to export your data. Contact us through the Contact section to request a data export in JSON format.
-              </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Alternative: Export Your Data
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  Before deleting your account, you may want to export your data. Contact us through the Contact section to request a data export in JSON format.
+                </p>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Account Recovery</h2>
-              <p>
-                Once deleted, your account cannot be recovered. If you delete your account by mistake, you will need to create a new account and start over.
-              </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                  Account Recovery
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  Once deleted, your account cannot be recovered. If you delete your account by mistake, you will need to create a new account and start over.
+                </p>
+              </div>
             </div>
           </div>
 

@@ -29,45 +29,91 @@ export default function SettingsPrivacy() {
           <div className="w-20" />
         </div>
 
-        <div className="prose prose-sm prose-invert max-w-none">
-          <div className="space-y-4 text-zinc-400 text-sm leading-relaxed">
-            <p>
-              This privacy policy explains how we collect, use, and protect your personal information when you use our productivity application.
-            </p>
+        <div className="space-y-6">
+          <div className="relative">
+            <div className="relative p-5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                This privacy policy explains how we collect, use, and protect your personal information when you use our productivity application.
+              </p>
+            </div>
+          </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Information We Collect</h2>
-            <p>
-              We collect information you provide directly to us, including your email address, name, and productivity data such as habits, tasks, and screen time usage. This information is necessary to provide you with the app's core functionality.
-            </p>
+          <div className="space-y-5">
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Information We Collect
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We collect information you provide directly to us, including your email address, name, and productivity data such as habits, tasks, and screen time usage. This information is necessary to provide you with the app's core functionality.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">How We Use Your Information</h2>
-            <p>
-              Your data is used solely to provide and improve the app's services. We use your productivity data to generate insights, track progress, and help you achieve your goals. We do not sell your personal information to third parties.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  How We Use Your Information
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  Your data is used solely to provide and improve the app's services. We use your productivity data to generate insights, track progress, and help you achieve your goals. We do not sell your personal information to third parties.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Data Storage and Security</h2>
-            <p>
-              Your data is stored securely on our servers with industry-standard encryption. We implement appropriate technical and organizational measures to protect your information against unauthorized access, alteration, or destruction.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Data Storage and Security
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  Your data is stored securely on our servers with industry-standard encryption. We implement appropriate technical and organizational measures to protect your information against unauthorized access, alteration, or destruction.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Data Sharing</h2>
-            <p>
-              We do not share your personal information with third parties except when required by law or with your explicit consent. Analytics and performance data may be shared in aggregated, anonymized form.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Data Sharing
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We do not share your personal information with third parties except when required by law or with your explicit consent. Analytics and performance data may be shared in aggregated, anonymized form.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Your Rights</h2>
-            <p>
-              You have the right to access, correct, or delete your personal information at any time. You can also request a copy of your data or restrict how we use it. To exercise these rights, please contact us through the Contact section.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Your Rights
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  You have the right to access, correct, or delete your personal information at any time. You can also request a copy of your data or restrict how we use it. To exercise these rights, please contact us through the Contact section.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Changes to This Policy</h2>
-            <p>
-              We may update this privacy policy from time to time. We will notify you of any significant changes by email or through the app. Your continued use of the app after such changes constitutes acceptance of the updated policy.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Changes to This Policy
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We may update this privacy policy from time to time. We will notify you of any significant changes by email or through the app. Your continued use of the app after such changes constitutes acceptance of the updated policy.
+                </p>
+              </div>
+            </div>
+          </div>
 
-            <p className="mt-6 text-xs text-zinc-600">
-              Last updated: December 2025
-            </p>
+          <div className="text-[10px] text-zinc-700 text-center pt-2">
+            Last updated: December 2025
           </div>
         </div>
       </div>

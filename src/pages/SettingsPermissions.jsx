@@ -29,45 +29,91 @@ export default function SettingsPermissions() {
           <div className="w-20" />
         </div>
 
-        <div className="prose prose-sm prose-invert max-w-none">
-          <div className="space-y-4 text-zinc-400 text-sm leading-relaxed">
-            <p>
-              This application may request certain permissions from your device to provide its full functionality. Below is an explanation of what permissions we request and why.
-            </p>
+        <div className="space-y-6">
+          <div className="relative">
+            <div className="relative p-5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                This application may request certain permissions from your device to provide its full functionality. Below is an explanation of what permissions we request and why.
+              </p>
+            </div>
+          </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Notifications</h2>
-            <p>
-              We request notification permission to send you reminders about your habits, upcoming calendar events, and focus session completions. These notifications help you stay on track with your productivity goals. You can disable notifications at any time in your device settings.
-            </p>
+          <div className="space-y-5">
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  Notifications
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We request notification permission to send you reminders about your habits, upcoming calendar events, and focus session completions. These notifications help you stay on track with your productivity goals. You can disable notifications at any time in your device settings.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Calendar Access (Optional)</h2>
-            <p>
-              If you choose to sync with your device calendar, we request calendar read and write permissions. This allows the app to display your events and create new calendar entries. This permission is entirely optional and the app functions without it.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                  Calendar Access <span className="text-[10px] text-zinc-600 font-normal">(Optional)</span>
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  If you choose to sync with your device calendar, we request calendar read and write permissions. This allows the app to display your events and create new calendar entries. This permission is entirely optional and the app functions without it.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Storage</h2>
-            <p>
-              The app needs storage permission to save your data locally on your device. This ensures your productivity data is accessible even when offline and improves app performance.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  Storage
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  The app needs storage permission to save your data locally on your device. This ensures your productivity data is accessible even when offline and improves app performance.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Screen Time Tracking (Mobile)</h2>
-            <p>
-              On mobile devices, we request usage access permission to track your screen time and app usage. This data remains private and is only used to provide you with insights into your device usage patterns. You can revoke this permission at any time through your device settings.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  Screen Time Tracking <span className="text-[10px] text-zinc-600 font-normal">(Mobile)</span>
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  On mobile devices, we request usage access permission to track your screen time and app usage. This data remains private and is only used to provide you with insights into your device usage patterns. You can revoke this permission at any time through your device settings.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">Managing Permissions</h2>
-            <p>
-              You have full control over permissions. You can grant or revoke any permission through your device settings at any time. Note that some features may not function properly without their required permissions.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                  Managing Permissions
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  You have full control over permissions. You can grant or revoke any permission through your device settings at any time. Note that some features may not function properly without their required permissions.
+                </p>
+              </div>
+            </div>
 
-            <h2 className="text-white text-base font-bold mt-6 mb-3">No Unnecessary Access</h2>
-            <p>
-              We do not request access to your contacts, microphone, camera, or location unless explicitly required for a specific feature you choose to use. We respect your privacy and only ask for permissions that are essential to the app's functionality.
-            </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  No Unnecessary Access
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We do not request access to your contacts, microphone, camera, or location unless explicitly required for a specific feature you choose to use. We respect your privacy and only ask for permissions that are essential to the app's functionality.
+                </p>
+              </div>
+            </div>
+          </div>
 
-            <p className="mt-6 text-xs text-zinc-600">
-              Last updated: December 2025
-            </p>
+          <div className="text-[10px] text-zinc-700 text-center pt-2">
+            Last updated: December 2025
           </div>
         </div>
       </div>

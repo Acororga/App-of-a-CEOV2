@@ -30,38 +30,83 @@ export default function SettingsContact() {
         </div>
 
         <div className="space-y-6">
-          <div className="prose prose-sm prose-invert max-w-none">
-            <div className="space-y-4 text-zinc-400 text-sm leading-relaxed">
-              <p>
+          <div className="relative">
+            <div className="relative p-5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              <p className="text-zinc-400 text-sm leading-relaxed">
                 We're here to help! If you have questions, feedback, or need support, please reach out to us through the methods below.
               </p>
+            </div>
+          </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">General Inquiries</h2>
-              <p>
-                For general questions about the app, features, or your account, please contact us via email. We typically respond within 24-48 hours.
-              </p>
+          <div className="space-y-5">
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  General Inquiries
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  For general questions about the app, features, or your account, please contact us via email. We typically respond within 24-48 hours.
+                </p>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Technical Support</h2>
-              <p>
-                If you're experiencing technical issues, please include the following information in your message:
-              </p>
-              <ul className="list-disc list-inside space-y-1 text-zinc-400">
-                <li>Device type and operating system version</li>
-                <li>App version (if available)</li>
-                <li>Description of the issue</li>
-                <li>Steps to reproduce the problem</li>
-                <li>Screenshots (if applicable)</li>
-              </ul>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  Technical Support
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed mb-3">
+                  If you're experiencing technical issues, please include the following information in your message:
+                </p>
+                <ul className="space-y-2 text-zinc-400 text-xs">
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Device type and operating system version</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>App version (if available)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Description of the issue</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Steps to reproduce the problem</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-zinc-700 mt-1">•</span>
+                    <span>Screenshots (if applicable)</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Privacy and Data Requests</h2>
-              <p>
-                For privacy-related inquiries, data access requests, or data deletion requests, please contact us with your registered email address. We will respond to your request in accordance with applicable data protection laws.
-              </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                  Privacy and Data Requests
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  For privacy-related inquiries, data access requests, or data deletion requests, please contact us with your registered email address. We will respond to your request in accordance with applicable data protection laws.
+                </p>
+              </div>
+            </div>
 
-              <h2 className="text-white text-base font-bold mt-6 mb-3">Feedback and Suggestions</h2>
-              <p>
-                We value your feedback! If you have ideas for new features or improvements, we'd love to hear from you. Your input helps us make the app better for everyone.
-              </p>
+            <div className="relative">
+              <div className="relative p-5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                <h2 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  Feedback and Suggestions
+                </h2>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  We value your feedback! If you have ideas for new features or improvements, we'd love to hear from you. Your input helps us make the app better for everyone.
+                </p>
+              </div>
             </div>
           </div>
 
