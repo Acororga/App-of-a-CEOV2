@@ -6,7 +6,7 @@ import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
-  BarChart3, CheckSquare, ClipboardList, Calendar, Shield, Circle, Zap, Plus, X, FileText 
+  BarChart3, CheckSquare, ClipboardList, Calendar, Shield, Circle, Zap, Plus, X, FileText, Settings as SettingsIcon
 } from 'lucide-react';
 import FocusModeQuickStart from '../components/FocusModeQuickStart';
 import HabitModal from '../components/habits/HabitModal';
@@ -456,8 +456,7 @@ export default function Home() {
                     <app.icon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold mb-0.5 text-white">{app.name}</div>
-                    <div className="text-[9px] text-zinc-600 font-semibold uppercase">Access</div>
+                    <div className="text-sm font-bold text-white">{app.name}</div>
                   </div>
                 </div>
               </div>
@@ -710,19 +709,21 @@ export default function Home() {
                 })}
               </div>
 
-              <button
-                className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
+              <Link
+                to={createPageUrl('Settings')}
+                onClick={() => setShowMenu(false)}
+                className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-blue-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/5 to-green-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                  <FileText className="w-5 h-5 text-white relative z-10" />
+                  <SettingsIcon className="w-5 h-5 text-white relative z-10" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="font-semibold">Privacy Policy</div>
-                  <div className="text-xs text-zinc-500">Terms & conditions</div>
+                  <div className="font-semibold">Settings & Legal</div>
+                  <div className="text-xs text-zinc-500">Privacy, terms & more</div>
                 </div>
-              </button>
+              </Link>
             </div>
 
             <div className="mt-8 pt-6 border-t border-zinc-800/50">
