@@ -13,6 +13,8 @@ import Rewards from './pages/Rewards';
 import ScreenTime from './pages/ScreenTime';
 import ScreenTimeManager from './pages/ScreenTimeManager';
 import WinStreak from './pages/WinStreak';
+import Settings from './pages/Settings';
+import SettingsLanguage from './pages/SettingsLanguage';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +34,8 @@ export const PAGES = {
     "ScreenTime": ScreenTime,
     "ScreenTimeManager": ScreenTimeManager,
     "WinStreak": WinStreak,
+    "Settings": Settings,
+    "SettingsLanguage": SettingsLanguage,
 }
 
 export const pagesConfig = {
