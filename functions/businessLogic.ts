@@ -323,25 +323,56 @@ export async function getHabitCompletionsForDate(date) {
 }
 
 export async function hasUncheckedHabits(date) {
-  const habits = await getHabitsForDate(date);
-  if (habits.length === 0) return false;
+  const user = await base44.auth.me();
+  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
   
-  const completions = await getHabitCompletionsForDate(date);
-  
-  if (completions.length === 0) return true;
-  
-  const completionMap = {};
-  completions.forEach(c => {
-    completionMap[c.habit_id] = true;
+  const pendingValidation = await base44.entities.HabitCompletion.filter({
+    created_by: user.email,
+    date: dateStr,
+    state: 'pending_validation'
   });
   
+  return pendingValidation.length > 0;
+}
+
+export async function ensureHabitsScheduled(date) {
+  const user = await base44.auth.me();
+  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+  const habits = await getHabitsForDate(typeof date === 'string' ? parseISO(date) : date);
+  
   for (const habit of habits) {
-    if (!completionMap[habit.id]) {
-      return true;
+    const existing = await base44.entities.HabitCompletion.filter({
+      created_by: user.email,
+      habit_id: habit.id,
+      date: dateStr
+    });
+    
+    if (existing.length === 0) {
+      await base44.entities.HabitCompletion.create({
+        habit_id: habit.id,
+        date: dateStr,
+        state: 'scheduled',
+        completed: false
+      });
     }
   }
+}
+
+export async function transitionScheduledToPending(date) {
+  const user = await base44.auth.me();
+  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
   
-  return false;
+  const scheduled = await base44.entities.HabitCompletion.filter({
+    created_by: user.email,
+    date: dateStr,
+    state: 'scheduled'
+  });
+  
+  for (const completion of scheduled) {
+    await base44.entities.HabitCompletion.update(completion.id, {
+      state: 'pending_validation'
+    });
+  }
 }
 
 export async function checkInHabit(habitId, date, completed) {
@@ -356,6 +387,7 @@ export async function checkInHabit(habitId, date, completed) {
   
   if (existing.length > 0) {
     await base44.entities.HabitCompletion.update(existing[0].id, {
+      state: completed ? 'completed' : 'missed',
       completed,
       checked_in_date: new Date().toISOString()
     });
@@ -364,6 +396,7 @@ export async function checkInHabit(habitId, date, completed) {
     const completion = await base44.entities.HabitCompletion.create({
       habit_id: habitId,
       date: dateStr,
+      state: completed ? 'completed' : 'missed',
       completed,
       checked_in_date: new Date().toISOString()
     });

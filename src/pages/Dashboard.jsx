@@ -5,7 +5,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   getHabitsForDate, 
   getHabitCompletionsForDate,
-  checkInHabit
+  checkInHabit,
+  ensureHabitsScheduled,
+  transitionScheduledToPending
 } from '../functions/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { format, subDays } from 'date-fns';
@@ -34,6 +36,9 @@ export default function Dashboard() {
     
     const fetchData = async () => {
       try {
+        await ensureHabitsScheduled(today);
+        await transitionScheduledToPending(yesterday);
+        
         const tHabits = await getHabitsForDate(today);
         const tCompletions = await getHabitCompletionsForDate(today);
         const yHabits = await getHabitsForDate(yesterday);
@@ -144,19 +149,10 @@ export default function Dashboard() {
   }
 
   const needsYesterdayValidation = React.useMemo(() => {
-    if (!yesterdayHabits || yesterdayHabits.length === 0) return false;
-    if (!yesterdayCompletions || yesterdayCompletions.length === 0) return true;
-    
-    const yesterdayStr = format(yesterday, 'yyyy-MM-dd');
-    for (const habit of yesterdayHabits) {
-      const completion = yesterdayCompletions.find(c => c.habit_id === habit.id);
-      if (!completion) return true;
-      const isSameDay = completion.date === yesterdayStr;
-      if (!isSameDay) return true;
-    }
-    
-    return false;
-  }, [yesterdayHabits, yesterdayCompletions, yesterdayVisible, yesterday]);
+    if (!yesterdayCompletions) return false;
+    const pendingValidation = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+    return pendingValidation.length > 0;
+  }, [yesterdayCompletions]);
 
   React.useEffect(() => {
     if (yesterdayHabits && yesterdayHabits.length > 0) {
