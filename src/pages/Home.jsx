@@ -540,9 +540,8 @@ export default function Home() {
                       </button>
                     )}
                     <div className="relative h-full flex flex-col justify-between">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <AppIcon className="w-6 h-6 text-white drop-shadow-md relative z-10" />
+                      <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                        {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
                       </div>
                       <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
@@ -892,9 +891,8 @@ export default function Home() {
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/[0.02] to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       )}
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} flex items-center justify-center shadow-md relative ${!isActive && 'opacity-40'}`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                        <Icon className="w-4 h-4 text-white relative z-10" />
+                      <div className={`w-8 h-8 ${!isActive && 'opacity-40'}`}>
+                        {apps.find(a => a.id === app.id)?.customIcon || <Icon className="w-4 h-4 text-white" />}
                       </div>
                       <div className="text-left flex-1">
                         <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
