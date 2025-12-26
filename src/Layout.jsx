@@ -119,29 +119,9 @@ function LayoutContent({ children, currentPageName }) {
                 <Link
                   to={createPageUrl('BiannualReport')}
                   onClick={() => setShowMenu(false)}
-                  className="group flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 active:scale-[0.98] transition-all"
+                  className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="w-10 h-10 rounded-lg group-active:scale-[0.96] transition-transform duration-100">
-                    <div className="relative w-full h-full">
-                      <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#a855f7] to-[#7c3aed] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(168,85,247,0.3)]" 
-                           style={{
-                             backgroundImage: `
-                               linear-gradient(135deg, #a855f7 0%, #7c3aed 100%),
-                               url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
-                             `,
-                             backgroundBlendMode: 'overlay, normal'
-                           }}>
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, 0.5px)' }}>
-                        <svg className="w-[55%] h-[55%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 21H4.6c-.56 0-.84 0-1.054-.109a1 1 0 01-.437-.437C3 20.24 3 19.96 3 19.4V3" opacity="0.88"/>
-                          <path d="M7 16l3.5-5.5L14 14l5-8" opacity="0.92" strokeWidth="2.8"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+                  <BarChart3 className="w-5 h-5 text-purple-400" />
                   <div>
                     <div className="font-semibold">{t('sixMonthReport')}</div>
                     <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
@@ -158,93 +138,13 @@ function LayoutContent({ children, currentPageName }) {
                       <button
                         key={app.id}
                         onClick={() => toggleAppMutation.mutate(app.id)}
-                        className={`group w-full flex items-center gap-3 p-3 rounded-lg border transition-all active:scale-[0.98] ${
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
                           isActive
                             ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
                             : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
                         }`}
                       >
-                        <div className={`w-8 h-8 rounded-lg group-active:scale-[0.96] transition-transform duration-100 ${!isActive && 'opacity-40'}`}>
-                          {/* Render app custom icons based on app.id */}
-                          {app.id === 'Pareto' && (
-                            <div className="relative w-full h-full">
-                              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#5b4fb8] to-[#7c3aed] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_3px_8px_rgba(91,79,184,0.25)]" 
-                                   style={{
-                                     backgroundImage: `linear-gradient(135deg, #5b4fb8 0%, #7c3aed 100%), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
-                                     backgroundBlendMode: 'overlay, normal'
-                                   }}>
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, -0.5px)' }}>
-                                <svg className="w-[50%] h-[50%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" opacity="0.85"/>
-                                  <path d="M9 14l2 2 4-4" opacity="0.90" strokeWidth="2.8"/>
-                                </svg>
-                              </div>
-                            </div>
-                          )}
-                          {app.id === 'Habits' && (
-                            <div className="relative w-full h-full">
-                              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#10b981] to-[#14b8a6] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_3px_8px_rgba(16,185,129,0.25)]" 
-                                   style={{
-                                     backgroundImage: `linear-gradient(135deg, #10b981 0%, #14b8a6 100%), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
-                                     backgroundBlendMode: 'overlay, normal'
-                                   }}>
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, 0.5px)' }}>
-                                <svg className="w-[50%] h-[50%] opacity-95" viewBox="0 0 24 24" fill="none">
-                                  <circle cx="12" cy="12" r="8.5" stroke="#f8f8f8" strokeWidth="2.2" strokeDasharray="2.5 3" opacity="0.85"/>
-                                  <path d="M8 12.5l2.5 2.5L16.5 9" stroke="#f8f8f8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
-                                </svg>
-                              </div>
-                            </div>
-                          )}
-                          {app.id === 'Calendar' && (
-                            <div className="relative w-full h-full">
-                              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#ec4899] to-[#f43f5e] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_3px_8px_rgba(236,72,153,0.25)]" 
-                                   style={{
-                                     backgroundImage: `linear-gradient(135deg, #ec4899 0%, #f43f5e 100%), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
-                                     backgroundBlendMode: 'overlay, normal'
-                                   }}>
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, 0px)' }}>
-                                <svg className="w-[52%] h-[52%] opacity-95" viewBox="0 0 24 24" fill="none">
-                                  <rect x="4" y="6" width="16" height="15" rx="2" stroke="#f8f8f8" strokeWidth="2.2" opacity="0.88"/>
-                                  <line x1="4" y1="10" x2="20" y2="10" stroke="#f8f8f8" strokeWidth="2.2" opacity="0.88"/>
-                                  <line x1="8" y1="3" x2="8" y2="7" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" opacity="0.88"/>
-                                  <line x1="16" y1="3" x2="16" y2="7" stroke="#f8f8f8" strokeWidth="2.5" strokeLinecap="round" opacity="0.88"/>
-                                  <circle cx="8.5" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.75"/>
-                                  <circle cx="12" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.85"/>
-                                  <circle cx="15.5" cy="13.5" r="1.2" fill="#f8f8f8" opacity="0.75"/>
-                                </svg>
-                              </div>
-                            </div>
-                          )}
-                          {app.id === 'ScreenTimeManager' && (
-                            <div className="relative w-full h-full">
-                              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#ef4444] to-[#f97316] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_3px_8px_rgba(239,68,68,0.25)]" 
-                                   style={{
-                                     backgroundImage: `linear-gradient(135deg, #ef4444 0%, #f97316 100%), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
-                                     backgroundBlendMode: 'overlay, normal'
-                                   }}>
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, -0.5px)' }}>
-                                <svg className="w-[54%] h-[54%] opacity-95" viewBox="0 0 24 24" fill="none">
-                                  <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" stroke="#f8f8f8" strokeWidth="2.2" strokeLinejoin="round" opacity="0.88"/>
-                                  <circle cx="12" cy="12.5" r="3" stroke="#f8f8f8" strokeWidth="2" opacity="0.82"/>
-                                  <path d="M12 9.5v3.5l2 2" stroke="#f8f8f8" strokeWidth="2.2" strokeLinecap="round" opacity="0.85"/>
-                                </svg>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
                         <div className="text-left flex-1">
                           <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
                             {app.name}
@@ -263,30 +163,9 @@ function LayoutContent({ children, currentPageName }) {
                 <Link
                   to={createPageUrl('Settings')}
                   onClick={() => setShowMenu(false)}
-                  className="group w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 active:scale-[0.98] transition-all"
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="w-10 h-10 rounded-lg group-active:scale-[0.96] transition-transform duration-100">
-                    <div className="relative w-full h-full">
-                      <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#2563eb] shadow-[0_1px_2px_rgba(0,0,0,0.3),0_4px_12px_rgba(59,130,246,0.3)]" 
-                           style={{
-                             backgroundImage: `
-                               linear-gradient(135deg, #3b82f6 0%, #2563eb 100%),
-                               url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
-                             `,
-                             backgroundBlendMode: 'overlay, normal'
-                           }}>
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-tl from-black/15 via-transparent to-transparent" />
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, 0px)' }}>
-                        <svg className="w-[58%] h-[58%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="3" opacity="0.88"/>
-                          <path d="M12 1v6m0 6v6M1 12h6m6 0h6" opacity="0.85" strokeWidth="2.5"/>
-                          <path d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M19.78 4.22l-4.24 4.24m-5.08 5.08l-4.24 4.24" opacity="0.82" strokeWidth="2"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+                  <FileText className="w-5 h-5 text-green-400" />
                   <div className="text-left">
                     <div className="font-semibold">{t('settingsAndLegal')}</div>
                     <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
