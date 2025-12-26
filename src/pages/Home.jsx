@@ -414,9 +414,33 @@ export default function Home() {
 
             <div className="relative flex items-center justify-between h-full">
               <div className="flex items-center gap-6">
-                <div className="w-20 h-20 rounded-[20px] bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-[0_12px_32px_rgba(59,130,246,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:shadow-[0_16px_48px_rgba(59,130,246,0.6)] transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
-                  <BarChart3 className="w-10 h-10 text-white relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" />
+                <div className="w-20 h-20 group-active:scale-[0.96] transition-transform duration-100 relative">
+                  {/* Premium Container with Grain Texture */}
+                  <div className="absolute inset-0 rounded-[16px] bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] shadow-[0_2px_4px_rgba(0,0,0,0.4),0_8px_24px_rgba(59,130,246,0.3)]" 
+                       style={{
+                         backgroundImage: `
+                           linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
+                         `,
+                         backgroundBlendMode: 'overlay, normal'
+                       }}>
+                    {/* Top-left light */}
+                    <div className="absolute inset-0 rounded-[16px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
+                    {/* Bottom-right shadow */}
+                    <div className="absolute inset-0 rounded-[16px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
+                    {/* Inner glow */}
+                    <div className="absolute inset-[2px] rounded-[14px] bg-gradient-to-br from-white/10 to-transparent opacity-50" />
+                  </div>
+
+                  {/* Icon Symbol - Monochrome, slightly off-center */}
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, 0.5px)' }}>
+                    <svg className="w-[58%] h-[58%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 3v18h18" opacity="0.85"/>
+                      <path d="M18 17V9" opacity="0.9" strokeWidth="2.8"/>
+                      <path d="M13 17v-6" opacity="0.88" strokeWidth="2.8"/>
+                      <path d="M8 17v-4" opacity="0.86" strokeWidth="2.8"/>
+                    </svg>
+                  </div>
                 </div>
                 <div>
                   <div className="text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">{t('dashboard')}</div>
@@ -805,9 +829,31 @@ export default function Home() {
                 className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                  <BarChart3 className="w-5 h-5 text-white relative z-10" />
+                <div className="w-10 h-10 group-active:scale-[0.96] transition-transform duration-100 relative">
+                  {/* Premium Container with Grain Texture */}
+                  <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-[#a855f7] to-[#7c3aed] shadow-[0_1.5px_3px_rgba(0,0,0,0.35),0_6px_18px_rgba(0,0,0,0.2)]" 
+                       style={{
+                         backgroundImage: `
+                           linear-gradient(135deg, #a855f7 0%, #7c3aed 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
+                         `,
+                         backgroundBlendMode: 'overlay, normal'
+                       }}>
+                    {/* Top-left light */}
+                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
+                    {/* Bottom-right shadow */}
+                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
+                  </div>
+
+                  {/* Icon Symbol */}
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(0.5px, -0.5px)' }}>
+                    <svg className="w-[56%] h-[56%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" opacity="0.82"/>
+                      <path d="M8 10v7" opacity="0.9" strokeWidth="2.8"/>
+                      <path d="M12 7v10" opacity="0.88" strokeWidth="2.8"/>
+                      <path d="M16 13v4" opacity="0.86" strokeWidth="2.8"/>
+                    </svg>
+                  </div>
                 </div>
                 <div className="flex-1">
                   <div className="font-semibold">{t('sixMonthReport')}</div>
@@ -873,9 +919,30 @@ export default function Home() {
                 className="group w-full flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-blue-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10 rounded-lg" />
-                  <SettingsIcon className="w-5 h-5 text-white relative z-10" />
+                <div className="w-10 h-10 group-active:scale-[0.96] transition-transform duration-100 relative">
+                  {/* Premium Container with Grain Texture */}
+                  <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-[#3b82f6] to-[#2563eb] shadow-[0_1.5px_3px_rgba(0,0,0,0.35),0_6px_18px_rgba(0,0,0,0.2)]" 
+                       style={{
+                         backgroundImage: `
+                           linear-gradient(135deg, #3b82f6 0%, #2563eb 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulescence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
+                         `,
+                         backgroundBlendMode: 'overlay, normal'
+                       }}>
+                    {/* Top-left light */}
+                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
+                    {/* Bottom-right shadow */}
+                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
+                  </div>
+
+                  {/* Icon Symbol */}
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'translate(-0.5px, 0.5px)' }}>
+                    <svg className="w-[58%] h-[58%] opacity-95" viewBox="0 0 24 24" fill="none" stroke="#f8f8f8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="3" opacity="0.9" strokeWidth="2.5"/>
+                      <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" opacity="0.85"/>
+                      <path d="M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M19.78 4.22l-4.24 4.24m-7.08 7.08l-4.24 4.24" opacity="0.75"/>
+                    </svg>
+                  </div>
                 </div>
                 <div className="text-left flex-1">
                   <div className="font-semibold">{t('settingsAndLegal')}</div>
