@@ -43,13 +43,16 @@ export default function Dashboard() {
         setIsLoading(true);
         const user = await base44.auth.me();
         
-        // Step 1: Ensure today's habits are scheduled
-        await ensureHabitsScheduled(today);
+        // Step 1: Ensure yesterday's habits are scheduled (CRUCIAL - must happen first)
+        await ensureHabitsScheduled(yesterday);
         
         // Step 2: Transition yesterday's scheduled to pending_validation
         await transitionScheduledToPending(yesterday);
         
-        // Step 3: Fetch today's data
+        // Step 3: Ensure today's habits are scheduled
+        await ensureHabitsScheduled(today);
+        
+        // Step 4: Fetch today's data
         const todayHabits = await getHabitsForDate(today);
         const todayCompletions = await getHabitCompletionsForDate(today);
         
