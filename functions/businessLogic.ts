@@ -342,12 +342,14 @@ export async function ensureHabitsScheduled(date) {
     const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
     
+    console.log(`[ensureHabitsScheduled] Starting for ${dateStr}`);
+    
     const habits = await getHabitsForDate(dateObj);
     
-    console.log(`[ensureHabitsScheduled] For ${dateStr}: found ${habits.length} habits`);
+    console.log(`[ensureHabitsScheduled] Found ${habits.length} habits for ${dateStr}`);
     
     if (habits.length === 0) {
-      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, skipping`);
+      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, returning`);
       return;
     }
     
@@ -357,28 +359,40 @@ export async function ensureHabitsScheduled(date) {
       date: dateStr
     });
     
+    console.log(`[ensureHabitsScheduled] Found ${allCompletions.length} existing completions`);
+    
     const completionMap = {};
     allCompletions.forEach(c => {
       completionMap[c.habit_id] = true;
     });
     
-    // Create missing completions in bulk
-    const toCreate = habits.filter(h => !completionMap[h.id]).map(h => ({
-      habit_id: h.id,
-      date: dateStr,
-      state: 'scheduled',
-      completed: false
-    }));
+    // Create missing completions one by one (bulkCreate may not exist)
+    const habitsToSchedule = habits.filter(h => !completionMap[h.id]);
     
-    if (toCreate.length > 0) {
-      console.log(`[ensureHabitsScheduled] Creating ${toCreate.length} new completions for ${dateStr}`);
-      await base44.entities.HabitCompletion.bulkCreate(toCreate);
+    if (habitsToSchedule.length > 0) {
+      console.log(`[ensureHabitsScheduled] Need to create ${habitsToSchedule.length} completions`);
+      for (const habit of habitsToSchedule) {
+        try {
+          await base44.entities.HabitCompletion.create({
+            habit_id: habit.id,
+            date: dateStr,
+            state: 'scheduled',
+            completed: false
+          });
+          console.log(`[ensureHabitsScheduled] Created completion for habit: ${habit.title}`);
+        } catch (createError) {
+          console.error(`[ensureHabitsScheduled] Failed to create completion for ${habit.title}:`, createError);
+          // Continue with other habits even if one fails
+        }
+      }
     } else {
       console.log(`[ensureHabitsScheduled] All habits already scheduled for ${dateStr}`);
     }
+    
+    console.log(`[ensureHabitsScheduled] Completed for ${dateStr}`);
   } catch (error) {
-    console.error('[ensureHabitsScheduled] ERROR:', error);
-    throw error;
+    console.error('[ensureHabitsScheduled] CRITICAL ERROR:', error);
+    // Don't throw - allow the app to continue even if scheduling fails
   }
 }
 
