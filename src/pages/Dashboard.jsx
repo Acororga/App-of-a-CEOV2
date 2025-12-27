@@ -52,11 +52,25 @@ export default function Dashboard() {
         // Step 3: Ensure today's habits are scheduled
         await ensureHabitsScheduled(today);
         
-        // Step 4: Fetch today's data
+        // Step 4: Fetch ALL habits (not filtered by date)
+        const allHabits = await base44.entities.Habit.filter({ 
+          created_by: user.email,
+          archived: false
+        });
+        
+        console.log('=== ALL HABITS FETCHED ===');
+        console.log('Total habits in database:', allHabits.length);
+        allHabits.forEach(h => console.log(`- ${h.title} (daily: ${h.is_daily}, days: ${h.specific_days})`));
+        
+        // Step 5: Fetch today's data
         const todayHabits = await getHabitsForDate(today);
         const todayCompletions = await getHabitCompletionsForDate(today);
         
-        // Step 4: Get today's scheduled completions with habit details
+        console.log('=== FILTERED FOR TODAY ===');
+        console.log('Habits for today from getHabitsForDate:', todayHabits.length);
+        todayHabits.forEach(h => console.log(`- ${h.title}`));
+        
+        // Step 6: Get today's scheduled completions with habit details
         const scheduledCompletions = todayCompletions.filter(c => c.state === 'scheduled');
         const todayHabitsData = todayHabits.map(habit => {
           const completion = scheduledCompletions.find(c => c.habit_id === habit.id);
@@ -67,14 +81,13 @@ export default function Dashboard() {
           };
         });
         
-        // Step 5: Fetch yesterday's pending validations
+        // Step 7: Fetch yesterday's pending validations
         const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
         const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
         
-        // Step 6: Get habit details for pending validations
-        const allHabits = await base44.entities.Habit.filter({ 
-          created_by: user.email 
-        });
+        console.log('=== YESTERDAY VALIDATIONS ===');
+        console.log('Yesterday completions:', yesterdayCompletions.length);
+        console.log('Pending validations:', pendingCompletions.length);
         
         const pendingWithHabits = pendingCompletions.map(completion => {
           const habit = allHabits.find(h => h.id === completion.habit_id);
