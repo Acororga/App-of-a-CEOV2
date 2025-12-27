@@ -212,9 +212,9 @@ export default function Home() {
           <div className="absolute inset-0 rounded-[18px] overflow-hidden"
                style={{
                  background: `
-                   radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.4) 0%, transparent 50%),
-                   radial-gradient(circle at 70% 70%, rgba(91, 79, 184, 0.3) 0%, transparent 50%),
-                   linear-gradient(135deg, #5b4fb8 0%, #6d3bc5 50%, #7c3aed 100%)
+                   radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+                   radial-gradient(circle at 70% 70%, rgba(91, 79, 184, 0.25) 0%, transparent 50%),
+                   linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #8b5cf6 100%)
                  `,
                  boxShadow: `
                    0 0 0 1px rgba(124, 58, 237, 0.3),
@@ -226,7 +226,7 @@ export default function Home() {
                }}>
             
             {/* Grille hexagonale futuriste */}
-            <div className="absolute inset-0 opacity-10"
+            <div className="absolute inset-0 opacity-[0.06]"
                  style={{
                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0 L45 15 L45 30 L30 45 L15 30 L15 15 Z' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E")`,
                    backgroundSize: '30px 30px'
@@ -274,9 +274,9 @@ export default function Home() {
               {/* Glow background */}
               <g filter="url(#glow-pareto)">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M9 14l2 2 4-4" 
-                      stroke="rgba(255, 255, 255, 0.95)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
               </g>
               <defs>
                 <filter id="glow-pareto" x="-50%" y="-50%" width="200%" height="200%">
@@ -315,9 +315,9 @@ export default function Home() {
           <div className="absolute inset-0 rounded-[18px] overflow-hidden"
                style={{
                  background: `
-                   radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.5) 0%, transparent 50%),
-                   radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.4) 0%, transparent 50%),
-                   linear-gradient(135deg, #10b981 0%, #13a382 50%, #14b8a6 100%)
+                   radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.35) 0%, transparent 50%),
+                   radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.3) 0%, transparent 50%),
+                   linear-gradient(135deg, #10b981 0%, #0d9f6e 50%, #14b8a6 100%)
                  `,
                  boxShadow: `
                    0 0 0 1px rgba(16, 185, 129, 0.4),
@@ -377,11 +377,11 @@ export default function Home() {
             <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
               <g filter="url(#glow-habit)">
                 {/* Cercle avec segments */}
-                <circle cx="12" cy="12" r="9.5" stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2" 
+                <circle cx="12" cy="12" r="9.5" stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.6" 
                         strokeDasharray="4 3" strokeLinecap="round"/>
                 {/* Check mark puissant */}
                 <path d="M7.5 12.5l3 3L17 9" 
-                      stroke="rgba(255, 255, 255, 0.95)" strokeWidth="3.5" 
+                      stroke="rgba(255, 255, 255, 0.88)" strokeWidth="2.4" 
                       strokeLinecap="round" strokeLinejoin="round"/>
               </g>
               <defs>
@@ -420,8 +420,8 @@ export default function Home() {
           <div className="absolute inset-0 rounded-[18px] overflow-hidden"
                style={{
                  background: `
-                   radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.5) 0%, transparent 45%),
-                   radial-gradient(circle at 70% 80%, rgba(244, 63, 94, 0.4) 0%, transparent 45%),
+                   radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.35) 0%, transparent 45%),
+                   radial-gradient(circle at 70% 80%, rgba(244, 63, 94, 0.3) 0%, transparent 45%),
                    linear-gradient(135deg, #ec4899 0%, #f14178 50%, #f43f5e 100%)
                  `,
                  boxShadow: `
@@ -434,7 +434,7 @@ export default function Home() {
                }}>
             
             {/* Grille calendrier stylisée */}
-            <div className="absolute inset-0 opacity-[0.09]"
+            <div className="absolute inset-0 opacity-[0.05]"
                  style={{
                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L60 0 L60 60 L0 60 Z M0 20 L60 20 M20 0 L20 60 M40 0 L40 60 M0 40 L60 40' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
                    backgroundSize: '30px 30px'
@@ -482,21 +482,21 @@ export default function Home() {
               <g filter="url(#glow-calendar)">
                 {/* Corps du calendrier */}
                 <rect x="4" y="6" width="16" height="15" rx="2.5" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.3"/>
+                      stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1.8"/>
                 {/* Ligne de séparation */}
                 <line x1="4" y1="10.5" x2="20" y2="10.5" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.3"/>
+                      stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1.8"/>
                 {/* Attaches */}
                 <line x1="8" y1="3.5" x2="8" y2="7.5" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.8" strokeLinecap="round"/>
+                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.2" strokeLinecap="round"/>
                 <line x1="16" y1="3.5" x2="16" y2="7.5" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.8" strokeLinecap="round"/>
+                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.2" strokeLinecap="round"/>
                 {/* Points de dates avec glow */}
-                <circle cx="8" cy="14" r="1.3" fill="rgba(255, 255, 255, 0.8)"/>
-                <circle cx="12" cy="14" r="1.3" fill="rgba(255, 255, 255, 0.95)"/>
-                <circle cx="16" cy="14" r="1.3" fill="rgba(255, 255, 255, 0.8)"/>
-                <circle cx="8" cy="17.5" r="1.3" fill="rgba(255, 255, 255, 0.7)"/>
-                <circle cx="12" cy="17.5" r="1.3" fill="rgba(255, 255, 255, 0.75)"/>
+                <circle cx="8" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.7)"/>
+                <circle cx="12" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.85)"/>
+                <circle cx="16" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.7)"/>
+                <circle cx="8" cy="17.5" r="1.1" fill="rgba(255, 255, 255, 0.6)"/>
+                <circle cx="12" cy="17.5" r="1.1" fill="rgba(255, 255, 255, 0.65)"/>
               </g>
               <defs>
                 <filter id="glow-calendar" x="-50%" y="-50%" width="200%" height="200%">
@@ -541,8 +541,8 @@ export default function Home() {
           <div className="absolute inset-0 rounded-[18px] overflow-hidden"
                style={{
                  background: `
-                   radial-gradient(circle at 28% 25%, rgba(239, 68, 68, 0.5) 0%, transparent 48%),
-                   radial-gradient(circle at 72% 75%, rgba(249, 115, 22, 0.45) 0%, transparent 48%),
+                   radial-gradient(circle at 28% 25%, rgba(239, 68, 68, 0.35) 0%, transparent 48%),
+                   radial-gradient(circle at 72% 75%, rgba(249, 115, 22, 0.3) 0%, transparent 48%),
                    linear-gradient(135deg, #ef4444 0%, #f35a2e 50%, #f97316 100%)
                  `,
                  boxShadow: `
@@ -555,7 +555,7 @@ export default function Home() {
                }}>
             
             {/* Motif de protection tech */}
-            <div className="absolute inset-0 opacity-[0.07]"
+            <div className="absolute inset-0 opacity-[0.04]"
                  style={{
                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 5 L30 15 L40 15 L33 23 L36 33 L25 27 L14 33 L17 23 L10 15 L20 15 Z' fill='none' stroke='%23ffffff' stroke-width='0.8'/%3E%3C/svg%3E")`,
                    backgroundSize: '25px 25px'
@@ -604,13 +604,13 @@ export default function Home() {
               <g filter="url(#glow-shield)">
                 {/* Bouclier de protection */}
                 <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.4" strokeLinejoin="round"/>
+                      stroke="rgba(255, 255, 255, 0.82)" strokeWidth="1.9" strokeLinejoin="round"/>
                 {/* Cercle d'horloge interne */}
                 <circle cx="12" cy="12.5" r="3.2" 
-                        stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.2"/>
+                        stroke="rgba(255, 255, 255, 0.78)" strokeWidth="1.7"/>
                 {/* Aiguilles de temps */}
                 <path d="M12 9.5v3.5l2.2 2.2" 
-                      stroke="rgba(255, 255, 255, 0.95)" strokeWidth="2.5" strokeLinecap="round"/>
+                      stroke="rgba(255, 255, 255, 0.88)" strokeWidth="2" strokeLinecap="round"/>
               </g>
               <defs>
                 <filter id="glow-shield" x="-50%" y="-50%" width="200%" height="200%">
@@ -739,8 +739,8 @@ export default function Home() {
                   <div className="absolute inset-0 rounded-[16px] bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] shadow-[0_2px_4px_rgba(0,0,0,0.4),0_8px_24px_rgba(59,130,246,0.3)]" 
                        style={{
                          backgroundImage: `
-                           linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%),
-                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
+                           linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%),
+                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
                          `,
                          backgroundBlendMode: 'overlay, normal'
                        }}>
@@ -762,15 +762,15 @@ export default function Home() {
                       <g filter="url(#glow-dashboard)">
                         {/* Axes */}
                         <path d="M3 3v18h18" 
-                              stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.3" 
+                              stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.8" 
                               strokeLinecap="round" strokeLinejoin="round"/>
                         {/* Barres avec effets de glow */}
                         <rect x="6.5" y="13" width="3" height="4" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.9)" opacity="0.9"/>
+                              fill="rgba(255, 255, 255, 0.8)" opacity="0.85"/>
                         <rect x="11" y="9" width="3" height="8" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.95)" opacity="0.95"/>
+                              fill="rgba(255, 255, 255, 0.85)" opacity="0.9"/>
                         <rect x="15.5" y="7" width="3" height="10" rx="0.5"
-                              fill="rgba(255, 255, 255, 1)"/>
+                              fill="rgba(255, 255, 255, 0.9)" opacity="0.95"/>
                       </g>
                       <defs>
                         <filter id="glow-dashboard" x="-50%" y="-50%" width="200%" height="200%">
@@ -839,9 +839,10 @@ export default function Home() {
               const AppIcon = app.icon;
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 group-active:opacity-30 transition-all duration-200`} />
-                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
-                    <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-50 group-active:opacity-30 transition-all duration-200`} />
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
+                    <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500`} />
                     {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
                       <button
                         onClick={(e) => handleQuickAddClick(e, app.id)}
@@ -875,18 +876,20 @@ export default function Home() {
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in zoom-in-95 duration-200">
                   <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
-                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
-                    {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
-                      <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 active:scale-95 transition-all z-10">
-                        <Plus className="w-3.5 h-3.5 text-zinc-500" />
-                      </button>
-                    )}
-                    <div className="relative h-full flex flex-col justify-between">
-                      <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
-                        {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
-                      </div>
-                      <div className="text-sm font-bold text-white">{app.name}</div>
+                  <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-active:scale-[0.98] transition-all duration-150">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
+                  {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
+                    <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 active:scale-95 transition-all z-10">
+                      <Plus className="w-3.5 h-3.5 text-zinc-500" />
+                    </button>
+                  )}
+                  <div className="relative h-full flex flex-col justify-between">
+                    <div className="w-12 h-12 group-hover:translate-y-[-2px] transition-transform duration-200" 
+                         style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }}>
+                      {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
                     </div>
+                    <div className="text-sm font-bold text-white">{app.name}</div>
+                  </div>
                   </div>
                 </Link>
               );
@@ -905,7 +908,8 @@ export default function Home() {
                         </button>
                       )}
                       <div className="relative h-full flex flex-col justify-between">
-                        <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                        <div className="w-12 h-12 group-hover:translate-y-[-2px] transition-transform duration-200" 
+                             style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }}>
                           {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
                         </div>
                         <div className="text-sm font-bold text-white">{app.name}</div>
@@ -1196,14 +1200,14 @@ export default function Home() {
                       <g filter="url(#glow-report)">
                         {/* Cadre du rapport */}
                         <rect x="3" y="3" width="18" height="18" rx="2.5" 
-                              stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.3"/>
+                              stroke="rgba(255, 255, 255, 0.78)" strokeWidth="1.8"/>
                         {/* Graphiques internes avec glow */}
                         <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.9)"/>
+                              fill="rgba(255, 255, 255, 0.8)"/>
                         <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.95)"/>
+                              fill="rgba(255, 255, 255, 0.85)"/>
                         <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.88)"/>
+                              fill="rgba(255, 255, 255, 0.78)"/>
                       </g>
                       <defs>
                         <filter id="glow-report" x="-50%" y="-50%" width="200%" height="200%">
@@ -1306,14 +1310,14 @@ export default function Home() {
                       <g filter="url(#glow-settings)">
                         {/* Cercle central */}
                         <circle cx="12" cy="12" r="3.5" 
-                                stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.5"/>
+                                stroke="rgba(255, 255, 255, 0.82)" strokeWidth="2"/>
                         {/* Lignes radiales principales */}
                         <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                              stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.3" 
+                              stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.8" 
                               strokeLinecap="round"/>
                         {/* Lignes diagonales */}
                         <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                              stroke="rgba(255, 255, 255, 0.75)" strokeWidth="2" 
+                              stroke="rgba(255, 255, 255, 0.65)" strokeWidth="1.6" 
                               strokeLinecap="round"/>
                       </g>
                       <defs>
