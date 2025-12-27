@@ -93,21 +93,56 @@ export async function logScreenTimeSession(entityType, entityName, startTime, en
 }
 
 export async function getOrCreateWinStreak() {
-  const user = await base44.auth.me();
-  const streaks = await base44.entities.WinStreak.filter({ created_by: user.email });
-  
-  if (streaks.length > 0) {
-    return streaks[0];
+  try {
+    const user = await base44.auth.me();
+    
+    console.log('[getOrCreateWinStreak] Checking for existing streak');
+    
+    let streaks = [];
+    try {
+      streaks = await base44.entities.WinStreak.filter({ created_by: user.email });
+    } catch (fetchError) {
+      console.error('[getOrCreateWinStreak] Error fetching streak:', fetchError);
+      streaks = [];
+    }
+    
+    // SAFE: If streak exists, return it
+    if (streaks && streaks.length > 0) {
+      console.log('[getOrCreateWinStreak] Found existing streak:', streaks[0]);
+      return streaks[0];
+    }
+    
+    // SAFE: Create new streak if none exists
+    console.log('[getOrCreateWinStreak] No streak found, creating new one');
+    try {
+      const newStreak = await base44.entities.WinStreak.create({
+        current_streak: 0,
+        longest_streak: 0,
+        total_completed_sessions: 0,
+        total_failed_sessions: 0
+      });
+      console.log('[getOrCreateWinStreak] Created new streak:', newStreak);
+      return newStreak;
+    } catch (createError) {
+      console.error('[getOrCreateWinStreak] Error creating streak:', createError);
+      // SAFE: Return default object if creation fails
+      return {
+        current_streak: 0,
+        longest_streak: 0,
+        total_completed_sessions: 0,
+        total_failed_sessions: 0
+      };
+    }
+  } catch (error) {
+    console.error('[getOrCreateWinStreak] CRITICAL ERROR:', error);
+    // SAFE: Always return a valid streak object
+    return {
+      current_streak: 0,
+      longest_streak: 0,
+      total_completed_sessions: 0,
+      total_failed_sessions: 0
+    };
   }
-  
-  const newStreak = await base44.entities.WinStreak.create({
-    current_streak: 0,
-    longest_streak: 0,
-    total_completed_sessions: 0,
-    total_failed_sessions: 0
-  });
-  
-  return newStreak;
 }
 
 export async function incrementWinStreak() {
@@ -274,66 +309,103 @@ export async function updateUserRank() {
 }
 
 export async function getHabitsForDate(date) {
-  const user = await base44.auth.me();
-  const allHabits = await base44.entities.Habit.filter({ 
-    created_by: user.email,
-    archived: false
-  });
-  
-  const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, 2=Tuesday, ..., 6=Saturday
-  
-  console.log('=== getHabitsForDate ===');
-  console.log('Date:', format(date, 'yyyy-MM-dd'));
-  console.log('Day of week (JS):', dayOfWeek, ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayOfWeek]);
-  console.log('Total habits:', allHabits.length);
-  
-  const filtered = allHabits.filter(habit => {
-    // Daily habits appear every day
-    if (habit.is_daily) {
-      console.log(`✓ "${habit.title}" - DAILY`);
-      return true;
+  try {
+    const user = await base44.auth.me();
+    const allHabits = await base44.entities.Habit.filter({ 
+      created_by: user.email,
+      archived: false
+    });
+    
+    // SAFE: If no habits exist, return empty array
+    if (!allHabits || allHabits.length === 0) {
+      console.log('[getHabitsForDate] No habits found, returning []');
+      return [];
     }
     
-    // If not daily and no specific days defined, treat as not scheduled
-    if (!habit.specific_days || !Array.isArray(habit.specific_days) || habit.specific_days.length === 0) {
-      console.log(`✗ "${habit.title}" - NO DAYS SET (treating as not scheduled)`);
-      return false;
-    }
+    const dayOfWeek = date.getDay();
     
-    // Check if this day is in specific_days array
-    const isScheduled = habit.specific_days.includes(dayOfWeek);
-    console.log(`${isScheduled ? '✓' : '✗'} "${habit.title}" - Days: [${habit.specific_days}], Looking for: ${dayOfWeek}`);
+    console.log('=== getHabitsForDate ===');
+    console.log('Date:', format(date, 'yyyy-MM-dd'));
+    console.log('Day of week (JS):', dayOfWeek, ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayOfWeek]);
+    console.log('Total habits:', allHabits.length);
     
-    return isScheduled;
-  });
-  
-  console.log('Filtered result:', filtered.length, 'habits');
-  return filtered;
+    const filtered = allHabits.filter(habit => {
+      // SAFE: Check if habit object exists
+      if (!habit) return false;
+      
+      // Daily habits appear every day
+      if (habit.is_daily) {
+        console.log(`✓ "${habit.title}" - DAILY`);
+        return true;
+      }
+      
+      // If not daily and no specific days defined, treat as not scheduled
+      if (!habit.specific_days || !Array.isArray(habit.specific_days) || habit.specific_days.length === 0) {
+        console.log(`✗ "${habit.title}" - NO DAYS SET (treating as not scheduled)`);
+        return false;
+      }
+      
+      // Check if this day is in specific_days array
+      const isScheduled = habit.specific_days.includes(dayOfWeek);
+      console.log(`${isScheduled ? '✓' : '✗'} "${habit.title}" - Days: [${habit.specific_days}], Looking for: ${dayOfWeek}`);
+      
+      return isScheduled;
+    });
+    
+    console.log('Filtered result:', filtered.length, 'habits');
+    return filtered;
+  } catch (error) {
+    console.error('[getHabitsForDate] ERROR:', error);
+    // SAFE: Always return empty array on error
+    return [];
+  }
 }
 
 export async function getHabitCompletionsForDate(date) {
-  const user = await base44.auth.me();
-  const dateStr = format(date, 'yyyy-MM-dd');
-  
-  const completions = await base44.entities.HabitCompletion.filter({
-    created_by: user.email,
-    date: dateStr
-  });
-  
-  return completions;
+  try {
+    const user = await base44.auth.me();
+    const dateStr = format(date, 'yyyy-MM-dd');
+    
+    const completions = await base44.entities.HabitCompletion.filter({
+      created_by: user.email,
+      date: dateStr
+    });
+    
+    // SAFE: Return completions or empty array
+    return completions || [];
+  } catch (error) {
+    console.error('[getHabitCompletionsForDate] ERROR:', error);
+    // SAFE: Always return empty array on error
+    return [];
+  }
 }
 
 export async function hasUncheckedHabits(date) {
-  const user = await base44.auth.me();
-  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
-  
-  const pendingValidation = await base44.entities.HabitCompletion.filter({
-    created_by: user.email,
-    date: dateStr,
-    state: 'pending_validation'
-  });
-  
-  return pendingValidation.length > 0;
+  try {
+    const user = await base44.auth.me();
+    const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+    
+    console.log(`[hasUncheckedHabits] Checking for ${dateStr}`);
+    
+    const pendingValidation = await base44.entities.HabitCompletion.filter({
+      created_by: user.email,
+      date: dateStr,
+      state: 'pending_validation'
+    });
+    
+    // SAFE: Return false if no data
+    if (!pendingValidation || pendingValidation.length === 0) {
+      console.log(`[hasUncheckedHabits] No pending validations for ${dateStr}`);
+      return false;
+    }
+    
+    console.log(`[hasUncheckedHabits] Found ${pendingValidation.length} pending validations`);
+    return true;
+  } catch (error) {
+    console.error('[hasUncheckedHabits] ERROR:', error);
+    // SAFE: Return false on error (don't crash the UI)
+    return false;
+  }
 }
 
 export async function ensureHabitsScheduled(date) {
@@ -344,33 +416,48 @@ export async function ensureHabitsScheduled(date) {
     
     console.log(`[ensureHabitsScheduled] Starting for ${dateStr}`);
     
+    // STEP 1: Safely get habits for this date
     const habits = await getHabitsForDate(dateObj);
     
     console.log(`[ensureHabitsScheduled] Found ${habits.length} habits for ${dateStr}`);
     
-    if (habits.length === 0) {
-      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, returning`);
-      return;
+    // SAFE: If no habits exist, return empty data - don't crash
+    if (!habits || habits.length === 0) {
+      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, returning safely`);
+      return { created: 0, existing: 0 };
     }
     
-    // Fetch all existing completions for this date in one query
-    const allCompletions = await base44.entities.HabitCompletion.filter({
-      created_by: user.email,
-      date: dateStr
-    });
+    // STEP 2: Safely fetch existing completions
+    let allCompletions = [];
+    try {
+      allCompletions = await base44.entities.HabitCompletion.filter({
+        created_by: user.email,
+        date: dateStr
+      });
+    } catch (fetchError) {
+      console.error(`[ensureHabitsScheduled] Error fetching completions:`, fetchError);
+      allCompletions = [];
+    }
     
     console.log(`[ensureHabitsScheduled] Found ${allCompletions.length} existing completions`);
     
+    // STEP 3: Build completion map
     const completionMap = {};
-    allCompletions.forEach(c => {
-      completionMap[c.habit_id] = true;
-    });
+    if (allCompletions && Array.isArray(allCompletions)) {
+      allCompletions.forEach(c => {
+        if (c && c.habit_id) {
+          completionMap[c.habit_id] = true;
+        }
+      });
+    }
     
-    // Create missing completions one by one (bulkCreate may not exist)
-    const habitsToSchedule = habits.filter(h => !completionMap[h.id]);
+    // STEP 4: Identify habits that need scheduling
+    const habitsToSchedule = habits.filter(h => h && h.id && !completionMap[h.id]);
     
     if (habitsToSchedule.length > 0) {
       console.log(`[ensureHabitsScheduled] Need to create ${habitsToSchedule.length} completions`);
+      
+      let created = 0;
       for (const habit of habitsToSchedule) {
         try {
           await base44.entities.HabitCompletion.create({
@@ -379,37 +466,73 @@ export async function ensureHabitsScheduled(date) {
             state: 'scheduled',
             completed: false
           });
-          console.log(`[ensureHabitsScheduled] Created completion for habit: ${habit.title}`);
+          created++;
+          console.log(`[ensureHabitsScheduled] ✓ Created completion for: ${habit.title}`);
         } catch (createError) {
-          console.error(`[ensureHabitsScheduled] Failed to create completion for ${habit.title}:`, createError);
+          console.error(`[ensureHabitsScheduled] ✗ Failed to create completion for ${habit.title}:`, createError);
           // Continue with other habits even if one fails
         }
       }
+      
+      console.log(`[ensureHabitsScheduled] Successfully created ${created}/${habitsToSchedule.length} completions`);
+      return { created, existing: allCompletions.length };
     } else {
       console.log(`[ensureHabitsScheduled] All habits already scheduled for ${dateStr}`);
+      return { created: 0, existing: allCompletions.length };
     }
-    
-    console.log(`[ensureHabitsScheduled] Completed for ${dateStr}`);
   } catch (error) {
     console.error('[ensureHabitsScheduled] CRITICAL ERROR:', error);
-    // Don't throw - allow the app to continue even if scheduling fails
+    // SAFE: Never throw - return safe data
+    return { created: 0, existing: 0, error: true };
   }
 }
 
 export async function transitionScheduledToPending(date) {
-  const user = await base44.auth.me();
-  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
-  
-  const scheduled = await base44.entities.HabitCompletion.filter({
-    created_by: user.email,
-    date: dateStr,
-    state: 'scheduled'
-  });
-  
-  for (const completion of scheduled) {
-    await base44.entities.HabitCompletion.update(completion.id, {
-      state: 'pending_validation'
-    });
+  try {
+    const user = await base44.auth.me();
+    const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+    
+    console.log(`[transitionScheduledToPending] Processing ${dateStr}`);
+    
+    let scheduled = [];
+    try {
+      scheduled = await base44.entities.HabitCompletion.filter({
+        created_by: user.email,
+        date: dateStr,
+        state: 'scheduled'
+      });
+    } catch (fetchError) {
+      console.error('[transitionScheduledToPending] Error fetching scheduled:', fetchError);
+      scheduled = [];
+    }
+    
+    // SAFE: If no scheduled items, return
+    if (!scheduled || scheduled.length === 0) {
+      console.log(`[transitionScheduledToPending] No scheduled completions for ${dateStr}`);
+      return { transitioned: 0 };
+    }
+    
+    console.log(`[transitionScheduledToPending] Found ${scheduled.length} scheduled items to transition`);
+    
+    let transitioned = 0;
+    for (const completion of scheduled) {
+      try {
+        await base44.entities.HabitCompletion.update(completion.id, {
+          state: 'pending_validation'
+        });
+        transitioned++;
+      } catch (updateError) {
+        console.error(`[transitionScheduledToPending] Failed to update completion ${completion.id}:`, updateError);
+        // Continue with others even if one fails
+      }
+    }
+    
+    console.log(`[transitionScheduledToPending] Successfully transitioned ${transitioned}/${scheduled.length} items`);
+    return { transitioned };
+  } catch (error) {
+    console.error('[transitionScheduledToPending] CRITICAL ERROR:', error);
+    // SAFE: Never throw
+    return { transitioned: 0, error: true };
   }
 }
 
