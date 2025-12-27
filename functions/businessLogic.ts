@@ -294,12 +294,13 @@ export async function getHabitsForDate(date) {
       return true;
     }
     
-    // Check if this day is in specific_days array
-    if (!habit.specific_days || habit.specific_days.length === 0) {
-      console.log(`✗ "${habit.title}" - NO DAYS SET`);
+    // If not daily and no specific days defined, treat as not scheduled
+    if (!habit.specific_days || !Array.isArray(habit.specific_days) || habit.specific_days.length === 0) {
+      console.log(`✗ "${habit.title}" - NO DAYS SET (treating as not scheduled)`);
       return false;
     }
     
+    // Check if this day is in specific_days array
     const isScheduled = habit.specific_days.includes(dayOfWeek);
     console.log(`${isScheduled ? '✓' : '✗'} "${habit.title}" - Days: [${habit.specific_days}], Looking for: ${dayOfWeek}`);
     
@@ -336,25 +337,48 @@ export async function hasUncheckedHabits(date) {
 }
 
 export async function ensureHabitsScheduled(date) {
-  const user = await base44.auth.me();
-  const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
-  const habits = await getHabitsForDate(typeof date === 'string' ? parseISO(date) : date);
-  
-  for (const habit of habits) {
-    const existing = await base44.entities.HabitCompletion.filter({
+  try {
+    const user = await base44.auth.me();
+    const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+    const dateObj = typeof date === 'string' ? parseISO(date) : date;
+    
+    const habits = await getHabitsForDate(dateObj);
+    
+    console.log(`[ensureHabitsScheduled] For ${dateStr}: found ${habits.length} habits`);
+    
+    if (habits.length === 0) {
+      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, skipping`);
+      return;
+    }
+    
+    // Fetch all existing completions for this date in one query
+    const allCompletions = await base44.entities.HabitCompletion.filter({
       created_by: user.email,
-      habit_id: habit.id,
       date: dateStr
     });
     
-    if (existing.length === 0) {
-      await base44.entities.HabitCompletion.create({
-        habit_id: habit.id,
-        date: dateStr,
-        state: 'scheduled',
-        completed: false
-      });
+    const completionMap = {};
+    allCompletions.forEach(c => {
+      completionMap[c.habit_id] = true;
+    });
+    
+    // Create missing completions in bulk
+    const toCreate = habits.filter(h => !completionMap[h.id]).map(h => ({
+      habit_id: h.id,
+      date: dateStr,
+      state: 'scheduled',
+      completed: false
+    }));
+    
+    if (toCreate.length > 0) {
+      console.log(`[ensureHabitsScheduled] Creating ${toCreate.length} new completions for ${dateStr}`);
+      await base44.entities.HabitCompletion.bulkCreate(toCreate);
+    } else {
+      console.log(`[ensureHabitsScheduled] All habits already scheduled for ${dateStr}`);
     }
+  } catch (error) {
+    console.error('[ensureHabitsScheduled] ERROR:', error);
+    throw error;
   }
 }
 
