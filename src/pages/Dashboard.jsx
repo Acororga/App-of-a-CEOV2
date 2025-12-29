@@ -247,7 +247,6 @@ export default function Dashboard() {
           <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
             {t('controlCenter')}
           </h1>
-          <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">{t('todaysFocus')}</div>
         </div>
 
         {/* ACTION ZONE - Layered visual hierarchy */}

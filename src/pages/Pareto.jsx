@@ -163,30 +163,6 @@ export default function Pareto() {
             <span className="text-sm font-medium">{t('home')}</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab('list')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                activeTab === 'list'
-                  ? 'bg-white text-black'
-                  : 'bg-zinc-800/50 text-zinc-500 hover:bg-zinc-800'
-              }`}
-            >
-              List
-            </button>
-            <button
-              onClick={() => setActiveTab('matrix')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                activeTab === 'matrix'
-                  ? 'bg-white text-black'
-                  : 'bg-zinc-800/50 text-zinc-500 hover:bg-zinc-800'
-              }`}
-            >
-              <Grid3x3 className="w-3 h-3" />
-              Matrix
-            </button>
-          </div>
-
           <div className="w-20" />
         </div>
 
@@ -282,9 +258,9 @@ export default function Pareto() {
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-1 h-8 bg-gradient-to-b from-red-500 to-orange-500 rounded-full shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+                    <div className="w-1 h-8 bg-white rounded-full shadow-[0_0_12px_rgba(255,255,255,0.5)]" />
                     <h2 className="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-                      {t('doThisNow')}
+                      YOUR PRIORITIES
                     </h2>
                   </div>
                   {!showAddForm && (
