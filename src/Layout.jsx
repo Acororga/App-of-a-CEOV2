@@ -121,24 +121,7 @@ function LayoutContent({ children, currentPageName }) {
                   onClick={() => setShowMenu(false)}
                   className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="w-10 h-10 relative">
-                    <div className="absolute inset-0 rounded-[11px]" style={{
-                      background: 'linear-gradient(145deg, #3d3d3d 0%, #2f2f2f 100%)',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 -1px 0 rgba(0, 0, 0, 0.3)'
-                    }} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
-                        <g style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))' }}>
-                          <rect x="6.5" y="13" width="2.5" height="7" rx="1"
-                                fill="#7a9b9e" opacity="0.75"/>
-                          <rect x="10.5" y="7" width="2.5" height="13" rx="1"
-                                fill="#7a9b9e" opacity="0.85"/>
-                          <rect x="14.5" y="10" width="2.5" height="10" rx="1"
-                                fill="#7a9b9e" opacity="0.8"/>
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
+                  <BarChart3 className="w-5 h-5 text-purple-400" />
                   <div>
                     <div className="font-semibold">{t('sixMonthReport')}</div>
                     <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
@@ -182,23 +165,7 @@ function LayoutContent({ children, currentPageName }) {
                   onClick={() => setShowMenu(false)}
                   className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="w-10 h-10 relative">
-                    <div className="absolute inset-0 rounded-[11px]" style={{
-                      background: 'linear-gradient(145deg, #3d3d3d 0%, #2f2f2f 100%)',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 -1px 0 rgba(0, 0, 0, 0.3)'
-                    }} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-                        <g style={{ filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))' }}>
-                          <circle cx="12" cy="12" r="3" 
-                                  stroke="#7a9b9e" strokeWidth="1.8" opacity="0.85"/>
-                          <path d="M12 3v3m0 12v3M21 12h-3m-12 0H3" 
-                                stroke="#7a9b9e" strokeWidth="1.6" 
-                                strokeLinecap="round" opacity="0.8"/>
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
+                  <FileText className="w-5 h-5 text-green-400" />
                   <div className="text-left">
                     <div className="font-semibold">{t('settingsAndLegal')}</div>
                     <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
