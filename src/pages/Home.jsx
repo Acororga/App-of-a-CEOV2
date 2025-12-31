@@ -207,97 +207,27 @@ export default function Home() {
       colors: 'from-indigo-500 to-purple-600', 
       glow: 'from-indigo-600/10 to-purple-600/10',
       customIcon: (
-        <div className="relative w-full h-full perspective-1000">
-          {/* Base futuriste multi-couches */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden"
+        <div className="relative w-full h-full">
+          {/* Matte dark container */}
+          <div className="absolute inset-0 rounded-[18px]"
                style={{
-                 background: `
-                   radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
-                   radial-gradient(circle at 70% 70%, rgba(91, 79, 184, 0.25) 0%, transparent 50%),
-                   linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #8b5cf6 100%)
-                 `,
+                 background: '#2e2e2e',
                  boxShadow: `
-                   0 0 0 1px rgba(124, 58, 237, 0.3),
-                   0 2px 8px rgba(0, 0, 0, 0.4),
-                   0 8px 24px rgba(124, 58, 237, 0.2),
-                   inset 0 1px 2px rgba(255, 255, 255, 0.1),
-                   inset 0 -1px 2px rgba(0, 0, 0, 0.3)
+                   0 1px 3px rgba(0, 0, 0, 0.3),
+                   inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                   inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
                  `
-               }}>
-            
-            {/* Grille hexagonale futuriste */}
-            <div className="absolute inset-0 opacity-[0.06]"
-                 style={{
-                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0 L45 15 L45 30 L30 45 L15 30 L15 15 Z' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                   backgroundSize: '30px 30px'
-                 }}
-            />
-            
-            {/* Lumière holographique supérieure */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(165deg, rgba(255, 255, 255, 0.35) 0%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.08) 100%)'
-                 }}
-            />
-            
-            {/* Reflet métallique */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-1/3 rounded-t-[18px]"
-                 style={{
-                   background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%)',
-                   filter: 'blur(4px)'
-                 }}
-            />
-            
-            {/* Bord néon lumineux */}
-            <div className="absolute inset-[1px] rounded-[17px]"
-                 style={{
-                   boxShadow: 'inset 0 1px 1px rgba(139, 92, 246, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.4)'
-                 }}
-            />
-            
-            {/* Effet de profondeur 3D */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%)',
-                   mixBlendMode: 'multiply'
-                 }}
-            />
-          </div>
-          
-          {/* Symbole avec effet holographique */}
-          <div className="absolute inset-0 flex items-center justify-center"
-               style={{
-                 transform: 'translateZ(4px)',
-                 filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))'
-               }}>
+               }}
+          />
+
+          {/* Icon symbol - desaturated purple */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[52%] h-[52%]" viewBox="0 0 24 24" fill="none">
-              {/* Glow background */}
-              <g filter="url(#glow-pareto)">
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
-                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M9 14l2 2 4-4" 
-                      stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </g>
-              <defs>
-                <filter id="glow-pareto" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
+                    stroke="#8b8ea1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 14l2 2 4-4" 
+                    stroke="#8b8ea1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </div>
-          
-          {/* Scan line animé */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden pointer-events-none">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                 style={{
-                   animation: 'scan 3s ease-in-out infinite',
-                   animationDelay: '0s'
-                 }}
-            />
           </div>
         </div>
       )
@@ -310,99 +240,27 @@ export default function Home() {
       colors: 'from-emerald-500 to-teal-600', 
       glow: 'from-emerald-600/10 to-teal-600/10',
       customIcon: (
-        <div className="relative w-full h-full perspective-1000">
-          {/* Base crystalline futuriste */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden"
+        <div className="relative w-full h-full">
+          {/* Matte dark container */}
+          <div className="absolute inset-0 rounded-[18px]"
                style={{
-                 background: `
-                   radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.35) 0%, transparent 50%),
-                   radial-gradient(circle at 75% 75%, rgba(20, 184, 166, 0.3) 0%, transparent 50%),
-                   linear-gradient(135deg, #10b981 0%, #0d9f6e 50%, #14b8a6 100%)
-                 `,
+                 background: '#2e2e2e',
                  boxShadow: `
-                   0 0 0 1px rgba(16, 185, 129, 0.4),
-                   0 2px 8px rgba(0, 0, 0, 0.4),
-                   0 8px 24px rgba(16, 185, 129, 0.25),
-                   inset 0 1px 2px rgba(255, 255, 255, 0.15),
-                   inset 0 -1px 2px rgba(0, 0, 0, 0.3)
+                   0 1px 3px rgba(0, 0, 0, 0.3),
+                   inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                   inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
                  `
-               }}>
-            
-            {/* Pattern de circuits */}
-            <div className="absolute inset-0 opacity-[0.08]"
-                 style={{
-                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L20 0 L20 20 M60 0 L80 0 L80 20 M0 60 L0 80 L20 80 M60 80 L80 80 L80 60' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3Ccircle cx='20' cy='20' r='2' fill='%23ffffff'/%3E%3Ccircle cx='60' cy='20' r='2' fill='%23ffffff'/%3E%3Ccircle cx='20' cy='60' r='2' fill='%23ffffff'/%3E%3Ccircle cx='60' cy='60' r='2' fill='%23ffffff'/%3E%3C/svg%3E")`,
-                   backgroundSize: '40px 40px'
-                 }}
-            />
-            
-            {/* Verre holographique */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(165deg, rgba(255, 255, 255, 0.4) 0%, transparent 28%, transparent 72%, rgba(255, 255, 255, 0.1) 100%)'
-                 }}
-            />
-            
-            {/* Reflet cristallin diagonal */}
-            <div className="absolute top-0 left-0 w-full h-full rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, transparent 40%)',
-                   clipPath: 'polygon(0 0, 70% 0, 30% 100%, 0 100%)',
-                   filter: 'blur(3px)'
-                 }}
-            />
-            
-            {/* Bordure énergétique */}
-            <div className="absolute inset-[1px] rounded-[17px]"
-                 style={{
-                   boxShadow: 'inset 0 1px 1px rgba(52, 211, 153, 0.7), inset 0 -1px 1px rgba(0, 0, 0, 0.4)'
-                 }}
-            />
-            
-            {/* Couche de profondeur */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(125deg, transparent 0%, rgba(0, 0, 0, 0.25) 100%)',
-                   mixBlendMode: 'multiply'
-                 }}
-            />
-          </div>
-          
-          {/* Cercle dynamique avec symbole */}
-          <div className="absolute inset-0 flex items-center justify-center"
-               style={{
-                 transform: 'translateZ(4px)',
-                 filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))'
-               }}>
+               }}
+          />
+
+          {/* Icon symbol - desaturated teal */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
-              <g filter="url(#glow-habit)">
-                {/* Cercle avec segments */}
-                <circle cx="12" cy="12" r="9.5" stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.6" 
-                        strokeDasharray="4 3" strokeLinecap="round"/>
-                {/* Check mark puissant */}
-                <path d="M7.5 12.5l3 3L17 9" 
-                      stroke="rgba(255, 255, 255, 0.88)" strokeWidth="2.4" 
-                      strokeLinecap="round" strokeLinejoin="round"/>
-              </g>
-              <defs>
-                <filter id="glow-habit" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+              <circle cx="12" cy="12" r="9.5" stroke="#7a9b96" strokeWidth="1.6"/>
+              <path d="M7.5 12.5l3 3L17 9" 
+                    stroke="#7a9b96" strokeWidth="2.4" 
+                    strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </div>
-          
-          {/* Pulse énergétique */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 w-4 h-4 -translate-x-1/2 -translate-y-1/2 bg-white/20 rounded-full"
-                 style={{
-                   animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                 }}
-            />
           </div>
         </div>
       )
@@ -415,115 +273,34 @@ export default function Home() {
       colors: 'from-pink-500 to-rose-600', 
       glow: 'from-pink-600/10 to-rose-600/10',
       customIcon: (
-        <div className="relative w-full h-full perspective-1000">
-          {/* Base vitreuse futuriste */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden"
+        <div className="relative w-full h-full">
+          {/* Matte dark container */}
+          <div className="absolute inset-0 rounded-[18px]"
                style={{
-                 background: `
-                   radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.35) 0%, transparent 45%),
-                   radial-gradient(circle at 70% 80%, rgba(244, 63, 94, 0.3) 0%, transparent 45%),
-                   linear-gradient(135deg, #ec4899 0%, #f14178 50%, #f43f5e 100%)
-                 `,
+                 background: '#2e2e2e',
                  boxShadow: `
-                   0 0 0 1px rgba(236, 72, 153, 0.4),
-                   0 2px 8px rgba(0, 0, 0, 0.4),
-                   0 8px 24px rgba(236, 72, 153, 0.25),
-                   inset 0 1px 2px rgba(255, 255, 255, 0.15),
-                   inset 0 -1px 2px rgba(0, 0, 0, 0.3)
+                   0 1px 3px rgba(0, 0, 0, 0.3),
+                   inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                   inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
                  `
-               }}>
-            
-            {/* Grille calendrier stylisée */}
-            <div className="absolute inset-0 opacity-[0.05]"
-                 style={{
-                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L60 0 L60 60 L0 60 Z M0 20 L60 20 M20 0 L20 60 M40 0 L40 60 M0 40 L60 40' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E")`,
-                   backgroundSize: '30px 30px'
-                 }}
-            />
-            
-            {/* Effet holographique rose */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(160deg, rgba(255, 255, 255, 0.35) 0%, transparent 30%, transparent 70%, rgba(255, 255, 255, 0.12) 100%)'
-                 }}
-            />
-            
-            {/* Reflet de verre supérieur */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-2/5 rounded-t-[18px]"
-                 style={{
-                   background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%)',
-                   filter: 'blur(4px)'
-                 }}
-            />
-            
-            {/* Bordure néon rose */}
-            <div className="absolute inset-[1px] rounded-[17px]"
-                 style={{
-                   boxShadow: 'inset 0 1px 1px rgba(251, 113, 133, 0.7), inset 0 -1px 1px rgba(0, 0, 0, 0.4)'
-                 }}
-            />
-            
-            {/* Dégradé de profondeur */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.28) 100%)',
-                   mixBlendMode: 'multiply'
-                 }}
-            />
-          </div>
-          
-          {/* Calendrier futuriste */}
-          <div className="absolute inset-0 flex items-center justify-center"
-               style={{
-                 transform: 'translateZ(4px)',
-                 filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))'
-               }}>
+               }}
+          />
+
+          {/* Icon symbol - desaturated rose */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-              <g filter="url(#glow-calendar)">
-                {/* Corps du calendrier */}
-                <rect x="4" y="6" width="16" height="15" rx="2.5" 
-                      stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1.8"/>
-                {/* Ligne de séparation */}
-                <line x1="4" y1="10.5" x2="20" y2="10.5" 
-                      stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1.8"/>
-                {/* Attaches */}
-                <line x1="8" y1="3.5" x2="8" y2="7.5" 
-                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.2" strokeLinecap="round"/>
-                <line x1="16" y1="3.5" x2="16" y2="7.5" 
-                      stroke="rgba(255, 255, 255, 0.85)" strokeWidth="2.2" strokeLinecap="round"/>
-                {/* Points de dates avec glow */}
-                <circle cx="8" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.7)"/>
-                <circle cx="12" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.85)"/>
-                <circle cx="16" cy="14" r="1.1" fill="rgba(255, 255, 255, 0.7)"/>
-                <circle cx="8" cy="17.5" r="1.1" fill="rgba(255, 255, 255, 0.6)"/>
-                <circle cx="12" cy="17.5" r="1.1" fill="rgba(255, 255, 255, 0.65)"/>
-              </g>
-              <defs>
-                <filter id="glow-calendar" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+              <rect x="4" y="6" width="16" height="15" rx="2.5" 
+                    stroke="#9b8b94" strokeWidth="1.8"/>
+              <line x1="4" y1="10.5" x2="20" y2="10.5" 
+                    stroke="#9b8b94" strokeWidth="1.8"/>
+              <line x1="8" y1="3.5" x2="8" y2="7.5" 
+                    stroke="#9b8b94" strokeWidth="2.2" strokeLinecap="round"/>
+              <line x1="16" y1="3.5" x2="16" y2="7.5" 
+                    stroke="#9b8b94" strokeWidth="2.2" strokeLinecap="round"/>
+              <circle cx="8" cy="14" r="1.1" fill="#9b8b94"/>
+              <circle cx="12" cy="14" r="1.1" fill="#9b8b94"/>
+              <circle cx="16" cy="14" r="1.1" fill="#9b8b94"/>
             </svg>
-          </div>
-          
-          {/* Particules flottantes */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/3 w-1 h-1 bg-white/40 rounded-full"
-                 style={{
-                   animation: 'float 4s ease-in-out infinite',
-                   animationDelay: '0s'
-                 }}
-            />
-            <div className="absolute top-2/3 right-1/4 w-1 h-1 bg-white/30 rounded-full"
-                 style={{
-                   animation: 'float 4s ease-in-out infinite',
-                   animationDelay: '1.5s'
-                 }}
-            />
           </div>
         </div>
       )
@@ -536,101 +313,29 @@ export default function Home() {
       colors: 'from-red-500 to-orange-600', 
       glow: 'from-red-600/10 to-orange-600/10',
       customIcon: (
-        <div className="relative w-full h-full perspective-1000">
-          {/* Base blindée futuriste */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden"
+        <div className="relative w-full h-full">
+          {/* Matte dark container */}
+          <div className="absolute inset-0 rounded-[18px]"
                style={{
-                 background: `
-                   radial-gradient(circle at 28% 25%, rgba(239, 68, 68, 0.35) 0%, transparent 48%),
-                   radial-gradient(circle at 72% 75%, rgba(249, 115, 22, 0.3) 0%, transparent 48%),
-                   linear-gradient(135deg, #ef4444 0%, #f35a2e 50%, #f97316 100%)
-                 `,
+                 background: '#2e2e2e',
                  boxShadow: `
-                   0 0 0 1px rgba(239, 68, 68, 0.4),
-                   0 2px 8px rgba(0, 0, 0, 0.4),
-                   0 8px 24px rgba(239, 68, 68, 0.3),
-                   inset 0 1px 2px rgba(255, 255, 255, 0.15),
-                   inset 0 -1px 2px rgba(0, 0, 0, 0.35)
+                   0 1px 3px rgba(0, 0, 0, 0.3),
+                   inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                   inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
                  `
-               }}>
-            
-            {/* Motif de protection tech */}
-            <div className="absolute inset-0 opacity-[0.04]"
-                 style={{
-                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 5 L30 15 L40 15 L33 23 L36 33 L25 27 L14 33 L17 23 L10 15 L20 15 Z' fill='none' stroke='%23ffffff' stroke-width='0.8'/%3E%3C/svg%3E")`,
-                   backgroundSize: '25px 25px'
-                 }}
-            />
-            
-            {/* Reflet métallique blindé */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(155deg, rgba(255, 255, 255, 0.4) 0%, transparent 32%, transparent 68%, rgba(255, 255, 255, 0.15) 100%)'
-                 }}
-            />
-            
-            {/* Brillance métallique diagonale */}
-            <div className="absolute top-0 left-0 w-full h-full rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(140deg, rgba(255, 255, 255, 0.35) 0%, transparent 45%)',
-                   clipPath: 'polygon(0 0, 75% 0, 25% 100%, 0 100%)',
-                   filter: 'blur(3px)'
-                 }}
-            />
-            
-            {/* Bordure de sécurité */}
-            <div className="absolute inset-[1px] rounded-[17px]"
-                 style={{
-                   boxShadow: 'inset 0 1px 1px rgba(248, 113, 113, 0.7), inset 0 -1px 1px rgba(0, 0, 0, 0.45)'
-                 }}
-            />
-            
-            {/* Ombre de profondeur */}
-            <div className="absolute inset-0 rounded-[18px]"
-                 style={{
-                   background: 'linear-gradient(130deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%)',
-                   mixBlendMode: 'multiply'
-                 }}
-            />
-          </div>
-          
-          {/* Bouclier avec horloge */}
-          <div className="absolute inset-0 flex items-center justify-center"
-               style={{
-                 transform: 'translateZ(4px)',
-                 filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))'
-               }}>
+               }}
+          />
+
+          {/* Icon symbol - desaturated red */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[58%] h-[58%]" viewBox="0 0 24 24" fill="none">
-              <g filter="url(#glow-shield)">
-                {/* Bouclier de protection */}
-                <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
-                      stroke="rgba(255, 255, 255, 0.82)" strokeWidth="1.9" strokeLinejoin="round"/>
-                {/* Cercle d'horloge interne */}
-                <circle cx="12" cy="12.5" r="3.2" 
-                        stroke="rgba(255, 255, 255, 0.78)" strokeWidth="1.7"/>
-                {/* Aiguilles de temps */}
-                <path d="M12 9.5v3.5l2.2 2.2" 
-                      stroke="rgba(255, 255, 255, 0.88)" strokeWidth="2" strokeLinecap="round"/>
-              </g>
-              <defs>
-                <filter id="glow-shield" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
+              <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
+                    stroke="#9b8388" strokeWidth="1.9" strokeLinejoin="round"/>
+              <circle cx="12" cy="12.5" r="3.2" 
+                      stroke="#9b8388" strokeWidth="1.7"/>
+              <path d="M12 9.5v3.5l2.2 2.2" 
+                    stroke="#9b8388" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-          </div>
-          
-          {/* Ondes de protection */}
-          <div className="absolute inset-0 rounded-[18px] overflow-hidden pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 w-6 h-6 -translate-x-1/2 -translate-y-1/2 border-2 border-white/15 rounded-full"
-                 style={{
-                   animation: 'shield-pulse 2.5s ease-out infinite'
-                 }}
-            />
           </div>
         </div>
       )
