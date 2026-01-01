@@ -348,8 +348,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
-      {/* Barres de pouvoir et cadre selon le rang */}
-      {ambientStyles.powerBars}
       {ambientStyles.frame}
 
       {/* Header */}
