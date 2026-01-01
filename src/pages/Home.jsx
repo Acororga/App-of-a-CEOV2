@@ -948,50 +948,29 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="w-10 h-10 group-active:scale-[0.96] transition-transform duration-100 relative">
-                  {/* Premium Container with Grain Texture */}
-                  <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-[#3b82f6] to-[#2563eb] shadow-[0_1.5px_3px_rgba(0,0,0,0.35),0_6px_18px_rgba(0,0,0,0.2)]" 
+                  {/* Matte dark container */}
+                  <div className="absolute inset-0 rounded-[11px]"
                        style={{
-                         backgroundImage: `
-                           linear-gradient(135deg, #3b82f6 0%, #2563eb 100%),
-                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulescence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
-                         `,
-                         backgroundBlendMode: 'overlay, normal'
-                       }}>
-                    {/* Top-left light */}
-                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
-                    {/* Bottom-right shadow */}
-                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
-                  </div>
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 1.5px 4px rgba(0, 0, 0, 0.35),
+                           inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                           inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
 
-                  {/* Engrenage paramètres futuriste */}
-                  <div className="absolute inset-0 flex items-center justify-center"
-                       style={{
-                         transform: 'translateZ(4px)',
-                         filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))'
-                       }}>
+                  {/* Icon symbol - desaturated */}
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-                      <g filter="url(#glow-settings)">
-                        {/* Cercle central */}
-                        <circle cx="12" cy="12" r="3.5" 
-                                stroke="rgba(255, 255, 255, 0.82)" strokeWidth="2"/>
-                        {/* Lignes radiales principales */}
-                        <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                              stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.8" 
-                              strokeLinecap="round"/>
-                        {/* Lignes diagonales */}
-                        <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                              stroke="rgba(255, 255, 255, 0.65)" strokeWidth="1.6" 
-                              strokeLinecap="round"/>
-                      </g>
-                      <defs>
-                        <filter id="glow-settings" x="-50%" y="-50%" width="200%" height="200%">
-                          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                          <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                        </filter>
-                      </defs>
+                      <circle cx="12" cy="12" r="3.5" 
+                              stroke="#8a8a8a" strokeWidth="2"/>
+                      <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
+                            stroke="#8a8a8a" strokeWidth="1.8" 
+                            strokeLinecap="round"/>
+                      <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
+                            stroke="#8a8a8a" strokeWidth="1.6" 
+                            strokeLinecap="round"/>
                     </svg>
                   </div>
                 </div>
