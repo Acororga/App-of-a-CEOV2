@@ -858,49 +858,29 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="w-10 h-10 group-active:scale-[0.96] transition-transform duration-100 relative">
-                  {/* Premium Container with Grain Texture */}
-                  <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-[#a855f7] to-[#7c3aed] shadow-[0_1.5px_3px_rgba(0,0,0,0.35),0_6px_18px_rgba(0,0,0,0.2)]" 
+                  {/* Matte dark container */}
+                  <div className="absolute inset-0 rounded-[11px]"
                        style={{
-                         backgroundImage: `
-                           linear-gradient(135deg, #a855f7 0%, #7c3aed 100%),
-                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E")
-                         `,
-                         backgroundBlendMode: 'overlay, normal'
-                       }}>
-                    {/* Top-left light */}
-                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
-                    {/* Bottom-right shadow */}
-                    <div className="absolute inset-0 rounded-[11px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
-                  </div>
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 1.5px 4px rgba(0, 0, 0, 0.35),
+                           inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                           inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
 
-                  {/* Graphique de rapport futuriste */}
-                  <div className="absolute inset-0 flex items-center justify-center"
-                       style={{
-                         transform: 'translateZ(4px)',
-                         filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))'
-                       }}>
+                  {/* Icon symbol - desaturated */}
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
-                      <g filter="url(#glow-report)">
-                        {/* Cadre du rapport */}
-                        <rect x="3" y="3" width="18" height="18" rx="2.5" 
-                              stroke="rgba(255, 255, 255, 0.78)" strokeWidth="1.8"/>
-                        {/* Graphiques internes avec glow */}
-                        <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.8)"/>
-                        <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.85)"/>
-                        <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.78)"/>
-                      </g>
-                      <defs>
-                        <filter id="glow-report" x="-50%" y="-50%" width="200%" height="200%">
-                          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                          <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                        </filter>
-                      </defs>
+                      <rect x="3" y="3" width="18" height="18" rx="2.5" 
+                            stroke="#8a8a8a" strokeWidth="1.8"/>
+                      <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
+                            fill="#8a8a8a"/>
+                      <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
+                            fill="#8a8a8a"/>
+                      <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
+                            fill="#8a8a8a"/>
                     </svg>
                   </div>
                 </div>
