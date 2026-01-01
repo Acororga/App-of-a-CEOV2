@@ -22,41 +22,41 @@ export function RankAmbientProvider({ children }) {
   const ambientStyles = useMemo(() => {
     const frameConfigs = {
       1: { // Bronze
-        thickness: 2,
+        thickness: 4,
         gradient: 'linear-gradient(180deg, #6d5a3c 0%, #a07e52 100%)',
-        glow: 'none'
+        glow: '0 0 6px rgba(160, 126, 82, 0.2)'
       },
       2: { // Silver
-        thickness: 3,
+        thickness: 5,
         gradient: 'linear-gradient(180deg, #888888 0%, #c0c0c0 100%)',
-        glow: '0 0 8px rgba(192, 192, 192, 0.3)'
+        glow: '0 0 10px rgba(192, 192, 192, 0.35)'
       },
       3: { // Gold
-        thickness: 4,
+        thickness: 6,
         gradient: 'linear-gradient(180deg, #b8860b 0%, #ffd700 100%)',
-        glow: '0 0 12px rgba(255, 215, 0, 0.4)'
+        glow: '0 0 16px rgba(255, 215, 0, 0.45)'
       },
       4: { // Platinum
-        thickness: 5,
+        thickness: 7,
         gradient: 'linear-gradient(180deg, #a0a8b0 0%, #d8dce0 100%)',
-        glow: '0 0 10px rgba(216, 220, 224, 0.3)'
+        glow: '0 0 14px rgba(216, 220, 224, 0.4)'
       },
       5: { // Diamond
-        thickness: 6,
+        thickness: 8,
         gradient: 'linear-gradient(180deg, #d0e8f0 0%, #e8f8ff 100%)',
-        glow: '0 0 16px rgba(176, 224, 230, 0.5)'
+        glow: '0 0 20px rgba(176, 224, 230, 0.55)'
       },
       6: { // Batman
-        thickness: 4,
+        thickness: 6,
         gradient: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)',
-        glow: 'none'
+        glow: '0 0 12px rgba(26, 26, 26, 0.3)'
       },
       7: { // CEO - double frame
-        thickness: 6,
-        innerThickness: 2,
-        gap: 2,
+        thickness: 8,
+        innerThickness: 3,
+        gap: 3,
         gradient: 'linear-gradient(180deg, #b8860b 0%, #ffd700 100%)',
-        glow: '0 0 20px rgba(255, 215, 0, 0.4)'
+        glow: '0 0 24px rgba(255, 215, 0, 0.5)'
       }
     };
 

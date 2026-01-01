@@ -422,7 +422,7 @@ export default function Pareto() {
             )}
 
             <div className="mt-8 text-center text-xs text-zinc-600">
-              Swipe right for Matrix view →
+              Swipe left for Matrix view →
             </div>
           </>
         )}
@@ -547,7 +547,7 @@ export default function Pareto() {
             </div>
 
             <div className="mt-6 text-center text-xs text-zinc-600">
-              ← Swipe left to return to list view
+              ← Swipe right to return to list view
             </div>
           </div>
         )}

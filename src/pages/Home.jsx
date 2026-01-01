@@ -553,7 +553,9 @@ export default function Home() {
               const AppIcon = app.icon;
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in zoom-in-95 duration-200">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} rounded-2xl blur-2xl opacity-60 group-hover:opacity-90 transition-all duration-300`} style={{
+                    filter: 'blur(24px)'
+                  }} />
                   <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-active:scale-[0.98] transition-all duration-150">
                   <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
                   <div className={`absolute -top-8 -right-8 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500`} />
@@ -579,7 +581,9 @@ export default function Home() {
                 const AppIcon = app.icon;
                 return (
                   <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} rounded-2xl blur-2xl opacity-60 group-hover:opacity-90 transition-all duration-300`} style={{
+                      filter: 'blur(24px)'
+                    }} />
                     <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-active:scale-[0.98] transition-all duration-150">
                       <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
                       <div className={`absolute -top-8 -right-8 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500`} />
@@ -610,7 +614,9 @@ export default function Home() {
               const AppIcon = app.icon;
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in duration-200">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} rounded-2xl blur-2xl opacity-60 group-hover:opacity-90 transition-all duration-300`} style={{
+                    filter: 'blur(24px)'
+                  }} />
                   <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] group-active:scale-[0.98] transition-all duration-150">
                     {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
                       <button onClick={(e) => handleQuickAddClick(e, app.id)} className="absolute top-2 right-2 p-1 rounded-lg bg-zinc-800/40 hover:bg-zinc-700/60 z-10">
@@ -639,7 +645,9 @@ export default function Home() {
           const AppIcon = app.icon;
           return (
             <Link to={createPageUrl(app.id)} className="block group relative">
-              <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-200`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} rounded-2xl blur-2xl opacity-60 group-hover:opacity-90 transition-all duration-300`} style={{
+                filter: 'blur(24px)'
+              }} />
               <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-active:scale-[0.98] transition-all duration-150">
                 <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
                 <div className={`absolute -top-8 -right-8 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500`} />

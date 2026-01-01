@@ -181,9 +181,20 @@ export default function ScreenTimeManager() {
             <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                  <Ban className="w-6 h-6 text-white relative z-10" />
+                <div className="w-12 h-12 rounded-xl relative">
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 2px 6px rgba(0, 0, 0, 0.35),
+                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Ban className="w-6 h-6 text-zinc-500" />
+                  </div>
                 </div>
                 <div>
                   <div className="font-bold text-sm text-white mb-0.5">{t('blockApps')} & Sites</div>
@@ -198,9 +209,20 @@ export default function ScreenTimeManager() {
             <div className="absolute inset-0 bg-cyan-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                  <Trophy className="w-6 h-6 text-white relative z-10" />
+                <div className="w-12 h-12 rounded-xl relative">
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 2px 6px rgba(0, 0, 0, 0.35),
+                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-zinc-500" />
+                  </div>
                 </div>
                 <div>
                   <div className="font-bold text-sm text-white mb-0.5">{t('leaderboard')}</div>
@@ -215,9 +237,20 @@ export default function ScreenTimeManager() {
             <div className="absolute inset-0 bg-purple-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/10" />
-                  <Shield className="w-6 h-6 text-white relative z-10" />
+                <div className="w-12 h-12 rounded-xl relative">
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 2px 6px rgba(0, 0, 0, 0.35),
+                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-zinc-500" />
+                  </div>
                 </div>
                 <div>
                   <div className="font-bold text-sm text-white mb-0.5">Blocking Preview</div>
