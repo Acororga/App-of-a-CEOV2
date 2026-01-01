@@ -33,6 +33,7 @@ export function RankAmbientProvider({ children }) {
 
       return (
         <div 
+          key={position}
           className={`absolute ${bars[position]} pointer-events-none z-10`}
           style={{
             background: bgColor,
@@ -59,115 +60,112 @@ export function RankAmbientProvider({ children }) {
           }}
         />
       );
+    };
 
-    const styles = {
+    // Matériaux par rang - usiné, contrôlé, statutaire
+    const materials = {
       1: { // Bronze
-        accent: 'amber-600',
-        accentRgb: '217, 119, 6',
-        topRightOrnament: generateCracks('#cd7f32', 'top-right'),
-        bottomLeftOrnament: generateCracks('#cd7f32', 'bottom-left')
+        bgColor: '#8b6f47',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(160,130,109,0.1) 0%, rgba(139,111,71,0.1) 100%)',
+        },
+        shadow: '0 1px 2px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)',
+        finish: { filter: 'brightness(0.95) saturate(0.8)' }
       },
       2: { // Silver
-        accent: 'gray-400',
-        accentRgb: '156, 163, 175',
-        topRightOrnament: generateCracks('#c0c0c0', 'top-right'),
-        bottomLeftOrnament: generateCracks('#c0c0c0', 'bottom-left')
+        bgColor: '#a8a8a8',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(192,192,192,0.15) 0%, rgba(168,168,168,0.15) 100%)',
+        },
+        shadow: '0 1px 2px rgba(0,0,0,0.25), inset 0 0.5px 0 rgba(255,255,255,0.1)',
+        finish: { filter: 'brightness(1) saturate(0.7)' }
       },
       3: { // Gold
-        accent: 'yellow-600',
-        accentRgb: '202, 138, 4',
-        topRightOrnament: generateCracks('#ffd700', 'top-right'),
-        bottomLeftOrnament: generateCracks('#ffd700', 'bottom-left')
+        bgColor: '#d4af37',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(212,175,55,0.2) 100%)',
+        },
+        shadow: '0 1px 3px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.15)',
+        finish: { filter: 'brightness(1.05) saturate(0.9)' }
       },
       4: { // Platinum
-        accent: 'cyan-500',
-        accentRgb: '6, 182, 212',
-        topRightOrnament: (
-          <>
-            {generateCracks('#e5e4e2', 'top-right')}
-            <svg className="absolute top-0 right-0 w-[12.5vw] h-[12.5vh] pointer-events-none z-10" 
-                 viewBox="0 0 100 100">
-              <defs>
-                <linearGradient id="platinum-shimmer" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#e5e4e2" stopOpacity="0.3"/>
-                  <stop offset="50%" stopColor="#ffffff" stopOpacity="0.15"/>
-                  <stop offset="100%" stopColor="#e5e4e2" stopOpacity="0.3"/>
-                </linearGradient>
-              </defs>
-              <path d="M 10 5 L 15 8" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.4"/>
-              <path d="M 25 12 L 30 15" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.3"/>
-              <path d="M 40 20 L 45 23" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.35"/>
-            </svg>
-          </>
-        ),
-        bottomLeftOrnament: (
-          <>
-            {generateCracks('#e5e4e2', 'bottom-left')}
-            <svg className="absolute bottom-0 left-0 w-[12.5vw] h-[12.5vh] pointer-events-none z-10" 
-                 viewBox="0 0 100 100"
-                 style={{ transform: 'scale(-1, -1)', transformOrigin: 'center' }}>
-              <path d="M 10 5 L 15 8" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.4"/>
-              <path d="M 25 12 L 30 15" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.3"/>
-              <path d="M 40 20 L 45 23" stroke="url(#platinum-shimmer)" strokeWidth="2" opacity="0.35"/>
-            </svg>
-          </>
-        )
+        bgColor: '#c9c9c9',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(229,228,226,0.2) 0%, rgba(201,201,201,0.2) 100%)',
+        },
+        shadow: '0 1px 3px rgba(0,0,0,0.25), inset 0 0.5px 0 rgba(255,255,255,0.12)',
+        finish: { filter: 'brightness(1.1) saturate(0.5)' }
       },
       5: { // Diamond
-        accent: 'blue-400',
-        accentRgb: '96, 165, 250',
-        topRightOrnament: (
-          <>
-            {generateCracks('#b9f2ff', 'top-right')}
-            <svg className="absolute top-0 right-0 w-[12.5vw] h-[12.5vh] pointer-events-none z-10" 
-                 viewBox="0 0 100 100">
-              <defs>
-                <filter id="diamond-sparkle">
-                  <feGaussianBlur stdDeviation="1.5" result="blur"/>
-                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                </filter>
-              </defs>
-              <circle cx="20" cy="15" r="1.5" fill="#b9f2ff" opacity="0.9" filter="url(#diamond-sparkle)"/>
-              <circle cx="35" cy="25" r="1" fill="#b9f2ff" opacity="0.7" filter="url(#diamond-sparkle)"/>
-              <circle cx="45" cy="35" r="1.2" fill="#b9f2ff" opacity="0.8" filter="url(#diamond-sparkle)"/>
-              <circle cx="28" cy="20" r="0.8" fill="#b9f2ff" opacity="0.6" filter="url(#diamond-sparkle)"/>
-              <circle cx="50" cy="28" r="1" fill="#b9f2ff" opacity="0.75" filter="url(#diamond-sparkle)"/>
-            </svg>
-          </>
-        ),
-        bottomLeftOrnament: (
-          <>
-            {generateCracks('#b9f2ff', 'bottom-left')}
-            <svg className="absolute bottom-0 left-0 w-[12.5vw] h-[12.5vh] pointer-events-none z-10" 
-                 viewBox="0 0 100 100"
-                 style={{ transform: 'scale(-1, -1)', transformOrigin: 'center' }}>
-              <circle cx="20" cy="15" r="1.5" fill="#b9f2ff" opacity="0.9" filter="url(#diamond-sparkle)"/>
-              <circle cx="35" cy="25" r="1" fill="#b9f2ff" opacity="0.7" filter="url(#diamond-sparkle)"/>
-              <circle cx="45" cy="35" r="1.2" fill="#b9f2ff" opacity="0.8" filter="url(#diamond-sparkle)"/>
-              <circle cx="28" cy="20" r="0.8" fill="#b9f2ff" opacity="0.6" filter="url(#diamond-sparkle)"/>
-              <circle cx="50" cy="28" r="1" fill="#b9f2ff" opacity="0.75" filter="url(#diamond-sparkle)"/>
-            </svg>
-          </>
-        )
+        bgColor: '#b0e0e6',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(185,242,255,0.25) 0%, rgba(176,224,230,0.25) 100%)',
+        },
+        shadow: '0 1px 4px rgba(0,0,0,0.2), inset 0 0.5px 0 rgba(255,255,255,0.2), 0 0 8px rgba(176,224,230,0.15)',
+        finish: { filter: 'brightness(1.15) saturate(0.6)' }
       },
       6: { // Batman
-        accent: 'zinc-700',
-        accentRgb: '63, 63, 70',
-        topRightOrnament: generateCracks('#1a1a1a', 'top-right'),
-        bottomLeftOrnament: generateCracks('#1a1a1a', 'bottom-left')
+        bgColor: '#0a0a0a',
+        texture: {
+          backgroundImage: 'none',
+        },
+        shadow: '0 1px 1px rgba(0,0,0,0.5), inset 0 0.5px 0 rgba(255,255,255,0.02)',
+        finish: { filter: 'brightness(0.4) saturate(0)' }
       },
       7: { // CEO
-        accent: 'yellow-500',
-        accentRgb: '234, 179, 8',
-        topRightOrnament: generateCracks('#ffd700', 'top-right'),
-        bottomLeftOrnament: generateCracks('#ffd700', 'bottom-left'),
-        topLeftOrnament: generateCracks('#ffd700', 'top-left'),
-        bottomRightOrnament: generateCracks('#ffd700', 'bottom-right'),
-        ceoGlow: true
+        bgColor: '#d4af37',
+        texture: {
+          backgroundImage: 'linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(212,175,55,0.3) 100%)',
+        },
+        shadow: '0 2px 4px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 12px rgba(212,175,55,0.2)',
+        finish: { filter: 'brightness(1.1) saturate(1)' }
       }
     };
 
-    return styles[rankLevel] || styles[1];
+    const accentRgbs = {
+      1: '139, 111, 71',
+      2: '168, 168, 168',
+      3: '212, 175, 55',
+      4: '201, 201, 201',
+      5: '176, 224, 230',
+      6: '10, 10, 10',
+      7: '212, 175, 55'
+    };
+
+    // Épaisseur du cadre selon le rang
+    const frameThickness = {
+      1: 1,   // Bronze - très fin
+      2: 1.5, // Silver - fin
+      3: 2,   // Gold - moyen
+      4: 2.5, // Platinum - épais
+      5: 3,   // Diamond - épais
+      6: 2,   // Batman - presque invisible
+      7: 3    // CEO - double cadre (simulé par épaisseur)
+    };
+
+    const material = materials[rankLevel];
+    const accentRgb = accentRgbs[rankLevel] || '139, 111, 71';
+    const isCEO = rankLevel === 7;
+
+    // Générer les barres (CEO = 4 coins, autres = 2 coins)
+    const powerBars = (
+      <>
+        {generatePowerBar('top-right', material)}
+        {generatePowerBar('bottom-left', material)}
+        {isCEO && generatePowerBar('top-left', material)}
+        {isCEO && generatePowerBar('bottom-right', material)}
+      </>
+    );
+
+    const frame = generateFrame(frameThickness[rankLevel], material);
+
+    return {
+      powerBars,
+      frame,
+      accentRgb,
+      rankLevel,
+      rankName
+    };
   }, [rankLevel]);
 
   const isCEO = rankLevel === 7;
