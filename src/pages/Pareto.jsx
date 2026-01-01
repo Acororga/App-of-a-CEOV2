@@ -113,10 +113,10 @@ export default function Pareto() {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
-    if (isLeftSwipe && activeTab === 'list') {
+    if (isRightSwipe && activeTab === 'list') {
       setActiveTab('matrix');
     }
-    if (isRightSwipe && activeTab === 'matrix') {
+    if (isLeftSwipe && activeTab === 'matrix') {
       setActiveTab('list');
     }
   };
@@ -422,7 +422,7 @@ export default function Pareto() {
             )}
 
             <div className="mt-8 text-center text-xs text-zinc-600">
-              Swipe left for Matrix view →
+              Swipe right for Matrix view →
             </div>
           </>
         )}
@@ -547,7 +547,7 @@ export default function Pareto() {
             </div>
 
             <div className="mt-6 text-center text-xs text-zinc-600">
-              ← Swipe right to return to list view
+              ← Swipe left to return to list view
             </div>
           </div>
         )}

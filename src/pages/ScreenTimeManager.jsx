@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
-import { getTodayScreenTime, getAverageScreenTime, getOrCreateWinStreak } from '../functions/businessLogic';
+import { getTodayScreenTime, getAverageScreenTime, getOrCreateWinStreak } from '../utils/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Target, Flame, Trophy, Crown, Ban, Zap, Shield } from 'lucide-react';
 import { useLanguage } from '../components/LanguageProvider';
