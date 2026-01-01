@@ -85,9 +85,22 @@ export default function OnboardingTutorial({ onComplete }) {
           >
             {/* Icon */}
             <div className="flex justify-center">
-              <div className={`relative w-32 h-32 rounded-3xl bg-gradient-to-br ${step.color} flex items-center justify-center shadow-2xl`}>
-                <div className="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-3xl" />
-                <Icon className="w-16 h-16 text-white relative z-10" />
+              <div className="relative w-32 h-32">
+                {/* Matte dark container */}
+                <div className="absolute inset-0 rounded-3xl"
+                     style={{
+                       background: '#2e2e2e',
+                       boxShadow: `
+                         0 4px 12px rgba(0, 0, 0, 0.4),
+                         inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                         inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                       `
+                     }}
+                />
+                {/* Icon symbol - desaturated */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Icon className="w-16 h-16" style={{ color: '#9a9a9a' }} />
+                </div>
               </div>
             </div>
 
