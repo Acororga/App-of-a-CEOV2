@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../utils/businessLogic';
+import { getOrCreateWinStreak, hasUncheckedHabits, startFocusSession } from '../components/businessLogic';
 import { base44 } from '@/api/base44Client';
 import { subDays } from 'date-fns';
 import { 
@@ -517,10 +517,14 @@ export default function Home() {
               const AppIcon = app.icon;
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="group relative animate-in fade-in zoom-in-95 duration-200">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} rounded-2xl blur-2xl opacity-60 group-hover:opacity-90 transition-all duration-300`} style={{
-                    filter: 'blur(24px)'
+                  <div className="absolute inset-0 rounded-2xl blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" style={{
+                    background: `linear-gradient(to bottom right, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.2))`
                   }} />
                   <div className="relative h-36 rounded-2xl bg-gradient-to-br from-zinc-900/80 via-zinc-850/80 to-zinc-900/80 backdrop-blur-lg border border-zinc-700/40 p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(99,102,241,0.15)] group-hover:border-zinc-600/50 group-active:scale-[0.98] transition-all duration-150">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/8 via-transparent to-purple-600/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-700" style={{
+                      background: `linear-gradient(to bottom right, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.15))`
+                    }} />
                     <div className={`absolute inset-0 bg-gradient-to-br ${app.glow} opacity-0 group-hover:opacity-30 transition-opacity duration-300`} />
                     <div className={`absolute -top-8 -right-8 w-28 h-28 bg-gradient-to-br ${app.glow} rounded-full blur-2xl opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500`} />
                     {(app.id === 'Pareto' || app.id === 'Habits' || app.id === 'Calendar') && (
