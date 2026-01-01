@@ -5,6 +5,7 @@ import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
 import FocusMode from './pages/FocusMode';
 import Habits from './pages/Habits';
+import Home from './pages/Home';
 import Leaderboard from './pages/Leaderboard';
 import MigrateHabits from './pages/MigrateHabits';
 import Pareto from './pages/Pareto';
@@ -20,7 +21,6 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
-import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +32,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "FocusMode": FocusMode,
     "Habits": Habits,
+    "Home": Home,
     "Leaderboard": Leaderboard,
     "MigrateHabits": MigrateHabits,
     "Pareto": Pareto,
@@ -47,7 +48,6 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
-    "Home": Home,
 }
 
 export const pagesConfig = {
