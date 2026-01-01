@@ -69,16 +69,9 @@ function LayoutContent({ children, currentPageName }) {
   if (currentPageName === 'Home') {
     return (
       <div className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Craquelures selon le rang */}
-        {ambientStyles.topRightOrnament}
-        {ambientStyles.bottomLeftOrnament}
-        {ambientStyles.topLeftOrnament}
-        {ambientStyles.bottomRightOrnament}
-        {ambientStyles.ceoGlow && (
-          <div className="fixed inset-0 pointer-events-none z-0">
-            <div className="absolute inset-0 border-[3px] border-yellow-500/25 rounded-none shadow-[inset_0_0_60px_rgba(234,179,8,0.15)]" />
-          </div>
-        )}
+        {/* Barres de pouvoir et cadre selon le rang */}
+        {ambientStyles.powerBars}
+        {ambientStyles.frame}
         
         {/* User Icon - Top Left */}
         <button
