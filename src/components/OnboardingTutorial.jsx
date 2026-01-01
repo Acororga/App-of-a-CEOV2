@@ -86,6 +86,12 @@ export default function OnboardingTutorial({ onComplete }) {
             {/* Icon */}
             <div className="flex justify-center">
               <div className="relative w-32 h-32">
+                {/* Blue accent glow */}
+                <div className="absolute inset-0 rounded-3xl blur-xl opacity-40" 
+                     style={{
+                       background: 'linear-gradient(to bottom right, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3))'
+                     }}
+                />
                 {/* Matte dark container */}
                 <div className="absolute inset-0 rounded-3xl"
                      style={{
@@ -141,7 +147,7 @@ export default function OnboardingTutorial({ onComplete }) {
               )}
               <Button
                 onClick={handleNext}
-                className={`flex-1 bg-gradient-to-r ${step.color} hover:opacity-90 text-white`}
+                className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
               >
                 {currentStep === tutorialSteps.length - 1 ? 'Get Started' : 'Next'}
                 {currentStep !== tutorialSteps.length - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
