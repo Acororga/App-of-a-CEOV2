@@ -185,8 +185,6 @@ function LayoutContent({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Barres de pouvoir et cadre selon le rang */}
-      {ambientStyles.powerBars}
       {ambientStyles.frame}
       {children}
     </div>
