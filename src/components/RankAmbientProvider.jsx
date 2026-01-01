@@ -20,34 +20,73 @@ export function RankAmbientProvider({ children }) {
   const rankName = rankData?.rank_name || 'Bronze';
 
   const ambientStyles = useMemo(() => {
-    // Fonction pour générer les craquelures sismiques
+    // Fonction pour générer les craquelures sismiques partant du coin
     const generateCracks = (color, position) => {
       // Dimensions: 1/8 de l'écran (12.5% en largeur et hauteur)
       const size = 'w-[12.5vw] h-[12.5vh]';
       
-      // Craquelures organiques qui partent du coin et se ramifient
-      const crackPattern = `
-        <path d="M 0 0 L 15 8 L 28 5 L 35 15 L 45 12 L 52 20 L 60 18 L 68 25" 
-              stroke="${color}" stroke-width="1.5" fill="none" opacity="0.7" stroke-linecap="round"/>
-        <path d="M 0 0 L 10 12 L 18 18 L 25 28 L 30 35 L 35 45" 
-              stroke="${color}" stroke-width="1.2" fill="none" opacity="0.6" stroke-linecap="round"/>
-        <path d="M 0 0 L 8 6 L 12 14 L 20 22 L 28 30 L 35 40 L 42 48" 
-              stroke="${color}" stroke-width="1" fill="none" opacity="0.5" stroke-linecap="round"/>
-        <path d="M 15 8 L 22 15 L 28 22 L 35 28" 
-              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 28 5 L 32 12 L 38 18 L 44 24" 
-              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 10 12 L 15 18 L 18 25 L 22 32" 
-              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.35" stroke-linecap="round"/>
-        <path d="M 35 15 L 40 22 L 45 28 L 50 35 L 55 42" 
-              stroke="${color}" stroke-width="0.9" fill="none" opacity="0.5" stroke-linecap="round"/>
-        <path d="M 25 28 L 30 35 L 35 42 L 40 48 L 45 55" 
-              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 52 20 L 58 28 L 62 35 L 68 42" 
-              stroke="${color}" stroke-width="0.6" fill="none" opacity="0.35" stroke-linecap="round"/>
-        <path d="M 20 22 L 24 28 L 28 35" 
-              stroke="${color}" stroke-width="0.6" fill="none" opacity="0.3" stroke-linecap="round"/>
+      // Craquelures qui partent du coin (0,0) et se ramifient comme une rivière
+      // Branche principale 1 - vers le bas-droite
+      const mainBranch1 = `
+        <path d="M 0 0 L 8 10 L 15 22 L 22 35 L 28 48 L 32 60" 
+              stroke="${color}" stroke-width="1.8" fill="none" opacity="0.75" stroke-linecap="round"/>
       `;
+      
+      // Ramifications de la branche 1
+      const ramifications1 = `
+        <path d="M 8 10 L 12 18 L 18 28 L 22 38" 
+              stroke="${color}" stroke-width="1.2" fill="none" opacity="0.6" stroke-linecap="round"/>
+        <path d="M 15 22 L 20 30 L 25 40" 
+              stroke="${color}" stroke-width="1.0" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 22 35 L 28 42 L 32 50" 
+              stroke="${color}" stroke-width="0.9" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 12 18 L 15 25 L 18 32" 
+              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 20 30 L 24 36 L 28 44" 
+              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.35" stroke-linecap="round"/>
+      `;
+      
+      // Branche principale 2 - vers la droite-bas
+      const mainBranch2 = `
+        <path d="M 0 0 L 12 6 L 25 12 L 38 18 L 52 22 L 65 28" 
+              stroke="${color}" stroke-width="1.6" fill="none" opacity="0.7" stroke-linecap="round"/>
+      `;
+      
+      // Ramifications de la branche 2
+      const ramifications2 = `
+        <path d="M 12 6 L 18 12 L 25 20 L 30 28" 
+              stroke="${color}" stroke-width="1.1" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M 25 12 L 30 18 L 36 26" 
+              stroke="${color}" stroke-width="0.95" fill="none" opacity="0.48" stroke-linecap="round"/>
+        <path d="M 38 18 L 42 24 L 48 32 L 52 40" 
+              stroke="${color}" stroke-width="0.85" fill="none" opacity="0.42" stroke-linecap="round"/>
+        <path d="M 18 12 L 22 18 L 26 24" 
+              stroke="${color}" stroke-width="0.75" fill="none" opacity="0.38" stroke-linecap="round"/>
+        <path d="M 30 18 L 35 24 L 40 30" 
+              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.33" stroke-linecap="round"/>
+      `;
+      
+      // Branche principale 3 - diagonale équilibrée
+      const mainBranch3 = `
+        <path d="M 0 0 L 10 8 L 20 18 L 32 28 L 45 40 L 58 52" 
+              stroke="${color}" stroke-width="1.5" fill="none" opacity="0.68" stroke-linecap="round"/>
+      `;
+      
+      // Ramifications de la branche 3
+      const ramifications3 = `
+        <path d="M 10 8 L 14 15 L 18 22" 
+              stroke="${color}" stroke-width="0.9" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 20 18 L 24 25 L 28 32 L 32 40" 
+              stroke="${color}" stroke-width="0.85" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 32 28 L 38 35 L 44 42" 
+              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.38" stroke-linecap="round"/>
+        <path d="M 14 15 L 17 20 L 20 26" 
+              stroke="${color}" stroke-width="0.65" fill="none" opacity="0.32" stroke-linecap="round"/>
+        <path d="M 45 40 L 50 46 L 55 53" 
+              stroke="${color}" stroke-width="0.75" fill="none" opacity="0.35" stroke-linecap="round"/>
+      `;
+
+      const crackPattern = mainBranch1 + ramifications1 + mainBranch2 + ramifications2 + mainBranch3 + ramifications3;
 
       const positions = {
         'top-right': 'top-0 right-0',
@@ -67,7 +106,7 @@ export function RankAmbientProvider({ children }) {
         <svg className={`absolute ${positions[position]} ${size} pointer-events-none z-10`} 
              viewBox="0 0 100 100" 
              preserveAspectRatio="xMinYMin meet"
-             style={{ transform: transforms[position], transformOrigin: 'center' }}>
+             style={{ transform: transforms[position], transformOrigin: position.includes('top') ? 'top' : 'bottom' }}>
           <g dangerouslySetInnerHTML={{ __html: crackPattern }} />
         </svg>
       );
