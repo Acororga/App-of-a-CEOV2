@@ -435,52 +435,30 @@ export default function Home() {
             <div className="relative flex items-center justify-between h-full">
               <div className="flex items-center gap-6">
                 <div className="w-20 h-20 group-active:scale-[0.96] transition-transform duration-100 relative">
-                  {/* Premium Container with Grain Texture */}
-                  <div className="absolute inset-0 rounded-[16px] bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] shadow-[0_2px_4px_rgba(0,0,0,0.4),0_8px_24px_rgba(59,130,246,0.3)]" 
+                  {/* Matte dark container */}
+                  <div className="absolute inset-0 rounded-[16px]"
                        style={{
-                         backgroundImage: `
-                           linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%),
-                           url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
-                         `,
-                         backgroundBlendMode: 'overlay, normal'
-                       }}>
-                    {/* Top-left light */}
-                    <div className="absolute inset-0 rounded-[16px] bg-gradient-to-br from-white/25 via-transparent to-transparent" />
-                    {/* Bottom-right shadow */}
-                    <div className="absolute inset-0 rounded-[16px] bg-gradient-to-tl from-black/20 via-transparent to-transparent" />
-                    {/* Inner glow */}
-                    <div className="absolute inset-[2px] rounded-[14px] bg-gradient-to-br from-white/10 to-transparent opacity-50" />
-                  </div>
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 2px 6px rgba(0, 0, 0, 0.35),
+                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
 
-                  {/* Graphique analytique futuriste */}
-                  <div className="absolute inset-0 flex items-center justify-center"
-                       style={{
-                         transform: 'translateZ(4px)',
-                         filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5))'
-                       }}>
+                  {/* Icon symbol - desaturated */}
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-                      <g filter="url(#glow-dashboard)">
-                        {/* Axes */}
-                        <path d="M3 3v18h18" 
-                              stroke="rgba(255, 255, 255, 0.75)" strokeWidth="1.8" 
-                              strokeLinecap="round" strokeLinejoin="round"/>
-                        {/* Barres avec effets de glow */}
-                        <rect x="6.5" y="13" width="3" height="4" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.8)" opacity="0.85"/>
-                        <rect x="11" y="9" width="3" height="8" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.85)" opacity="0.9"/>
-                        <rect x="15.5" y="7" width="3" height="10" rx="0.5"
-                              fill="rgba(255, 255, 255, 0.9)" opacity="0.95"/>
-                      </g>
-                      <defs>
-                        <filter id="glow-dashboard" x="-50%" y="-50%" width="200%" height="200%">
-                          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                          <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                        </filter>
-                      </defs>
+                      <path d="M3 3v18h18" 
+                            stroke="#8a8a8a" strokeWidth="1.8" 
+                            strokeLinecap="round" strokeLinejoin="round"/>
+                      <rect x="6.5" y="13" width="3" height="4" rx="0.5"
+                            fill="#8a8a8a" opacity="0.85"/>
+                      <rect x="11" y="9" width="3" height="8" rx="0.5"
+                            fill="#8a8a8a" opacity="0.9"/>
+                      <rect x="15.5" y="7" width="3" height="10" rx="0.5"
+                            fill="#8a8a8a" opacity="0.95"/>
                     </svg>
                   </div>
                 </div>
