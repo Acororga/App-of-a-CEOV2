@@ -348,18 +348,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
-      {/* Craquelures selon le rang */}
-      {ambientStyles.topRightOrnament}
-      {ambientStyles.bottomLeftOrnament}
-      {ambientStyles.topLeftOrnament}
-      {ambientStyles.bottomRightOrnament}
-      
-      {/* Noise texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '128px 128px'
-      }} />
+      {/* Barres de pouvoir et cadre selon le rang */}
+      {ambientStyles.powerBars}
+      {ambientStyles.frame}
 
       {/* Header */}
       <div className="fixed top-6 left-6 right-6 z-50 flex items-center justify-between">
