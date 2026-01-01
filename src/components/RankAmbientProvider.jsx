@@ -20,73 +20,128 @@ export function RankAmbientProvider({ children }) {
   const rankName = rankData?.rank_name || 'Bronze';
 
   const ambientStyles = useMemo(() => {
-    // Fonction pour générer les craquelures sismiques partant du coin
+    // Fonction pour générer les craquelures sismiques complexes partant du coin exact
     const generateCracks = (color, position) => {
       // Dimensions: 1/8 de l'écran (12.5% en largeur et hauteur)
       const size = 'w-[12.5vw] h-[12.5vh]';
       
-      // Craquelures qui partent du coin (0,0) et se ramifient comme une rivière
-      // Branche principale 1 - vers le bas-droite
-      const mainBranch1 = `
-        <path d="M 0 0 L 8 10 L 15 22 L 22 35 L 28 48 L 32 60" 
-              stroke="${color}" stroke-width="1.8" fill="none" opacity="0.75" stroke-linecap="round"/>
+      // Craquelures organiques complexes partant du coin (0,0)
+      // Structure: plusieurs branches principales avec de nombreuses ramifications
+      
+      // BRANCHE PRINCIPALE 1 - Vers le bas (verticale)
+      const branch1Main = `
+        <path d="M 0 0 L 3 12 L 5 25 L 7 38 L 8 52 L 10 65 L 11 78 L 12 92" 
+              stroke="${color}" stroke-width="2.2" fill="none" opacity="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch1Subs = `
+        <path d="M 3 12 L 8 18 L 12 24 L 15 30" stroke="${color}" stroke-width="1.3" fill="none" opacity="0.6" stroke-linecap="round"/>
+        <path d="M 5 25 L 10 32 L 14 38 L 18 45" stroke="${color}" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M 8 18 L 12 22 L 16 28" stroke="${color}" stroke-width="0.9" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 7 38 L 12 45 L 16 52 L 19 58" stroke="${color}" stroke-width="1.1" fill="none" opacity="0.52" stroke-linecap="round"/>
+        <path d="M 10 32 L 14 38 L 17 44" stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 10 65 L 15 72 L 18 78 L 22 85" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.48" stroke-linecap="round"/>
+        <path d="M 12 45 L 16 50 L 20 56" stroke="${color}" stroke-width="0.75" fill="none" opacity="0.38" stroke-linecap="round"/>
+        <path d="M 15 72 L 19 78 L 23 84" stroke="${color}" stroke-width="0.7" fill="none" opacity="0.35" stroke-linecap="round"/>
       `;
       
-      // Ramifications de la branche 1
-      const ramifications1 = `
-        <path d="M 8 10 L 12 18 L 18 28 L 22 38" 
-              stroke="${color}" stroke-width="1.2" fill="none" opacity="0.6" stroke-linecap="round"/>
-        <path d="M 15 22 L 20 30 L 25 40" 
-              stroke="${color}" stroke-width="1.0" fill="none" opacity="0.5" stroke-linecap="round"/>
-        <path d="M 22 35 L 28 42 L 32 50" 
-              stroke="${color}" stroke-width="0.9" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 12 18 L 15 25 L 18 32" 
-              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 20 30 L 24 36 L 28 44" 
-              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.35" stroke-linecap="round"/>
+      // BRANCHE PRINCIPALE 2 - Diagonale moyenne (45 degrés)
+      const branch2Main = `
+        <path d="M 0 0 L 10 10 L 22 22 L 35 35 L 48 48 L 62 62 L 75 75 L 88 88" 
+              stroke="${color}" stroke-width="2.0" fill="none" opacity="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch2Subs = `
+        <path d="M 10 10 L 15 18 L 20 26 L 24 34" stroke="${color}" stroke-width="1.2" fill="none" opacity="0.58" stroke-linecap="round"/>
+        <path d="M 22 22 L 28 30 L 33 38 L 38 46" stroke="${color}" stroke-width="1.15" fill="none" opacity="0.55" stroke-linecap="round"/>
+        <path d="M 15 18 L 18 24 L 22 30" stroke="${color}" stroke-width="0.85" fill="none" opacity="0.42" stroke-linecap="round"/>
+        <path d="M 35 35 L 42 43 L 48 51 L 54 58" stroke="${color}" stroke-width="1.1" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 28 30 L 32 36 L 36 42" stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 48 48 L 55 56 L 62 64 L 68 72" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.48" stroke-linecap="round"/>
+        <path d="M 42 43 L 46 49 L 50 55" stroke="${color}" stroke-width="0.75" fill="none" opacity="0.36" stroke-linecap="round"/>
+        <path d="M 62 62 L 68 70 L 74 78 L 80 86" stroke="${color}" stroke-width="0.95" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 55 56 L 60 62 L 65 68" stroke="${color}" stroke-width="0.7" fill="none" opacity="0.33" stroke-linecap="round"/>
       `;
       
-      // Branche principale 2 - vers la droite-bas
-      const mainBranch2 = `
-        <path d="M 0 0 L 12 6 L 25 12 L 38 18 L 52 22 L 65 28" 
-              stroke="${color}" stroke-width="1.6" fill="none" opacity="0.7" stroke-linecap="round"/>
+      // BRANCHE PRINCIPALE 3 - Vers la droite (horizontale)
+      const branch3Main = `
+        <path d="M 0 0 L 13 3 L 27 6 L 42 8 L 57 11 L 72 13 L 87 15" 
+              stroke="${color}" stroke-width="1.9" fill="none" opacity="0.72" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch3Subs = `
+        <path d="M 13 3 L 18 9 L 23 16 L 28 23" stroke="${color}" stroke-width="1.15" fill="none" opacity="0.56" stroke-linecap="round"/>
+        <path d="M 27 6 L 32 13 L 37 20 L 42 28" stroke="${color}" stroke-width="1.1" fill="none" opacity="0.53" stroke-linecap="round"/>
+        <path d="M 18 9 L 22 14 L 26 20" stroke="${color}" stroke-width="0.8" fill="none" opacity="0.4" stroke-linecap="round"/>
+        <path d="M 42 8 L 48 15 L 54 23 L 60 31" stroke="${color}" stroke-width="1.05" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 32 13 L 36 19 L 40 25" stroke="${color}" stroke-width="0.75" fill="none" opacity="0.37" stroke-linecap="round"/>
+        <path d="M 57 11 L 63 18 L 69 26 L 75 34" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.47" stroke-linecap="round"/>
+        <path d="M 48 15 L 52 21 L 56 28" stroke="${color}" stroke-width="0.7" fill="none" opacity="0.34" stroke-linecap="round"/>
+        <path d="M 72 13 L 78 20 L 84 28 L 90 36" stroke="${color}" stroke-width="0.95" fill="none" opacity="0.44" stroke-linecap="round"/>
+        <path d="M 63 18 L 68 24 L 73 30" stroke="${color}" stroke-width="0.65" fill="none" opacity="0.31" stroke-linecap="round"/>
       `;
       
-      // Ramifications de la branche 2
-      const ramifications2 = `
-        <path d="M 12 6 L 18 12 L 25 20 L 30 28" 
-              stroke="${color}" stroke-width="1.1" fill="none" opacity="0.55" stroke-linecap="round"/>
-        <path d="M 25 12 L 30 18 L 36 26" 
-              stroke="${color}" stroke-width="0.95" fill="none" opacity="0.48" stroke-linecap="round"/>
-        <path d="M 38 18 L 42 24 L 48 32 L 52 40" 
-              stroke="${color}" stroke-width="0.85" fill="none" opacity="0.42" stroke-linecap="round"/>
-        <path d="M 18 12 L 22 18 L 26 24" 
-              stroke="${color}" stroke-width="0.75" fill="none" opacity="0.38" stroke-linecap="round"/>
-        <path d="M 30 18 L 35 24 L 40 30" 
-              stroke="${color}" stroke-width="0.7" fill="none" opacity="0.33" stroke-linecap="round"/>
+      // BRANCHE PRINCIPALE 4 - Légèrement vers le bas-droite (20-25 degrés)
+      const branch4Main = `
+        <path d="M 0 0 L 14 5 L 28 11 L 43 16 L 58 22 L 73 27 L 88 33" 
+              stroke="${color}" stroke-width="1.8" fill="none" opacity="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch4Subs = `
+        <path d="M 14 5 L 19 12 L 24 19 L 29 27" stroke="${color}" stroke-width="1.1" fill="none" opacity="0.54" stroke-linecap="round"/>
+        <path d="M 28 11 L 34 18 L 40 26 L 45 34" stroke="${color}" stroke-width="1.05" fill="none" opacity="0.51" stroke-linecap="round"/>
+        <path d="M 19 12 L 23 18 L 28 24" stroke="${color}" stroke-width="0.78" fill="none" opacity="0.39" stroke-linecap="round"/>
+        <path d="M 43 16 L 49 24 L 55 32 L 61 40" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.48" stroke-linecap="round"/>
+        <path d="M 34 18 L 38 24 L 43 31" stroke="${color}" stroke-width="0.72" fill="none" opacity="0.36" stroke-linecap="round"/>
+        <path d="M 58 22 L 64 30 L 70 38 L 76 46" stroke="${color}" stroke-width="0.95" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 49 24 L 54 30 L 59 37" stroke="${color}" stroke-width="0.68" fill="none" opacity="0.32" stroke-linecap="round"/>
+        <path d="M 73 27 L 79 35 L 85 43 L 91 51" stroke="${color}" stroke-width="0.9" fill="none" opacity="0.42" stroke-linecap="round"/>
       `;
       
-      // Branche principale 3 - diagonale équilibrée
-      const mainBranch3 = `
-        <path d="M 0 0 L 10 8 L 20 18 L 32 28 L 45 40 L 58 52" 
-              stroke="${color}" stroke-width="1.5" fill="none" opacity="0.68" stroke-linecap="round"/>
+      // BRANCHE PRINCIPALE 5 - Presque verticale vers le bas (10-15 degrés)
+      const branch5Main = `
+        <path d="M 0 0 L 5 14 L 9 29 L 12 45 L 15 61 L 18 77 L 20 93" 
+              stroke="${color}" stroke-width="1.7" fill="none" opacity="0.68" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch5Subs = `
+        <path d="M 5 14 L 10 21 L 15 29 L 20 37" stroke="${color}" stroke-width="1.05" fill="none" opacity="0.52" stroke-linecap="round"/>
+        <path d="M 9 29 L 14 36 L 19 44 L 24 52" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.49" stroke-linecap="round"/>
+        <path d="M 10 21 L 14 27 L 18 34" stroke="${color}" stroke-width="0.75" fill="none" opacity="0.38" stroke-linecap="round"/>
+        <path d="M 12 45 L 17 52 L 22 60 L 26 68" stroke="${color}" stroke-width="0.95" fill="none" opacity="0.46" stroke-linecap="round"/>
+        <path d="M 14 36 L 18 42 L 22 49" stroke="${color}" stroke-width="0.7" fill="none" opacity="0.35" stroke-linecap="round"/>
+        <path d="M 15 61 L 20 69 L 24 77 L 28 85" stroke="${color}" stroke-width="0.88" fill="none" opacity="0.43" stroke-linecap="round"/>
+        <path d="M 17 52 L 21 58 L 25 65" stroke="${color}" stroke-width="0.65" fill="none" opacity="0.31" stroke-linecap="round"/>
       `;
       
-      // Ramifications de la branche 3
-      const ramifications3 = `
-        <path d="M 10 8 L 14 15 L 18 22" 
-              stroke="${color}" stroke-width="0.9" fill="none" opacity="0.45" stroke-linecap="round"/>
-        <path d="M 20 18 L 24 25 L 28 32 L 32 40" 
-              stroke="${color}" stroke-width="0.85" fill="none" opacity="0.4" stroke-linecap="round"/>
-        <path d="M 32 28 L 38 35 L 44 42" 
-              stroke="${color}" stroke-width="0.8" fill="none" opacity="0.38" stroke-linecap="round"/>
-        <path d="M 14 15 L 17 20 L 20 26" 
-              stroke="${color}" stroke-width="0.65" fill="none" opacity="0.32" stroke-linecap="round"/>
-        <path d="M 45 40 L 50 46 L 55 53" 
-              stroke="${color}" stroke-width="0.75" fill="none" opacity="0.35" stroke-linecap="round"/>
+      // BRANCHE PRINCIPALE 6 - Presque horizontale vers la droite (75-80 degrés)
+      const branch6Main = `
+        <path d="M 0 0 L 15 2 L 31 5 L 47 7 L 63 10 L 79 12 L 95 14" 
+              stroke="${color}" stroke-width="1.65" fill="none" opacity="0.66" stroke-linecap="round" stroke-linejoin="round"/>
+      `;
+      const branch6Subs = `
+        <path d="M 15 2 L 20 8 L 25 15 L 30 22" stroke="${color}" stroke-width="1.0" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M 31 5 L 36 12 L 41 19 L 46 27" stroke="${color}" stroke-width="0.98" fill="none" opacity="0.48" stroke-linecap="round"/>
+        <path d="M 20 8 L 24 14 L 28 20" stroke="${color}" stroke-width="0.72" fill="none" opacity="0.37" stroke-linecap="round"/>
+        <path d="M 47 7 L 53 14 L 59 22 L 65 30" stroke="${color}" stroke-width="0.93" fill="none" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 36 12 L 40 18 L 44 25" stroke="${color}" stroke-width="0.68" fill="none" opacity="0.34" stroke-linecap="round"/>
+        <path d="M 63 10 L 69 17 L 75 25 L 81 33" stroke="${color}" stroke-width="0.88" fill="none" opacity="0.42" stroke-linecap="round"/>
+        <path d="M 53 14 L 58 20 L 63 27" stroke="${color}" stroke-width="0.63" fill="none" opacity="0.3" stroke-linecap="round"/>
+        <path d="M 79 12 L 85 19 L 91 27 L 97 35" stroke="${color}" stroke-width="0.85" fill="none" opacity="0.4" stroke-linecap="round"/>
+      `;
+      
+      // RAMIFICATIONS TERTIAIRES (plus fines, plus loin du centre)
+      const tertiaryBranches = `
+        <path d="M 12 24 L 15 29 L 18 35" stroke="${color}" stroke-width="0.6" fill="none" opacity="0.28" stroke-linecap="round"/>
+        <path d="M 24 20 L 28 25 L 32 31" stroke="${color}" stroke-width="0.58" fill="none" opacity="0.27" stroke-linecap="round"/>
+        <path d="M 18 34 L 21 40 L 24 46" stroke="${color}" stroke-width="0.55" fill="none" opacity="0.25" stroke-linecap="round"/>
+        <path d="M 40 25 L 44 31 L 48 38" stroke="${color}" stroke-width="0.6" fill="none" opacity="0.28" stroke-linecap="round"/>
+        <path d="M 28 44 L 32 50 L 36 57" stroke="${color}" stroke-width="0.57" fill="none" opacity="0.26" stroke-linecap="round"/>
+        <path d="M 50 55 L 54 62 L 58 69" stroke="${color}" stroke-width="0.6" fill="none" opacity="0.28" stroke-linecap="round"/>
+        <path d="M 68 24 L 72 30 L 76 37" stroke="${color}" stroke-width="0.58" fill="none" opacity="0.27" stroke-linecap="round"/>
+        <path d="M 21 58 L 25 64 L 29 71" stroke="${color}" stroke-width="0.55" fill="none" opacity="0.25" stroke-linecap="round"/>
+        <path d="M 85 19 L 89 25 L 93 32" stroke="${color}" stroke-width="0.6" fill="none" opacity="0.28" stroke-linecap="round"/>
       `;
 
-      const crackPattern = mainBranch1 + ramifications1 + mainBranch2 + ramifications2 + mainBranch3 + ramifications3;
+      const crackPattern = branch1Main + branch1Subs + branch2Main + branch2Subs + 
+                          branch3Main + branch3Subs + branch4Main + branch4Subs + 
+                          branch5Main + branch5Subs + branch6Main + branch6Subs + 
+                          tertiaryBranches;
 
       const positions = {
         'top-right': 'top-0 right-0',
@@ -105,8 +160,8 @@ export function RankAmbientProvider({ children }) {
       return (
         <svg className={`absolute ${positions[position]} ${size} pointer-events-none z-10`} 
              viewBox="0 0 100 100" 
-             preserveAspectRatio="xMinYMin meet"
-             style={{ transform: transforms[position], transformOrigin: position.includes('top') ? 'top' : 'bottom' }}>
+             preserveAspectRatio="none"
+             style={{ transform: transforms[position] }}>
           <g dangerouslySetInnerHTML={{ __html: crackPattern }} />
         </svg>
       );
