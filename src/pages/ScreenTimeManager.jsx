@@ -193,7 +193,10 @@ export default function ScreenTimeManager() {
                        }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Ban className="w-6 h-6 text-zinc-500" />
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="#6b7280" strokeWidth="2"/>
+                      <line x1="6" y1="6" x2="18" y2="18" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round"/>
+                    </svg>
                   </div>
                 </div>
                 <div>
@@ -221,7 +224,14 @@ export default function ScreenTimeManager() {
                        }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-zinc-500" />
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M4 22h16" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M18 2H6v7a6 6 0 0012 0V2z" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
                 </div>
                 <div>
@@ -249,7 +259,11 @@ export default function ScreenTimeManager() {
                        }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-zinc-500" />
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
+                            stroke="#6b7280" strokeWidth="1.9" strokeLinejoin="round"/>
+                      <rect x="10" y="10" width="4" height="6" rx="0.5" stroke="#6366f1" strokeWidth="2"/>
+                    </svg>
                   </div>
                 </div>
                 <div>
