@@ -310,52 +310,78 @@ export async function updateUserRank() {
 
 export async function getHabitsForDate(date) {
   try {
+    console.log('\n╔════════════════════════════════════════════════════════╗');
+    console.log('║ [getHabitsForDate] START                               ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    
     const user = await base44.auth.me();
+    console.log('✓ User authenticated:', user.email);
+    
     const allHabits = await base44.entities.Habit.filter({ 
       created_by: user.email,
       archived: false
     });
     
+    console.log(`✓ Fetched ${allHabits.length} total habits from database`);
+    
     // SAFE: If no habits exist, return empty array
     if (!allHabits || allHabits.length === 0) {
-      console.log('[getHabitsForDate] No habits found, returning []');
+      console.log('⚠ No habits found in database, returning []');
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return [];
     }
     
     const dayOfWeek = date.getDay();
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayOfWeek];
     
-    console.log('=== getHabitsForDate ===');
-    console.log('Date:', format(date, 'yyyy-MM-dd'));
-    console.log('Day of week (JS):', dayOfWeek, ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayOfWeek]);
-    console.log('Total habits:', allHabits.length);
+    console.log('📅 Target date:', dateStr);
+    console.log('📅 Day of week (JS):', dayOfWeek, `(${dayName})`);
+    console.log('\n--- Filtering habits for this specific day ---');
     
     const filtered = allHabits.filter(habit => {
       // SAFE: Check if habit object exists
-      if (!habit) return false;
+      if (!habit) {
+        console.log('⚠ Found null/undefined habit, skipping');
+        return false;
+      }
+      
+      console.log(`\n🔍 Checking habit: "${habit.title}"`);
+      console.log(`   - is_daily: ${habit.is_daily}`);
+      console.log(`   - specific_days: [${habit.specific_days || 'none'}]`);
       
       // Daily habits appear every day
       if (habit.is_daily) {
-        console.log(`✓ "${habit.title}" - DAILY`);
+        console.log(`   ✓ MATCH - This is a daily habit`);
         return true;
       }
       
       // If not daily and no specific days defined, treat as not scheduled
       if (!habit.specific_days || !Array.isArray(habit.specific_days) || habit.specific_days.length === 0) {
-        console.log(`✗ "${habit.title}" - NO DAYS SET (treating as not scheduled)`);
+        console.log(`   ✗ NO MATCH - Not daily and no specific days set`);
         return false;
       }
       
       // Check if this day is in specific_days array
       const isScheduled = habit.specific_days.includes(dayOfWeek);
-      console.log(`${isScheduled ? '✓' : '✗'} "${habit.title}" - Days: [${habit.specific_days}], Looking for: ${dayOfWeek}`);
+      console.log(`   - specific_days includes ${dayOfWeek}? ${isScheduled}`);
+      console.log(`   ${isScheduled ? '✓ MATCH' : '✗ NO MATCH'} - Habit ${isScheduled ? 'IS' : 'IS NOT'} scheduled for ${dayName}`);
       
       return isScheduled;
     });
     
-    console.log('Filtered result:', filtered.length, 'habits');
+    console.log('\n═══ FINAL RESULT ═══');
+    console.log(`✓ ${filtered.length} habits matched for ${dateStr} (${dayName})`);
+    filtered.forEach(h => console.log(`   - ${h.title}`));
+    console.log('╚════════════════════════════════════════════════════════╝\n');
+    
     return filtered;
   } catch (error) {
-    console.error('[getHabitsForDate] ERROR:', error);
+    console.error('\n╔════════════════════════════════════════════════════════╗');
+    console.error('║ [getHabitsForDate] CRITICAL ERROR                      ║');
+    console.error('╚════════════════════════════════════════════════════════╝');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     // SAFE: Always return empty array on error
     return [];
   }
@@ -382,10 +408,15 @@ export async function getHabitCompletionsForDate(date) {
 
 export async function hasUncheckedHabits(date) {
   try {
+    console.log('\n╔════════════════════════════════════════════════════════╗');
+    console.log('║ [hasUncheckedHabits] START                             ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    
     const user = await base44.auth.me();
     const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
     
-    console.log(`[hasUncheckedHabits] Checking for ${dateStr}`);
+    console.log(`📅 Checking date: ${dateStr}`);
+    console.log(`👤 User: ${user.email}`);
     
     const pendingValidation = await base44.entities.HabitCompletion.filter({
       created_by: user.email,
@@ -393,16 +424,25 @@ export async function hasUncheckedHabits(date) {
       state: 'pending_validation'
     });
     
+    console.log(`✓ Found ${pendingValidation.length} completions with state 'pending_validation'`);
+    
     // SAFE: Return false if no data
     if (!pendingValidation || pendingValidation.length === 0) {
-      console.log(`[hasUncheckedHabits] No pending validations for ${dateStr}`);
+      console.log(`═══ RESULT: NO pending validations for ${dateStr} ═══`);
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return false;
     }
     
-    console.log(`[hasUncheckedHabits] Found ${pendingValidation.length} pending validations`);
+    pendingValidation.forEach(c => console.log(`   - Habit ${c.habit_id} (date: ${c.date})`));
+    console.log(`═══ RESULT: ${pendingValidation.length} pending validations FOUND ═══`);
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return true;
   } catch (error) {
-    console.error('[hasUncheckedHabits] ERROR:', error);
+    console.error('\n╔════════════════════════════════════════════════════════╗');
+    console.error('║ [hasUncheckedHabits] CRITICAL ERROR                    ║');
+    console.error('╚════════════════════════════════════════════════════════╝');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     // SAFE: Return false on error (don't crash the UI)
     return false;
   }
@@ -410,52 +450,70 @@ export async function hasUncheckedHabits(date) {
 
 export async function ensureHabitsScheduled(date) {
   try {
+    console.log('\n╔════════════════════════════════════════════════════════╗');
+    console.log('║ [ensureHabitsScheduled] START                          ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    
     const user = await base44.auth.me();
     const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
     
-    console.log(`[ensureHabitsScheduled] Starting for ${dateStr}`);
+    console.log(`📅 Target date: ${dateStr}`);
+    console.log(`👤 User: ${user.email}`);
     
     // STEP 1: Safely get habits for this date
+    console.log('\n--- STEP 1: Get habits for this date ---');
     const habits = await getHabitsForDate(dateObj);
     
-    console.log(`[ensureHabitsScheduled] Found ${habits.length} habits for ${dateStr}`);
+    console.log(`✓ Received ${habits.length} habits from getHabitsForDate()`);
+    habits.forEach(h => console.log(`   - ${h.title} (ID: ${h.id})`));
     
     // SAFE: If no habits exist, return empty data - don't crash
     if (!habits || habits.length === 0) {
-      console.log(`[ensureHabitsScheduled] No habits for ${dateStr}, returning safely`);
+      console.log(`⚠ No habits scheduled for ${dateStr}, exiting safely`);
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return { created: 0, existing: 0 };
     }
     
     // STEP 2: Safely fetch existing completions
+    console.log('\n--- STEP 2: Fetch existing completions ---');
     let allCompletions = [];
     try {
       allCompletions = await base44.entities.HabitCompletion.filter({
         created_by: user.email,
         date: dateStr
       });
+      console.log(`✓ Found ${allCompletions.length} existing completions`);
+      allCompletions.forEach(c => console.log(`   - Completion for habit ${c.habit_id} (state: ${c.state})`));
     } catch (fetchError) {
-      console.error(`[ensureHabitsScheduled] Error fetching completions:`, fetchError);
+      console.error(`✗ Error fetching completions:`, fetchError);
       allCompletions = [];
     }
     
-    console.log(`[ensureHabitsScheduled] Found ${allCompletions.length} existing completions`);
-    
     // STEP 3: Build completion map
+    console.log('\n--- STEP 3: Build completion map ---');
     const completionMap = {};
     if (allCompletions && Array.isArray(allCompletions)) {
       allCompletions.forEach(c => {
         if (c && c.habit_id) {
           completionMap[c.habit_id] = true;
+          console.log(`   ✓ Habit ${c.habit_id} already has completion`);
         }
       });
     }
     
     // STEP 4: Identify habits that need scheduling
-    const habitsToSchedule = habits.filter(h => h && h.id && !completionMap[h.id]);
+    console.log('\n--- STEP 4: Identify habits needing completions ---');
+    const habitsToSchedule = habits.filter(h => {
+      const needsCompletion = h && h.id && !completionMap[h.id];
+      if (needsCompletion) {
+        console.log(`   → "${h.title}" needs completion record`);
+      }
+      return needsCompletion;
+    });
     
     if (habitsToSchedule.length > 0) {
-      console.log(`[ensureHabitsScheduled] Need to create ${habitsToSchedule.length} completions`);
+      console.log(`\n--- STEP 5: Create ${habitsToSchedule.length} completion records ---`);
       
       let created = 0;
       for (const habit of habitsToSchedule) {
@@ -467,21 +525,30 @@ export async function ensureHabitsScheduled(date) {
             completed: false
           });
           created++;
-          console.log(`[ensureHabitsScheduled] ✓ Created completion for: ${habit.title}`);
+          console.log(`   ✓ Created completion for: "${habit.title}"`);
         } catch (createError) {
-          console.error(`[ensureHabitsScheduled] ✗ Failed to create completion for ${habit.title}:`, createError);
+          console.error(`   ✗ Failed to create completion for "${habit.title}":`, createError);
           // Continue with other habits even if one fails
         }
       }
       
-      console.log(`[ensureHabitsScheduled] Successfully created ${created}/${habitsToSchedule.length} completions`);
+      console.log(`\n═══ RESULT ═══`);
+      console.log(`✓ Successfully created ${created}/${habitsToSchedule.length} completions`);
+      console.log(`✓ Total completions for ${dateStr}: ${allCompletions.length + created}`);
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return { created, existing: allCompletions.length };
     } else {
-      console.log(`[ensureHabitsScheduled] All habits already scheduled for ${dateStr}`);
+      console.log(`\n═══ RESULT ═══`);
+      console.log(`✓ All ${habits.length} habits already have completions for ${dateStr}`);
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return { created: 0, existing: allCompletions.length };
     }
   } catch (error) {
-    console.error('[ensureHabitsScheduled] CRITICAL ERROR:', error);
+    console.error('\n╔════════════════════════════════════════════════════════╗');
+    console.error('║ [ensureHabitsScheduled] CRITICAL ERROR                 ║');
+    console.error('╚════════════════════════════════════════════════════════╝');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     // SAFE: Never throw - return safe data
     return { created: 0, existing: 0, error: true };
   }
@@ -489,10 +556,15 @@ export async function ensureHabitsScheduled(date) {
 
 export async function transitionScheduledToPending(date) {
   try {
+    console.log('\n╔════════════════════════════════════════════════════════╗');
+    console.log('║ [transitionScheduledToPending] START                   ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    
     const user = await base44.auth.me();
     const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
     
-    console.log(`[transitionScheduledToPending] Processing ${dateStr}`);
+    console.log(`📅 Processing date: ${dateStr}`);
+    console.log(`👤 User: ${user.email}`);
     
     let scheduled = [];
     try {
@@ -501,18 +573,21 @@ export async function transitionScheduledToPending(date) {
         date: dateStr,
         state: 'scheduled'
       });
+      console.log(`✓ Found ${scheduled.length} completions with state 'scheduled'`);
     } catch (fetchError) {
-      console.error('[transitionScheduledToPending] Error fetching scheduled:', fetchError);
+      console.error('✗ Error fetching scheduled completions:', fetchError);
       scheduled = [];
     }
     
     // SAFE: If no scheduled items, return
     if (!scheduled || scheduled.length === 0) {
-      console.log(`[transitionScheduledToPending] No scheduled completions for ${dateStr}`);
+      console.log(`═══ RESULT: No scheduled completions for ${dateStr} ═══`);
+      console.log('╚════════════════════════════════════════════════════════╝\n');
       return { transitioned: 0 };
     }
     
-    console.log(`[transitionScheduledToPending] Found ${scheduled.length} scheduled items to transition`);
+    scheduled.forEach(c => console.log(`   - Completion ${c.id} for habit ${c.habit_id}`));
+    console.log(`\n--- Transitioning ${scheduled.length} items to 'pending_validation' ---`);
     
     let transitioned = 0;
     for (const completion of scheduled) {
@@ -521,16 +596,22 @@ export async function transitionScheduledToPending(date) {
           state: 'pending_validation'
         });
         transitioned++;
+        console.log(`   ✓ Transitioned completion ${completion.id}`);
       } catch (updateError) {
-        console.error(`[transitionScheduledToPending] Failed to update completion ${completion.id}:`, updateError);
+        console.error(`   ✗ Failed to update completion ${completion.id}:`, updateError);
         // Continue with others even if one fails
       }
     }
     
-    console.log(`[transitionScheduledToPending] Successfully transitioned ${transitioned}/${scheduled.length} items`);
+    console.log(`\n═══ RESULT: ${transitioned}/${scheduled.length} items transitioned ═══`);
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return { transitioned };
   } catch (error) {
-    console.error('[transitionScheduledToPending] CRITICAL ERROR:', error);
+    console.error('\n╔════════════════════════════════════════════════════════╗');
+    console.error('║ [transitionScheduledToPending] CRITICAL ERROR          ║');
+    console.error('╚════════════════════════════════════════════════════════╝');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     // SAFE: Never throw
     return { transitioned: 0, error: true };
   }

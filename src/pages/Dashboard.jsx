@@ -40,40 +40,55 @@ export default function Dashboard() {
     
     const fetchData = async () => {
       try {
+        console.log('\n╔═══════════════════════════════════════════════════════════════╗');
+        console.log('║ DASHBOARD DATA FETCH - START                                  ║');
+        console.log('╚═══════════════════════════════════════════════════════════════╝');
+        
         setIsLoading(true);
         const user = await base44.auth.me();
+        console.log(`👤 User: ${user.email}`);
+        console.log(`📅 Today: ${format(today, 'yyyy-MM-dd')} (${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][today.getDay()]})`);
+        console.log(`📅 Yesterday: ${format(yesterday, 'yyyy-MM-dd')} (${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][yesterday.getDay()]})`);
         
         // Step 1: Ensure yesterday's habits are scheduled (CRUCIAL - must happen first)
+        console.log('\n━━━ STEP 1: Ensure yesterday habits scheduled ━━━');
         await ensureHabitsScheduled(yesterday);
         
         // Step 2: Transition yesterday's scheduled to pending_validation
+        console.log('\n━━━ STEP 2: Transition yesterday to pending_validation ━━━');
         await transitionScheduledToPending(yesterday);
         
         // Step 3: Ensure today's habits are scheduled
+        console.log('\n━━━ STEP 3: Ensure today habits scheduled ━━━');
         await ensureHabitsScheduled(today);
         
         // Step 4: Fetch ALL habits (not filtered by date)
+        console.log('\n━━━ STEP 4: Fetch all habits from database ━━━');
         const allHabits = await base44.entities.Habit.filter({ 
           created_by: user.email,
           archived: false
         });
         
-        console.log('=== ALL HABITS FETCHED ===');
-        console.log('Total habits in database:', allHabits.length);
-        allHabits.forEach(h => console.log(`- ${h.title} (daily: ${h.is_daily}, days: ${h.specific_days})`));
+        console.log(`✓ Total habits in database: ${allHabits.length}`);
+        allHabits.forEach(h => console.log(`   - ${h.title} (daily: ${h.is_daily}, specific_days: [${h.specific_days || 'none'}])`));
         
         // Step 5: Fetch today's data
+        console.log('\n━━━ STEP 5: Get today habits and completions ━━━');
         const todayHabits = await getHabitsForDate(today);
         const todayCompletions = await getHabitCompletionsForDate(today);
         
-        console.log('=== FILTERED FOR TODAY ===');
-        console.log('Habits for today from getHabitsForDate:', todayHabits.length);
-        todayHabits.forEach(h => console.log(`- ${h.title}`));
+        console.log(`✓ Today habits from getHabitsForDate: ${todayHabits.length}`);
+        console.log(`✓ Today completions from database: ${todayCompletions.length}`);
+        todayHabits.forEach(h => console.log(`   - "${h.title}"`));
         
         // Step 6: Get today's scheduled completions with habit details
+        console.log('\n━━━ STEP 6: Build today habits data array ━━━');
         const scheduledCompletions = todayCompletions.filter(c => c.state === 'scheduled');
+        console.log(`✓ Scheduled completions for today: ${scheduledCompletions.length}`);
+        
         const todayHabitsData = todayHabits.map(habit => {
           const completion = scheduledCompletions.find(c => c.habit_id === habit.id);
+          console.log(`   - Mapping habit "${habit.title}" → completion ${completion ? 'FOUND' : 'NOT FOUND'}`);
           return {
             ...habit,
             completionId: completion?.id,
@@ -81,16 +96,19 @@ export default function Dashboard() {
           };
         });
         
-        // Step 7: Fetch yesterday's pending validations
-        const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
-        const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+        console.log(`✓ Final todayHabitsData array: ${todayHabitsData.length} items`);
         
-        console.log('=== YESTERDAY VALIDATIONS ===');
-        console.log('Yesterday completions:', yesterdayCompletions.length);
-        console.log('Pending validations:', pendingCompletions.length);
+        // Step 7: Fetch yesterday's pending validations
+        console.log('\n━━━ STEP 7: Get yesterday pending validations ━━━');
+        const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
+        console.log(`✓ Yesterday completions total: ${yesterdayCompletions.length}`);
+        
+        const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+        console.log(`✓ Yesterday pending validations: ${pendingCompletions.length}`);
         
         const pendingWithHabits = pendingCompletions.map(completion => {
           const habit = allHabits.find(h => h.id === completion.habit_id);
+          console.log(`   - Completion ${completion.id} → habit "${habit?.title || 'UNKNOWN'}"`);
           return {
             completionId: completion.id,
             habitId: completion.habit_id,
@@ -100,23 +118,28 @@ export default function Dashboard() {
           };
         });
         
-        if (!mounted) return;
+        if (!mounted) {
+          console.log('⚠ Component unmounted, skipping state update');
+          return;
+        }
         
+        console.log('\n━━━ STEP 8: Update component state ━━━');
         setTodayHabitsWithCompletions(todayHabitsData);
         setPendingYesterdayHabits(pendingWithHabits);
         setIsLoading(false);
         
-        console.log('=== Dashboard Data ===');
-        console.log('Today date:', format(today, 'yyyy-MM-dd'), 'Day of week:', today.getDay());
-        console.log('All habits for today from getHabitsForDate:', todayHabits.length);
-        console.log('Today completions fetched:', todayCompletions.length);
-        console.log('Scheduled completions:', scheduledCompletions.length);
-        console.log('Final todayHabitsData:', todayHabitsData.length);
-        console.log('Yesterday date:', format(yesterday, 'yyyy-MM-dd'));
-        console.log('Yesterday completions:', yesterdayCompletions.length);
-        console.log('Pending yesterday:', pendingWithHabits.length);
+        console.log('✓ State updated successfully');
+        console.log(`   - todayHabitsWithCompletions: ${todayHabitsData.length} items`);
+        console.log(`   - pendingYesterdayHabits: ${pendingWithHabits.length} items`);
+        console.log('\n╔═══════════════════════════════════════════════════════════════╗');
+        console.log('║ DASHBOARD DATA FETCH - COMPLETE                               ║');
+        console.log('╚═══════════════════════════════════════════════════════════════╝\n');
       } catch (error) {
-        console.error('Error fetching habits:', error);
+        console.error('\n╔═══════════════════════════════════════════════════════════════╗');
+        console.error('║ DASHBOARD DATA FETCH - CRITICAL ERROR                         ║');
+        console.error('╚═══════════════════════════════════════════════════════════════╝');
+        console.error('Error:', error);
+        console.error('Stack:', error.stack);
         if (mounted) setIsLoading(false);
       }
     };
@@ -284,7 +307,7 @@ export default function Dashboard() {
                 <Button
                   onClick={() => validateYesterdayMutation.mutate()}
                   disabled={validateYesterdayMutation.isPending}
-                  className="w-full bg-white text-black hover:bg-zinc-200 h-14 text-base font-bold rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] active:scale-[0.98] transition-all duration-150"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 h-14 text-base font-bold rounded-2xl shadow-[0_8px_24px_rgba(59,130,246,0.4)] hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] active:scale-[0.98] transition-all duration-150"
                 >
                   <Check className="w-5 h-5 mr-2" />
                   {validateYesterdayMutation.isPending ? 'Confirming...' : 'Confirm'}

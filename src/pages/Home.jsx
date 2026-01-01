@@ -203,9 +203,9 @@ export default function Home() {
       id: 'Pareto', 
       name: t('todo'), 
       icon: ClipboardList, 
-      gradient: 'from-indigo-600/20 to-purple-600/20', 
-      colors: 'from-indigo-500 to-purple-600', 
-      glow: 'from-indigo-600/10 to-purple-600/10',
+      gradient: 'from-blue-600/20 to-blue-600/20', 
+      colors: 'from-blue-500 to-blue-600', 
+      glow: 'from-blue-600/30 to-purple-600/30',
       customIcon: (
         <div className="relative w-full h-full">
           {/* Matte dark container */}
@@ -220,13 +220,13 @@ export default function Home() {
                }}
           />
 
-          {/* Icon symbol - desaturated purple */}
+          {/* Icon symbol with blue accent lines */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[52%] h-[52%]" viewBox="0 0 24 24" fill="none">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
-                    stroke="#8b8ea1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M9 14l2 2 4-4" 
-                    stroke="#8b8ea1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    stroke="#6366f1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </div>
@@ -236,9 +236,9 @@ export default function Home() {
       id: 'Habits', 
       name: t('habits'), 
       icon: CheckSquare, 
-      gradient: 'from-emerald-600/20 to-teal-600/20', 
-      colors: 'from-emerald-500 to-teal-600', 
-      glow: 'from-emerald-600/10 to-teal-600/10',
+      gradient: 'from-blue-600/20 to-blue-600/20', 
+      colors: 'from-blue-500 to-blue-600', 
+      glow: 'from-blue-600/30 to-purple-600/30',
       customIcon: (
         <div className="relative w-full h-full">
           {/* Matte dark container */}
@@ -253,12 +253,12 @@ export default function Home() {
                }}
           />
 
-          {/* Icon symbol - desaturated teal */}
+          {/* Icon symbol with blue accent lines */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="9.5" stroke="#7a9b96" strokeWidth="1.6"/>
+              <circle cx="12" cy="12" r="9.5" stroke="#6b7280" strokeWidth="1.6"/>
               <path d="M7.5 12.5l3 3L17 9" 
-                    stroke="#7a9b96" strokeWidth="2.4" 
+                    stroke="#6366f1" strokeWidth="2.4" 
                     strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
@@ -269,9 +269,9 @@ export default function Home() {
       id: 'Calendar', 
       name: t('schedule'), 
       icon: Calendar, 
-      gradient: 'from-pink-600/20 to-rose-600/20', 
-      colors: 'from-pink-500 to-rose-600', 
-      glow: 'from-pink-600/10 to-rose-600/10',
+      gradient: 'from-blue-600/20 to-blue-600/20', 
+      colors: 'from-blue-500 to-blue-600', 
+      glow: 'from-blue-600/30 to-purple-600/30',
       customIcon: (
         <div className="relative w-full h-full">
           {/* Matte dark container */}
@@ -286,20 +286,20 @@ export default function Home() {
                }}
           />
 
-          {/* Icon symbol - desaturated rose */}
+          {/* Icon symbol with blue accent lines */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
               <rect x="4" y="6" width="16" height="15" rx="2.5" 
-                    stroke="#9b8b94" strokeWidth="1.8"/>
+                    stroke="#6b7280" strokeWidth="1.8"/>
               <line x1="4" y1="10.5" x2="20" y2="10.5" 
-                    stroke="#9b8b94" strokeWidth="1.8"/>
+                    stroke="#6366f1" strokeWidth="1.8"/>
               <line x1="8" y1="3.5" x2="8" y2="7.5" 
-                    stroke="#9b8b94" strokeWidth="2.2" strokeLinecap="round"/>
+                    stroke="#6b7280" strokeWidth="2.2" strokeLinecap="round"/>
               <line x1="16" y1="3.5" x2="16" y2="7.5" 
-                    stroke="#9b8b94" strokeWidth="2.2" strokeLinecap="round"/>
-              <circle cx="8" cy="14" r="1.1" fill="#9b8b94"/>
-              <circle cx="12" cy="14" r="1.1" fill="#9b8b94"/>
-              <circle cx="16" cy="14" r="1.1" fill="#9b8b94"/>
+                    stroke="#6b7280" strokeWidth="2.2" strokeLinecap="round"/>
+              <circle cx="8" cy="14" r="1.1" fill="#6366f1"/>
+              <circle cx="12" cy="14" r="1.1" fill="#6366f1"/>
+              <circle cx="16" cy="14" r="1.1" fill="#6366f1"/>
             </svg>
           </div>
         </div>
@@ -309,9 +309,9 @@ export default function Home() {
       id: 'ScreenTimeManager', 
       name: t('screenTime'), 
       icon: Shield, 
-      gradient: 'from-red-600/20 to-orange-600/20', 
-      colors: 'from-red-500 to-orange-600', 
-      glow: 'from-red-600/10 to-orange-600/10',
+      gradient: 'from-blue-600/20 to-blue-600/20', 
+      colors: 'from-blue-500 to-blue-600', 
+      glow: 'from-blue-600/30 to-purple-600/30',
       customIcon: (
         <div className="relative w-full h-full">
           {/* Matte dark container */}
@@ -326,15 +326,15 @@ export default function Home() {
                }}
           />
 
-          {/* Icon symbol - desaturated red */}
+          {/* Icon symbol with blue accent lines */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg className="w-[58%] h-[58%]" viewBox="0 0 24 24" fill="none">
               <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
-                    stroke="#9b8388" strokeWidth="1.9" strokeLinejoin="round"/>
+                    stroke="#6b7280" strokeWidth="1.9" strokeLinejoin="round"/>
               <circle cx="12" cy="12.5" r="3.2" 
-                      stroke="#9b8388" strokeWidth="1.7"/>
+                      stroke="#6366f1" strokeWidth="1.7"/>
               <path d="M12 9.5v3.5l2.2 2.2" 
-                    stroke="#9b8388" strokeWidth="2" strokeLinecap="round"/>
+                    stroke="#6366f1" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </div>
         </div>
@@ -447,18 +447,18 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol - desaturated */}
+                  {/* Icon symbol with blue accent lines */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
                       <path d="M3 3v18h18" 
-                            stroke="#8a8a8a" strokeWidth="1.8" 
+                            stroke="#6b7280" strokeWidth="1.8" 
                             strokeLinecap="round" strokeLinejoin="round"/>
                       <rect x="6.5" y="13" width="3" height="4" rx="0.5"
-                            fill="#8a8a8a" opacity="0.85"/>
+                            fill="#6b7280" opacity="0.85"/>
                       <rect x="11" y="9" width="3" height="8" rx="0.5"
-                            fill="#8a8a8a" opacity="0.9"/>
+                            fill="#6366f1" opacity="0.9"/>
                       <rect x="15.5" y="7" width="3" height="10" rx="0.5"
-                            fill="#8a8a8a" opacity="0.95"/>
+                            fill="#6366f1" opacity="0.95"/>
                     </svg>
                   </div>
                 </div>
@@ -880,17 +880,17 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol - desaturated */}
+                  {/* Icon symbol with blue accent lines */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2.5" 
-                            stroke="#8a8a8a" strokeWidth="1.8"/>
+                            stroke="#6b7280" strokeWidth="1.8"/>
                       <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
-                            fill="#8a8a8a"/>
+                            fill="#6b7280"/>
                       <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
-                            fill="#8a8a8a"/>
+                            fill="#6366f1"/>
                       <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
-                            fill="#8a8a8a"/>
+                            fill="#6366f1"/>
                     </svg>
                   </div>
                 </div>
@@ -970,16 +970,16 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol - desaturated */}
+                  {/* Icon symbol with blue accent lines */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="3.5" 
-                              stroke="#8a8a8a" strokeWidth="2"/>
+                              stroke="#6366f1" strokeWidth="2"/>
                       <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                            stroke="#8a8a8a" strokeWidth="1.8" 
+                            stroke="#6b7280" strokeWidth="1.8" 
                             strokeLinecap="round"/>
                       <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                            stroke="#8a8a8a" strokeWidth="1.6" 
+                            stroke="#6b7280" strokeWidth="1.6" 
                             strokeLinecap="round"/>
                     </svg>
                   </div>
