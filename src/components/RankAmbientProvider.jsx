@@ -64,14 +64,14 @@ export function RankAmbientProvider({ children }) {
     const isCEO = rankLevel === 7;
 
     const frame = isCEO ? (
-      <div className="fixed inset-0 pointer-events-none z-5">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 5 }}>
         <div 
           className="absolute inset-0"
           style={{
-            border: `${config.thickness}px solid transparent`,
+            border: `${config.thickness}px solid`,
             borderImage: config.gradient,
             borderImageSlice: 1,
-            boxShadow: config.glow
+            boxShadow: config.glow !== 'none' ? config.glow : undefined
           }}
         />
         <div 
@@ -81,7 +81,7 @@ export function RankAmbientProvider({ children }) {
             left: `${config.thickness + config.gap}px`,
             right: `${config.thickness + config.gap}px`,
             bottom: `${config.thickness + config.gap}px`,
-            border: `${config.innerThickness}px solid transparent`,
+            border: `${config.innerThickness}px solid`,
             borderImage: config.gradient,
             borderImageSlice: 1
           }}
@@ -89,12 +89,13 @@ export function RankAmbientProvider({ children }) {
       </div>
     ) : (
       <div 
-        className="fixed inset-0 pointer-events-none z-5"
+        className="fixed inset-0 pointer-events-none"
         style={{
-          border: `${config.thickness}px solid transparent`,
+          zIndex: 5,
+          border: `${config.thickness}px solid`,
           borderImage: config.gradient,
           borderImageSlice: 1,
-          boxShadow: config.glow
+          boxShadow: config.glow !== 'none' ? config.glow : undefined
         }}
       />
     );
