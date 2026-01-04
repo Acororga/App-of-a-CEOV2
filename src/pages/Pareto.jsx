@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Plus, X, Trash2, Zap, Grid3x3 } from 'lucide-react';
+import { ArrowLeft, Plus, X, Trash2, Zap, Grid3x3, Check, CheckCircle2 } from 'lucide-react';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -28,20 +29,62 @@ export default function Pareto() {
     time_duration: '1_hour',
     importance_level: 'crucial'
   });
+  const [newTask, setNewTask] = useState({
+    title: '',
+    time_duration: '1_hour',
+    importance_level: 'crucial'
+  });
   
   const { data: tasks } = useQuery({
     queryKey: ['paretoTasks'],
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.ParetoTask.filter({ 
-        created_by: user.email,
-        completed: false
+        created_by: user.email
       });
     }
   });
 
+  const createTaskMutation = useMutation({
+    mutationFn: async (taskData) => {
+      const user = await base44.auth.me();
+      return await base44.entities.ParetoTask.create({
+        ...taskData,
+        created_by: user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paretoTasks']);
+      setShowAddForm(false);
+      setNewTask({ title: '', time_duration: '1_hour', importance_level: 'crucial' });
+    }
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (taskId) => {
+      await base44.entities.ParetoTask.delete(taskId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paretoTasks']);
+    }
+  });
+
+  const completeTaskMutation = useMutation({
+    mutationFn: async (taskId) => {
+      await base44.entities.ParetoTask.update(taskId, {
+        completed: true,
+        completed_date: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paretoTasks']);
+    }
+  });
+
+  const uncompletedTasks = tasks?.filter(t => !t.completed) || [];
+  
   const prioritizedTasks = React.useMemo(() => {
-    if (!tasks) return [];
+    if (!uncompletedTasks) return [];
     
     const importanceWeight = { crucial: 4, essential: 3, average: 2, low: 1 };
     const timeWeight = { 
@@ -53,15 +96,22 @@ export default function Pareto() {
       several_days: 1 
     };
     
-    return [...tasks].sort((a, b) => {
+    return [...uncompletedTasks].sort((a, b) => {
       const scoreA = (importanceWeight[a.importance_level] || 0) * 10 + (timeWeight[a.time_duration] || 0);
       const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
       return scoreB - scoreA;
     });
-  }, [tasks]);
+  }, [uncompletedTasks]);
 
   const topThree = prioritizedTasks.slice(0, 3);
   const others = prioritizedTasks.slice(3);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (newTask.title.trim()) {
+      createTaskMutation.mutate(newTask);
+    }
+  };
 
   const createTaskMutation = useMutation({
     mutationFn: async (taskData) => {
@@ -135,22 +185,22 @@ export default function Pareto() {
 
 
   // Categorize tasks for Pareto Matrix (based on QUICK TO DO + IMPORTANCE)
-  const quickImportant = (tasks || []).filter(t => 
+  const quickImportant = uncompletedTasks.filter(t => 
     (t.importance_level === 'crucial' || t.importance_level === 'essential') &&
     (t.time_duration === 'less_than_30min' || t.time_duration === '1_hour')
   );
   
-  const slowImportant = (tasks || []).filter(t => 
+  const slowImportant = uncompletedTasks.filter(t => 
     (t.importance_level === 'crucial' || t.importance_level === 'essential') &&
     (t.time_duration === '2_hours' || t.time_duration === 'half_day' || t.time_duration === '1_day' || t.time_duration === 'several_days')
   );
   
-  const quickNotImportant = (tasks || []).filter(t => 
+  const quickNotImportant = uncompletedTasks.filter(t => 
     (t.importance_level === 'average' || t.importance_level === 'low') &&
     (t.time_duration === 'less_than_30min' || t.time_duration === '1_hour')
   );
   
-  const slowNotImportant = (tasks || []).filter(t => 
+  const slowNotImportant = uncompletedTasks.filter(t => 
     (t.importance_level === 'average' || t.importance_level === 'low') &&
     (t.time_duration === '2_hours' || t.time_duration === 'half_day' || t.time_duration === '1_day' || t.time_duration === 'several_days')
   );
@@ -560,7 +610,86 @@ export default function Pareto() {
             </div>
 
             <div className="mt-6 text-center text-xs text-zinc-600">
-              ← Swipe left to return to list view
+              ← Swipe left for list • Swipe right for history →
+            </div>
+          </div>
+        )}
+
+        {/* History View */}
+        {activeTab === 'history' && (
+          <div className="space-y-6">
+            <div className="mb-6">
+              <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
+                All Tasks
+              </h1>
+              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Complete History</div>
+            </div>
+
+            <div className="space-y-3">
+              {recentTasks.length > 0 ? (
+                recentTasks.map(task => (
+                  <div
+                    key={task.id}
+                    className={`p-4 rounded-2xl border transition-all ${
+                      task.completed
+                        ? 'bg-zinc-900/40 border-zinc-800/40 opacity-60'
+                        : 'bg-zinc-900/60 border-zinc-800/60'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <div className={`text-sm font-medium mb-2 ${task.completed ? 'line-through text-zinc-600' : 'text-white'}`}>
+                          {task.title}
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`text-[9px] px-2 py-1 rounded-lg font-black border uppercase tracking-wider ${
+                            task.importance_level === 'crucial' 
+                              ? 'text-red-300 bg-red-950/60 border-red-800/60'
+                              : task.importance_level === 'essential'
+                              ? 'text-yellow-300 bg-yellow-950/60 border-yellow-800/60'
+                              : 'text-blue-300 bg-blue-950/60 border-blue-800/60'
+                          }`}>
+                            {task.importance_level}
+                          </span>
+                          <span className="text-[9px] text-zinc-700 font-medium">
+                            {task.time_duration.replace(/_/g, ' ')}
+                          </span>
+                          {task.completed && task.completed_date && (
+                            <span className="text-[9px] text-green-600 font-medium">
+                              ✓ {format(new Date(task.completed_date), 'MMM d')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {!task.completed && (
+                        <button
+                          onClick={() => completeTaskMutation.mutate(task.id)}
+                          className="p-2 hover:bg-zinc-800/50 rounded-lg transition-colors"
+                        >
+                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-16">
+                  <div className="text-zinc-600 mb-2">No tasks</div>
+                  <button
+                    onClick={() => {
+                      setActiveTab('list');
+                      setShowAddForm(true);
+                    }}
+                    className="text-sm text-blue-400 hover:text-blue-300"
+                  >
+                    Add your first task
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 text-center text-xs text-zinc-600">
+              ← Swipe left to return to matrix
             </div>
           </div>
         )}
