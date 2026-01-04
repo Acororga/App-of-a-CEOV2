@@ -217,7 +217,7 @@ export default function Rank() {
   const bgStyle = getRankBackground();
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
       {/* Rank Background Branches */}
       {!bgStyle.ceoMode ? (
         <>
@@ -238,10 +238,6 @@ export default function Rank() {
       )}
 
       <div className="max-w-md mx-auto relative z-10">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
-        </Link>
 
         <div className="text-center mb-12">
           <div className="text-7xl mb-4">{currentTier?.icon || '🥉'}</div>

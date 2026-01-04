@@ -53,12 +53,8 @@ export default function Leaderboard() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-black text-white p-6 pt-20">
       <div className="max-w-md mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
-        </Link>
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
