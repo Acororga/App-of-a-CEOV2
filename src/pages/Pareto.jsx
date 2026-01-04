@@ -97,6 +97,32 @@ export default function Pareto() {
   // Swipe handling
   const minSwipeDistance = 50;
 
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isRightSwipe && view === 'list') {
+      setView('matrix');
+    } else if (isRightSwipe && view === 'matrix') {
+      setView('history');
+    } else if (isLeftSwipe && view === 'matrix') {
+      setView('list');
+    } else if (isLeftSwipe && view === 'history') {
+      setView('matrix');
+    }
+  };
+
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);

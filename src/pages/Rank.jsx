@@ -155,6 +155,7 @@ function getNextRankRequirements(currentRankLevel, currentStats) {
 }
 
 export default function Rank() {
+  const { t } = useLanguage();
   const { data: rankData, refetch } = useQuery({
     queryKey: ['userRank'],
     queryFn: calculateUserRank

@@ -40,55 +40,30 @@ export default function Dashboard() {
     
     const fetchData = async () => {
       try {
-        console.log('\n╔═══════════════════════════════════════════════════════════════╗');
-        console.log('║ DASHBOARD DATA FETCH - START                                  ║');
-        console.log('╚═══════════════════════════════════════════════════════════════╝');
-        
         setIsLoading(true);
         const user = await base44.auth.me();
-        console.log(`👤 User: ${user.email}`);
-        console.log(`📅 Today: ${format(today, 'yyyy-MM-dd')} (${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][today.getDay()]})`);
-        console.log(`📅 Yesterday: ${format(yesterday, 'yyyy-MM-dd')} (${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][yesterday.getDay()]})`);
         
-        // Step 1: Ensure yesterday's habits are scheduled (CRUCIAL - must happen first)
-        console.log('\n━━━ STEP 1: Ensure yesterday habits scheduled ━━━');
-        await ensureHabitsScheduled(yesterday);
+        // Run all operations in parallel for faster loading
+        const [
+          _,
+          __,
+          allHabits,
+          todayHabits,
+          todayCompletions,
+          yesterdayCompletions
+        ] = await Promise.all([
+          ensureHabitsScheduled(yesterday),
+          transitionScheduledToPending(yesterday),
+          base44.entities.Habit.filter({ created_by: user.email, archived: false }),
+          getHabitsForDate(today),
+          getHabitCompletionsForDate(today),
+          getHabitCompletionsForDate(yesterday)
+        ]);
         
-        // Step 2: Transition yesterday's scheduled to pending_validation
-        console.log('\n━━━ STEP 2: Transition yesterday to pending_validation ━━━');
-        await transitionScheduledToPending(yesterday);
-        
-        // Step 3: Ensure today's habits are scheduled
-        console.log('\n━━━ STEP 3: Ensure today habits scheduled ━━━');
-        await ensureHabitsScheduled(today);
-        
-        // Step 4: Fetch ALL habits (not filtered by date)
-        console.log('\n━━━ STEP 4: Fetch all habits from database ━━━');
-        const allHabits = await base44.entities.Habit.filter({ 
-          created_by: user.email,
-          archived: false
-        });
-        
-        console.log(`✓ Total habits in database: ${allHabits.length}`);
-        allHabits.forEach(h => console.log(`   - ${h.title} (daily: ${h.is_daily}, specific_days: [${h.specific_days || 'none'}])`));
-        
-        // Step 5: Fetch today's data
-        console.log('\n━━━ STEP 5: Get today habits and completions ━━━');
-        const todayHabits = await getHabitsForDate(today);
-        const todayCompletions = await getHabitCompletionsForDate(today);
-        
-        console.log(`✓ Today habits from getHabitsForDate: ${todayHabits.length}`);
-        console.log(`✓ Today completions from database: ${todayCompletions.length}`);
-        todayHabits.forEach(h => console.log(`   - "${h.title}"`));
-        
-        // Step 6: Get today's scheduled completions with habit details
-        console.log('\n━━━ STEP 6: Build today habits data array ━━━');
+        // Process today's data
         const scheduledCompletions = todayCompletions.filter(c => c.state === 'scheduled');
-        console.log(`✓ Scheduled completions for today: ${scheduledCompletions.length}`);
-        
         const todayHabitsData = todayHabits.map(habit => {
           const completion = scheduledCompletions.find(c => c.habit_id === habit.id);
-          console.log(`   - Mapping habit "${habit.title}" → completion ${completion ? 'FOUND' : 'NOT FOUND'}`);
           return {
             ...habit,
             completionId: completion?.id,
@@ -96,19 +71,10 @@ export default function Dashboard() {
           };
         });
         
-        console.log(`✓ Final todayHabitsData array: ${todayHabitsData.length} items`);
-        
-        // Step 7: Fetch yesterday's pending validations
-        console.log('\n━━━ STEP 7: Get yesterday pending validations ━━━');
-        const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
-        console.log(`✓ Yesterday completions total: ${yesterdayCompletions.length}`);
-        
+        // Process yesterday's pending validations
         const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
-        console.log(`✓ Yesterday pending validations: ${pendingCompletions.length}`);
-        
         const pendingWithHabits = pendingCompletions.map(completion => {
           const habit = allHabits.find(h => h.id === completion.habit_id);
-          console.log(`   - Completion ${completion.id} → habit "${habit?.title || 'UNKNOWN'}"`);
           return {
             completionId: completion.id,
             habitId: completion.habit_id,
@@ -118,28 +84,13 @@ export default function Dashboard() {
           };
         });
         
-        if (!mounted) {
-          console.log('⚠ Component unmounted, skipping state update');
-          return;
-        }
+        if (!mounted) return;
         
-        console.log('\n━━━ STEP 8: Update component state ━━━');
         setTodayHabitsWithCompletions(todayHabitsData);
         setPendingYesterdayHabits(pendingWithHabits);
         setIsLoading(false);
-        
-        console.log('✓ State updated successfully');
-        console.log(`   - todayHabitsWithCompletions: ${todayHabitsData.length} items`);
-        console.log(`   - pendingYesterdayHabits: ${pendingWithHabits.length} items`);
-        console.log('\n╔═══════════════════════════════════════════════════════════════╗');
-        console.log('║ DASHBOARD DATA FETCH - COMPLETE                               ║');
-        console.log('╚═══════════════════════════════════════════════════════════════╝\n');
       } catch (error) {
-        console.error('\n╔═══════════════════════════════════════════════════════════════╗');
-        console.error('║ DASHBOARD DATA FETCH - CRITICAL ERROR                         ║');
-        console.error('╚═══════════════════════════════════════════════════════════════╝');
-        console.error('Error:', error);
-        console.error('Stack:', error.stack);
+        console.error('Dashboard fetch error:', error);
         if (mounted) setIsLoading(false);
       }
     };
@@ -149,7 +100,7 @@ export default function Dashboard() {
     return () => {
       mounted = false;
     };
-  }, []); // FIXED: Run once on mount, dates don't change
+  }, []);
 
   const { data: topTasks } = useQuery({
     queryKey: ['topTasks'],
@@ -175,6 +126,27 @@ export default function Dashboard() {
         const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
         return scoreB - scoreA;
       }).slice(0, 3);
+    }
+  });
+
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ['upcomingEvents'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const now = new Date();
+      const todayStr = format(today, 'yyyy-MM-dd');
+      
+      const allEvents = await base44.entities.CalendarEvent.filter({ 
+        created_by: user.email,
+        event_date: todayStr
+      });
+      
+      return allEvents.filter(event => {
+        const [hours, minutes] = event.event_time.split(':').map(Number);
+        const eventTime = new Date(today);
+        eventTime.setHours(hours, minutes, 0, 0);
+        return eventTime > now;
+      }).sort((a, b) => a.event_time.localeCompare(b.event_time));
     }
   });
 
@@ -375,6 +347,42 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* Upcoming Events - SECONDARY FOCUS */}
+          {upcomingEvents && upcomingEvents.length > 0 && (
+            <div className="relative animate-in fade-in zoom-in-95 duration-300 delay-75">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-[28px] blur-2xl opacity-60" />
+              <div className="relative p-7 rounded-[28px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">{t('schedule')}</h2>
+                  <Link 
+                    to={createPageUrl('Calendar')}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
+                  >
+                    {t('viewAll')} →
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {upcomingEvents.slice(0, 3).map((event) => (
+                    <div
+                      key={event.id}
+                      className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-zinc-800/60 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                        <span className="text-xs font-bold text-zinc-400">{event.event_time.substring(0, 5)}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-white truncate">{event.title}</div>
+                        {event.description && (
+                          <div className="text-xs text-zinc-500 truncate">{event.description}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Priority Tasks - SECONDARY FOCUS */}
           {topTasks && topTasks.length > 0 && (

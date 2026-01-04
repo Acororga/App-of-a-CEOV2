@@ -8,6 +8,7 @@ import { ArrowLeft, Flame, CheckCircle2, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function WinStreak() {
+  const { t } = useLanguage();
   const { data: streak } = useQuery({
     queryKey: ['winStreak'],
     queryFn: getOrCreateWinStreak
