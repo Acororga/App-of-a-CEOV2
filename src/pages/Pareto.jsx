@@ -112,14 +112,14 @@ export default function Pareto() {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
-    if (isRightSwipe && view === 'list') {
-      setView('matrix');
-    } else if (isRightSwipe && view === 'matrix') {
-      setView('history');
-    } else if (isLeftSwipe && view === 'matrix') {
-      setView('list');
-    } else if (isLeftSwipe && view === 'history') {
-      setView('matrix');
+    if (isRightSwipe && activeTab === 'list') {
+      setActiveTab('matrix');
+    } else if (isRightSwipe && activeTab === 'matrix') {
+      setActiveTab('history');
+    } else if (isLeftSwipe && activeTab === 'matrix') {
+      setActiveTab('list');
+    } else if (isLeftSwipe && activeTab === 'history') {
+      setActiveTab('matrix');
     }
   };
 
@@ -132,20 +132,7 @@ export default function Pareto() {
     setTouchEnd(e.targetTouches[0].clientX);
   };
 
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
 
-    if (isRightSwipe && activeTab === 'list') {
-      setActiveTab('matrix');
-    }
-    if (isLeftSwipe && activeTab === 'matrix') {
-      setActiveTab('list');
-    }
-  };
 
   // Categorize tasks for Pareto Matrix (based on QUICK TO DO + IMPORTANCE)
   const quickImportant = (tasks || []).filter(t => 
@@ -171,9 +158,9 @@ export default function Pareto() {
   return (
     <div 
       className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Noise texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { getHabitsForDate, getHabitCompletionsForDate, calculateWeeklyHabitScore } from '../functions/businessLogic';
+import { getHabitsForDate, getHabitCompletionsForDate, calculateWeeklyHabitScore } from '../components/businessLogic';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -232,7 +232,14 @@ export default function Habits() {
                           const dayStr = format(day, 'yyyy-MM-dd');
                           const dayData = weekData?.[dayStr];
                           const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
-                          const isCompleted = dayData?.completions[habit.id];
+
+                          const completion = completions.find(c => 
+                            c.habit_id === habit.id && 
+                            format(new Date(c.date), 'yyyy-MM-dd') === dayStr
+                          );
+
+                          const isCompleted = completion?.state === 'completed';
+                          const isMissed = completion?.state === 'missed';
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
@@ -245,8 +252,15 @@ export default function Habits() {
                                     <CheckCircle2 className="relative w-5 h-5 text-green-400" />
                                   </div>
                                 </div>
+                              ) : isMissed ? (
+                                <div className="inline-flex items-center justify-center">
+                                  <div className="relative">
+                                    <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
+                                    <X className="relative w-5 h-5 text-red-400" />
+                                  </div>
+                                </div>
                               ) : (
-                                <XCircle className="w-5 h-5 text-zinc-700 inline-block opacity-50" />
+                                <div className="w-5 h-5 rounded-full border-2 border-zinc-800 inline-block" />
                               )}
                             </td>
                           );
