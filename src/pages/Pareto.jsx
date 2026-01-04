@@ -100,6 +100,10 @@ export default function Pareto() {
 
   const topThree = prioritizedTasks.slice(0, 3);
   const others = prioritizedTasks.slice(3);
+  
+  const recentTasks = tasks?.sort((a, b) => {
+    return new Date(b.created_date) - new Date(a.created_date);
+  }) || [];
 
   const handleSubmit = (e) => {
     e.preventDefault();
