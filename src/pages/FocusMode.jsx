@@ -68,7 +68,7 @@ export default function FocusMode() {
       
       return () => clearInterval(interval);
     }
-  }, [activeSession, completeMutation]);
+  }, [activeSession]);
 
   const startMutation = useMutation({
     mutationFn: async (mins) => {
