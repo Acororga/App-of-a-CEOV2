@@ -29,11 +29,6 @@ export default function Pareto() {
     time_duration: '1_hour',
     importance_level: 'crucial'
   });
-  const [newTask, setNewTask] = useState({
-    title: '',
-    time_duration: '1_hour',
-    importance_level: 'crucial'
-  });
   
   const { data: tasks } = useQuery({
     queryKey: ['paretoTasks'],
@@ -113,37 +108,6 @@ export default function Pareto() {
     }
   };
 
-  const createTaskMutation = useMutation({
-    mutationFn: async (taskData) => {
-      const user = await base44.auth.me();
-      return await base44.entities.ParetoTask.create({
-        ...taskData,
-        created_by: user.email
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['paretoTasks']);
-      setShowAddForm(false);
-      setNewTask({ title: '', time_duration: '1_hour', importance_level: 'crucial' });
-    }
-  });
-
-  const deleteTaskMutation = useMutation({
-    mutationFn: async (taskId) => {
-      await base44.entities.ParetoTask.delete(taskId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['paretoTasks']);
-    }
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (newTask.title.trim()) {
-      createTaskMutation.mutate(newTask);
-    }
-  };
-
   // Swipe handling
   const minSwipeDistance = 50;
 
@@ -172,17 +136,6 @@ export default function Pareto() {
       setActiveTab('matrix');
     }
   };
-
-  const onTouchStart = (e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-
 
   // Categorize tasks for Pareto Matrix (based on QUICK TO DO + IMPORTANCE)
   const quickImportant = uncompletedTasks.filter(t => 
