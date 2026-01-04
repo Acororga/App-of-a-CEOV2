@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { differenceInDays } from 'date-fns';
 import { ArrowLeft, Crown, TrendingUp, Zap } from 'lucide-react';
+import { useLanguage } from '../components/LanguageProvider.jsx';
 
 const RANK_TIERS = [
   { level: 1, name: 'Bronze', icon: '🥉', description: 'Starting rank' },
