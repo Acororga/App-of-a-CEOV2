@@ -13,7 +13,7 @@ import { base44 } from '@/api/base44Client';
 import { format, subDays } from 'date-fns';
 import { ArrowLeft, CheckCircle2, Circle, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '../components/LanguageProvider';
+import { useLanguage } from '../components/LanguageProvider.jsx';
 
 export default function Dashboard() {
   const { t } = useLanguage();

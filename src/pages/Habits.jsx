@@ -9,7 +9,7 @@ import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award, X } from 'lucide
 import { Button } from '@/components/ui/button';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
 import HabitModal from '../components/habits/HabitModal';
-import { useLanguage } from '../components/LanguageProvider';
+import { useLanguage } from '../components/LanguageProvider.jsx';
 
 export default function Habits() {
   const { t } = useLanguage();

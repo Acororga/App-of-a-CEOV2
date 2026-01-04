@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from '../components/LanguageProvider';
+import { useLanguage } from '../components/LanguageProvider.jsx';
 
 export default function Pareto() {
   const { t } = useLanguage();
