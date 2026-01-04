@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getHabitsForDate, getHabitCompletionsForDate, calculateWeeklyHabitScore } from '../components/businessLogic';
 import { format, startOfWeek, addDays } from 'date-fns';
-import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award } from 'lucide-react';
+import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
 import HabitModal from '../components/habits/HabitModal';
@@ -39,6 +39,20 @@ export default function Habits() {
   const { data: weeklyScore } = useQuery({
     queryKey: ['weeklyScore', format(weekStart, 'yyyy-MM-dd')],
     queryFn: () => calculateWeeklyHabitScore(weekStart)
+  });
+
+  const { data: allCompletions } = useQuery({
+    queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const allCompletions = await base44.entities.HabitCompletion.filter({
+        created_by: user.email
+      });
+      return allCompletions.filter(c => {
+        const cDate = new Date(c.date);
+        return cDate >= weekStart && cDate < addDays(weekStart, 7);
+      });
+    }
   });
 
   const { data: weekData } = useQuery({
@@ -233,7 +247,7 @@ export default function Habits() {
                           const dayData = weekData?.[dayStr];
                           const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
 
-                          const completion = completions.find(c => 
+                          const completion = allCompletions?.find(c => 
                             c.habit_id === habit.id && 
                             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
                           );
