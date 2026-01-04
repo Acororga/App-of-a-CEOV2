@@ -7,7 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { differenceInSeconds, parseISO } from 'date-fns';
-import { useLanguage } from '../components/LanguageProvider';
+import { useLanguage } from '../components/LanguageProvider.jsx';
 import CooldownScreen from '../components/blocking/CooldownScreen';
 
 export default function FocusMode() {
@@ -68,7 +68,7 @@ export default function FocusMode() {
       
       return () => clearInterval(interval);
     }
-  }, [activeSession]);
+  }, [activeSession, completeMutation]);
 
   const startMutation = useMutation({
     mutationFn: async (mins) => {
