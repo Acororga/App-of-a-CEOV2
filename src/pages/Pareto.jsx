@@ -98,8 +98,8 @@ export default function Pareto() {
     });
   }, [uncompletedTasks]);
 
-  const topThree = prioritizedTasks.slice(0, 3);
-  const others = prioritizedTasks.slice(3);
+  const topThree = prioritizedTasks.slice(0, 5);
+  const others = prioritizedTasks.slice(5);
   
   const recentTasks = tasks?.sort((a, b) => {
     return new Date(b.created_date) - new Date(a.created_date);

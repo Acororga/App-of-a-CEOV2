@@ -426,7 +426,7 @@ export default function Home() {
           <div className="absolute inset-0 rounded-[32px] blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" style={{
             background: `linear-gradient(to bottom right, rgba(${ambientStyles.accentRgb}, 0.3), rgba(${ambientStyles.accentRgb}, 0.2))`
           }} />
-          <div className="relative h-44 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/60 p-7 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(59,130,246,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:shadow-[0_24px_96px_rgba(59,130,246,0.3),0_0_0_1px_rgba(59,130,246,0.15)] group-active:scale-[0.99] transition-all duration-200">
+          <div className="relative h-44 rounded-[32px] bg-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/60 p-7 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(59,130,246,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] group-hover:shadow-[0_24px_96px_rgba(59,130,246,0.3),0_0_0_1px_rgba(59,130,246,0.15)] group-active:scale-[0.99] transition-all duration-200">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/8 via-transparent to-purple-600/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-700" style={{
               background: `linear-gradient(to bottom right, rgba(${ambientStyles.accentRgb}, 0.2), rgba(${ambientStyles.accentRgb}, 0.15))`
@@ -467,8 +467,8 @@ export default function Home() {
                   <div className="text-xs text-zinc-500 font-medium">{t('yourDailyControlCenter')}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-5">
-                <div className={`relative text-center px-5 py-3 rounded-2xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
+              <div className="flex items-center gap-3">
+                <div className={`relative text-center px-3 py-2 rounded-xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
                   (todayHabits || 0) === 0 && needsCheckIn
                     ? 'bg-red-950/40 border-red-600/50'
                     : (todayHabits || 0) >= 5
@@ -477,7 +477,7 @@ export default function Home() {
                     ? 'bg-blue-950/40 border-blue-600/50'
                     : 'bg-zinc-800/60 border-zinc-700/50'
                 }`}>
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 overflow-hidden rounded-b-2xl">
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 overflow-hidden rounded-b-xl">
                     <div 
                       className={`h-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${
                         (todayHabits || 0) >= 5 ? 'bg-emerald-400' : (todayHabits || 0) >= 3 ? 'bg-blue-400' : 'bg-zinc-600'
@@ -485,7 +485,7 @@ export default function Home() {
                       style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
                     />
                   </div>
-                  <div className={`text-4xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-2 ${
+                  <div className={`text-2xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-1 ${
                     (todayHabits || 0) === 0 && needsCheckIn
                       ? 'from-red-300 to-red-500'
                       : (todayHabits || 0) >= 5
@@ -494,7 +494,7 @@ export default function Home() {
                       ? 'from-blue-200 to-blue-400'
                       : 'from-white to-zinc-400'
                   }`}>{todayHabits || 0}</div>
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
+                  <div className="text-[8px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
                 </div>
                 {needsCheckIn && (
                   <div className="relative flex items-center gap-1">
@@ -644,7 +644,6 @@ export default function Home() {
         {/* 1 app: single column (1-1 pattern) */}
         {filteredApps.length === 1 && (() => {
           const app = filteredApps[0];
-          const AppIcon = app.icon;
           return (
             <Link to={createPageUrl(app.id)} className="block group relative">
               <div className="absolute inset-0 rounded-2xl blur-[48px] opacity-0 group-hover:opacity-90 transition-all duration-300" style={{
@@ -657,11 +656,8 @@ export default function Home() {
                   </button>
                 )}
                 <div className="relative h-full flex flex-col justify-between">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                    <div className="relative z-10">
-                      {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
-                    </div>
+                  <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                    {app.customIcon}
                   </div>
                   <div className="text-sm font-bold text-white">{app.name}</div>
                 </div>

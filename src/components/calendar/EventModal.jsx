@@ -59,19 +59,31 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
           <DialogTitle>Create New Event</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
-            <input
-              type="checkbox"
-              id="is_birthday"
-              checked={formData.is_birthday}
-              onChange={(e) => setFormData({ ...formData, is_birthday: e.target.checked })}
-              className="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-pink-500 focus:ring-pink-500"
-            />
-            <label htmlFor="is_birthday" className="text-sm font-medium flex items-center gap-2 cursor-pointer">
-              <Cake className="w-4 h-4 text-pink-400" />
-              Anniversaire
-            </label>
-          </div>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, is_birthday: !formData.is_birthday })}
+            className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 ${
+              formData.is_birthday
+                ? 'bg-gradient-to-br from-pink-950/60 to-purple-950/60 border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.3)]'
+                : 'bg-zinc-800/30 border-zinc-700/50 hover:border-zinc-600/50'
+            }`}
+          >
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              formData.is_birthday
+                ? 'bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg'
+                : 'bg-zinc-700/50'
+            }`}>
+              <Cake className={`w-5 h-5 ${formData.is_birthday ? 'text-white' : 'text-zinc-400'}`} />
+            </div>
+            <div className="flex-1 text-left">
+              <div className={`font-bold text-sm ${formData.is_birthday ? 'text-pink-200' : 'text-zinc-400'}`}>
+                🎂 Anniversaire
+              </div>
+              <div className="text-xs text-zinc-500">
+                {formData.is_birthday ? 'Mode activé' : 'Cliquer pour activer'}
+              </div>
+            </div>
+          </button>
 
           {formData.is_birthday ? (
             <>
@@ -131,7 +143,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
             </>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className={formData.is_birthday ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Date</label>
               <Input
@@ -143,17 +155,18 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
               />
             </div>
 
-            <div>
-              <label className="text-sm text-zinc-400 mb-2 block">Time</label>
-              <Input
-                type="time"
-                value={formData.event_time}
-                onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
-                className="bg-zinc-800 border-zinc-700"
-                required
-              />
-            </div>
-          </div>
+            {!formData.is_birthday && (
+              <div>
+                <label className="text-sm text-zinc-400 mb-2 block">Time</label>
+                <Input
+                  type="time"
+                  value={formData.event_time}
+                  onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
+                  className="bg-zinc-800 border-zinc-700"
+                  required
+                />
+              </div>
+            )}
 
           {!formData.is_birthday && (
             <div>
