@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
@@ -6,15 +6,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './components/LanguageProvider';
 import { RankAmbientProvider, useRankAmbient } from './components/RankAmbientProvider';
-import LoadingScreen from './components/LoadingScreen';
 
 export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       <RankAmbientProvider>
-        <Suspense fallback={<LoadingScreen />}>
-          <LayoutContent children={children} currentPageName={currentPageName} />
-        </Suspense>
+        <LayoutContent children={children} currentPageName={currentPageName} />
       </RankAmbientProvider>
     </LanguageProvider>
   );
