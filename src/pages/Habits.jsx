@@ -18,6 +18,8 @@ export default function Habits() {
   const [activeTab, setActiveTab] = useState('grid');
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   
   const { data: objectives } = useQuery({
@@ -186,8 +188,37 @@ export default function Habits() {
   const isOnTrack = (weeklyScore?.success_percentage || 0) >= (weeklyScore?.threshold_percentage || 90);
   const isAtRisk = (weeklyScore?.success_percentage || 0) >= 70 && !isOnTrack;
 
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeTab === 'grid') {
+      setActiveTab('goals');
+    } else if (isRightSwipe && activeTab === 'goals') {
+      setActiveTab('grid');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 pb-6 relative overflow-hidden">
+    <div 
+      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 pb-6 relative overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Noise texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulance type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
