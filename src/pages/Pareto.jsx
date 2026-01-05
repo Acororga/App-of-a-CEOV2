@@ -130,13 +130,13 @@ export default function Pareto() {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
-    if (isRightSwipe && activeTab === 'list') {
+    if (isLeftSwipe && activeTab === 'list') {
       setActiveTab('matrix');
-    } else if (isRightSwipe && activeTab === 'matrix') {
-      setActiveTab('history');
     } else if (isLeftSwipe && activeTab === 'matrix') {
+      setActiveTab('history');
+    } else if (isRightSwipe && activeTab === 'matrix') {
       setActiveTab('list');
-    } else if (isLeftSwipe && activeTab === 'history') {
+    } else if (isRightSwipe && activeTab === 'history') {
       setActiveTab('matrix');
     }
   };
@@ -441,9 +441,12 @@ export default function Pareto() {
               </div>
             )}
 
-            <div className="mt-8 text-center text-xs text-zinc-600">
+            <button
+              onClick={() => setActiveTab('matrix')}
+              className="mt-8 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
+            >
               Swipe right for Matrix view →
-            </div>
+            </button>
           </>
         )}
 
@@ -566,8 +569,13 @@ export default function Pareto() {
               </div>
             </div>
 
-            <div className="mt-6 text-center text-xs text-zinc-600">
-              ← Swipe left for list • Swipe right for history →
+            <div className="mt-6 flex justify-center gap-4 text-xs text-zinc-600">
+              <button onClick={() => setActiveTab('list')} className="hover:text-zinc-400 transition-colors">
+                ← Swipe left for list
+              </button>
+              <button onClick={() => setActiveTab('history')} className="hover:text-zinc-400 transition-colors">
+                Swipe right for history →
+              </button>
             </div>
           </div>
         )}
@@ -645,9 +653,12 @@ export default function Pareto() {
               )}
             </div>
 
-            <div className="mt-6 text-center text-xs text-zinc-600">
+            <button
+              onClick={() => setActiveTab('matrix')}
+              className="mt-6 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
+            >
               ← Swipe left to return to matrix
-            </div>
+            </button>
           </div>
         )}
       </div>
