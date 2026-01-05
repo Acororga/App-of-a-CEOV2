@@ -20,27 +20,13 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
       const monthDate = new Date(year, month, 1);
       const monthStart = startOfMonth(monthDate);
       const monthEnd = endOfMonth(monthStart);
-      const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-      const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
       
-      const days = [];
-      let day = startDate;
-      
-      while (day <= endDate) {
+      // Count events in this month
+      let eventCount = 0;
+      let day = monthStart;
+      while (day <= monthEnd) {
         const dayEvents = getEventsForDate(day);
-        const isCurrentMonth = isSameMonth(day, monthStart);
-        const isCurrentDay = isToday(day);
-        
-        days.push(
-          <div
-            key={day.toString()}
-            className={`aspect-square flex items-center justify-center text-[10px] font-medium ${
-              !isCurrentMonth ? 'text-zinc-800' : isCurrentDay ? 'bg-blue-500 text-white rounded-full font-bold' : dayEvents.length > 0 ? 'text-blue-400 font-bold' : 'text-zinc-500'
-            }`}
-          >
-            {format(day, 'd')}
-          </div>
-        );
+        eventCount += dayEvents.length;
         day = addDays(day, 1);
       }
       
@@ -51,14 +37,18 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
             setCurrentDate(monthDate);
             setView('monthly');
           }}
-          className="p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150"
+          className="relative p-5 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150"
         >
-          <div className="text-center font-bold mb-2 text-zinc-400 text-sm">
+          <div className="text-center font-bold text-zinc-300 text-base mb-1">
             {format(monthDate, 'MMM')}
           </div>
-          <div className="grid grid-cols-7 gap-0.5">
-            {days}
-          </div>
+          {eventCount > 0 && (
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40">
+                <span className="text-xs font-bold text-blue-400">{eventCount}</span>
+              </div>
+            </div>
+          )}
         </button>
       );
     }
@@ -116,11 +106,15 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
             <div className="relative space-y-1">
               {dayEvents.slice(0, 2).map(event => (
                 <div key={event.id} className={`text-xs px-2 py-1 rounded-lg font-medium truncate transition-all ${
-                  isCurrentDay
+                  event.is_birthday
+                    ? isCurrentDay
+                      ? 'bg-gradient-to-r from-pink-500/40 to-purple-500/40 text-pink-100 border border-pink-400/50 shadow-[0_0_8px_rgba(236,72,153,0.3)]'
+                      : 'bg-gradient-to-r from-pink-950/60 to-purple-950/60 text-pink-300 border border-pink-800/50'
+                    : isCurrentDay
                     ? 'bg-blue-500/30 text-blue-200 border border-blue-500/40'
                     : 'bg-blue-950/40 text-blue-400/80 border border-blue-900/40'
                 }`}>
-                  {event.event_time} {event.title}
+                  {event.is_birthday ? '🎂 ' : event.event_time + ' '}{event.is_birthday ? event.birthday_person_name : event.title}
                 </div>
               ))}
               {dayEvents.length > 2 && (
@@ -160,6 +154,8 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   const renderDailyView = () => {
     const dayEvents = getEventsForDate(currentDate);
     const isCurrentDay = isToday(currentDate);
+    const birthdayEvents = dayEvents.filter(e => e.is_birthday);
+    const regularEvents = dayEvents.filter(e => !e.is_birthday);
     
     // Get next few hours if today
     const now = new Date();
@@ -177,9 +173,29 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
               {format(currentDate, 'EEEE, MMM d')}
             </div>
           </div>
+          
+          {birthdayEvents.length > 0 && (
+            <div className="p-4 border-b border-zinc-800/50">
+              {birthdayEvents.map(event => (
+                <div key={event.id} className="p-4 rounded-xl bg-gradient-to-br from-pink-950/80 to-purple-950/80 border-2 border-pink-700/60 shadow-[0_8px_24px_rgba(236,72,153,0.4)] mb-3 last:mb-0">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">🎂</div>
+                    <div className="text-lg font-bold text-pink-200 mb-1">{event.birthday_person_name}</div>
+                    {event.birthday_relationship && (
+                      <div className="text-xs text-pink-400/70 mb-2">{event.birthday_relationship}</div>
+                    )}
+                    {event.birthday_notes && (
+                      <div className="text-xs text-pink-300/60 mt-2 italic">{event.birthday_notes}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
           <div className="max-h-[500px] overflow-y-auto">
             {hours.map(hour => {
-              const hourEvents = dayEvents.filter(e => parseInt(e.event_time.split(':')[0]) === hour);
+              const hourEvents = regularEvents.filter(e => parseInt(e.event_time.split(':')[0]) === hour);
               const hasEvents = hourEvents.length > 0;
               
               return (
@@ -199,15 +215,26 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
                     {format(new Date().setHours(hour, 0), 'HH:mm')}
                   </div>
                   <div className="flex-1 p-3 min-h-16 text-left">
-                    {hourEvents.map(event => (
-                      <div
-                        key={event.id}
-                        className="p-3 rounded-xl bg-gradient-to-br from-blue-950/60 to-purple-950/60 border border-blue-700/50 shadow-[0_4px_16px_rgba(59,130,246,0.2)] mb-2 last:mb-0"
-                      >
-                        <div className="text-sm font-bold text-blue-200 mb-1">{event.title}</div>
-                        <div className="text-xs text-blue-400/60 font-medium">{event.event_time} • {event.duration_minutes}min</div>
-                      </div>
-                    ))}
+                   {hourEvents.map(event => (
+                     <div
+                       key={event.id}
+                       className={`p-3 rounded-xl border shadow-[0_4px_16px_rgba(59,130,246,0.2)] mb-2 last:mb-0 ${
+                         event.is_birthday
+                           ? 'bg-gradient-to-br from-pink-950/60 to-purple-950/60 border-pink-700/50'
+                           : 'bg-gradient-to-br from-blue-950/60 to-purple-950/60 border-blue-700/50'
+                       }`}
+                     >
+                       <div className={`text-sm font-bold mb-1 ${event.is_birthday ? 'text-pink-200' : 'text-blue-200'}`}>
+                         {event.is_birthday ? '🎂 ' : ''}{event.is_birthday ? event.birthday_person_name : event.title}
+                       </div>
+                       <div className={`text-xs font-medium ${event.is_birthday ? 'text-pink-400/60' : 'text-blue-400/60'}`}>
+                         {event.is_birthday 
+                           ? (event.birthday_relationship ? event.birthday_relationship : 'Toute la journée')
+                           : `${event.event_time} • ${event.duration_minutes}min`
+                         }
+                       </div>
+                     </div>
+                   ))}
                   </div>
                 </button>
               );
@@ -264,7 +291,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {(view === 'monthly' || view === 'daily') && (
             <button
               onClick={handleBackNavigation}
@@ -273,14 +300,14 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
               <ArrowLeft className="w-4 h-4" />
             </button>
           )}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={navigatePrev}
               className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <h2 className="text-lg font-bold min-w-48 text-center">{getHeaderText()}</h2>
+            <h2 className="text-base font-bold min-w-32 text-center">{getHeaderText()}</h2>
             <button
               onClick={navigateNext}
               className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-95 transition-all duration-150"
@@ -291,10 +318,9 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
         </div>
         <Button
           onClick={onNewEvent}
-          className="bg-white text-black hover:bg-zinc-200 h-9 px-4 text-sm font-bold rounded-xl shadow-[0_8px_24px_rgba(255,255,255,0.12)] active:scale-95 transition-all duration-150"
+          className="bg-white text-black hover:bg-zinc-200 h-9 px-3 text-xs font-bold rounded-xl shadow-[0_8px_24px_rgba(255,255,255,0.12)] active:scale-95 transition-all duration-150"
         >
-          <Plus className="w-4 h-4 mr-1.5" />
-          New
+          <Plus className="w-4 h-4" />
         </Button>
       </div>
 
