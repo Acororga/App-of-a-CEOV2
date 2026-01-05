@@ -167,6 +167,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
                 />
               </div>
             )}
+          </div>
 
           {!formData.is_birthday && (
             <div>
