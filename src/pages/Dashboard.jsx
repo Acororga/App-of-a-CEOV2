@@ -126,7 +126,8 @@ export default function Dashboard() {
         const scoreB = (importanceWeight[b.importance_level] || 0) * 10 + (timeWeight[b.time_duration] || 0);
         return scoreB - scoreA;
       }).slice(0, 3);
-    }
+    },
+    initialData: []
   });
 
   const { data: upcomingEvents } = useQuery({
@@ -147,7 +148,8 @@ export default function Dashboard() {
         eventTime.setHours(hours, minutes, 0, 0);
         return eventTime > now;
       }).sort((a, b) => a.event_time.localeCompare(b.event_time));
-    }
+    },
+    initialData: []
   });
 
   const toggleTodayMarked = (habitId) => {

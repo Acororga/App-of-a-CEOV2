@@ -23,7 +23,8 @@ export default function WinStreak() {
         created_by: user.email 
       }, '-created_date', 10);
       return sessions;
-    }
+    },
+    initialData: []
   });
 
   return (

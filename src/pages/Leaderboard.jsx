@@ -25,7 +25,8 @@ export default function Leaderboard() {
     queryFn: async () => {
       const entries = await base44.entities.LeaderboardEntry.filter({ opted_in: true }, '-rank_level');
       return entries.slice(0, 10);
-    }
+    },
+    initialData: []
   });
 
   const { data: friends } = useQuery({
@@ -37,7 +38,8 @@ export default function Leaderboard() {
         status: 'accepted'
       });
       return connections.sort((a, b) => (b.friend_rank_level || 0) - (a.friend_rank_level || 0));
-    }
+    },
+    initialData: []
   });
 
   const getRankIcon = (rankName) => {

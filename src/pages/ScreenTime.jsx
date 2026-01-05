@@ -28,7 +28,8 @@ export default function ScreenTime() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.BlockedApp.filter({ created_by: user.email });
-    }
+    },
+    initialData: []
   });
 
   const { data: blockedWebsites } = useQuery({
@@ -36,7 +37,8 @@ export default function ScreenTime() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.BlockedWebsite.filter({ created_by: user.email });
-    }
+    },
+    initialData: []
   });
 
   const { data: restPeriods } = useQuery({
@@ -44,7 +46,8 @@ export default function ScreenTime() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.RestPeriod.filter({ created_by: user.email });
-    }
+    },
+    initialData: []
   });
 
   const { data: isInFocusMode } = useQuery({

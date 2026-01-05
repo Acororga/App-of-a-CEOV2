@@ -19,7 +19,8 @@ export default function Calendar() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.CalendarEvent.filter({ created_by: user.email }, '-event_date');
-    }
+    },
+    initialData: []
   });
 
   const createEventMutation = useMutation({

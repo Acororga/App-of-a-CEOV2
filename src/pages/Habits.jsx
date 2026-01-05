@@ -27,7 +27,8 @@ export default function Habits() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.Objective.filter({ created_by: user.email, archived: false });
-    }
+    },
+    initialData: []
   });
 
   const { data: habits } = useQuery({
@@ -35,7 +36,8 @@ export default function Habits() {
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.Habit.filter({ created_by: user.email, archived: false });
-    }
+    },
+    initialData: []
   });
 
   const { data: weeklyScore } = useQuery({
@@ -55,7 +57,8 @@ export default function Habits() {
         const cDate = new Date(c.date);
         return cDate >= weekStart && cDate < addDays(weekStart, 7);
       });
-    }
+    },
+    initialData: []
   });
 
   const { data: weekData } = useQuery({

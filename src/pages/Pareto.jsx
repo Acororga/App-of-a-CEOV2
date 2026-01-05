@@ -37,7 +37,8 @@ export default function Pareto() {
       return await base44.entities.ParetoTask.filter({ 
         created_by: user.email
       });
-    }
+    },
+    initialData: []
   });
 
   const createTaskMutation = useMutation({
