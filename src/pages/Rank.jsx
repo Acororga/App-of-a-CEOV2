@@ -4,7 +4,7 @@ import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { differenceInDays } from 'date-fns';
-import { ArrowLeft, Crown, TrendingUp, Zap } from 'lucide-react';
+import { ArrowLeft, Crown, TrendingUp, Zap, Home } from 'lucide-react';
 import { useLanguage } from '../components/LanguageProvider.jsx';
 
 const RANK_TIERS = [
@@ -219,6 +219,19 @@ export default function Rank() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
+      <div className="max-w-md mx-auto mb-8">
+        <div className="flex items-center justify-between">
+          <Link to={createPageUrl('ScreenTimeManager')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Screen Time</span>
+          </Link>
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+            <Crown className="w-4 h-4" />
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+        </div>
+      </div>
+
       {/* Rank Background Branches */}
       {!bgStyle.ceoMode ? (
         <>

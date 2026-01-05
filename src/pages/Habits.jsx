@@ -40,7 +40,8 @@ export default function Habits() {
 
   const { data: weeklyScore } = useQuery({
     queryKey: ['weeklyScore', format(weekStart, 'yyyy-MM-dd')],
-    queryFn: () => calculateWeeklyHabitScore(weekStart)
+    queryFn: () => calculateWeeklyHabitScore(weekStart),
+    enabled: !!habits && habits.length > 0
   });
 
   const { data: allCompletions } = useQuery({
@@ -283,7 +284,7 @@ export default function Habits() {
                             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
                           );
 
-                          const isCompleted = completion?.state === 'completed';
+                          const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
 
                           return (

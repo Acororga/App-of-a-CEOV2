@@ -4,8 +4,9 @@ import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { getOrCreateWinStreak } from '../components/businessLogic';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Flame, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowLeft, Flame, CheckCircle2, XCircle, Home } from 'lucide-react';
 import { format } from 'date-fns';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function WinStreak() {
   const { t } = useLanguage();
@@ -26,12 +27,18 @@ export default function WinStreak() {
   });
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-black text-white p-6 pt-20">
       <div className="max-w-md mx-auto">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-gray-400 mb-8">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Home</span>
-        </Link>
+        <div className="flex items-center justify-between mb-8">
+          <Link to={createPageUrl('ScreenTimeManager')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Screen Time</span>
+          </Link>
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+            <Home className="w-4 h-4" />
+            <span className="text-sm font-medium">Home</span>
+          </Link>
+        </div>
 
         <div className="text-center mb-12">
           <Flame className="w-16 h-16 mx-auto mb-6 text-orange-500" />

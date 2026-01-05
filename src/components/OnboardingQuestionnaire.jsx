@@ -99,7 +99,19 @@ export default function OnboardingQuestionnaire({ onComplete }) {
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="w-20 h-20 mx-auto mb-6"
           >
-            <Sparkles className="w-20 h-20 text-white" />
+            <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2l2.5 7.5H22l-6 5 2.5 7.5L12 17l-6.5 5 2.5-7.5-6-5h7.5z" 
+                    fill="url(#sparkle-gradient)" 
+                    stroke="#60A5FA" 
+                    strokeWidth="0.5"/>
+              <defs>
+                <linearGradient id="sparkle-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3B82F6"/>
+                  <stop offset="50%" stopColor="#60A5FA"/>
+                  <stop offset="100%" stopColor="#93C5FD"/>
+                </linearGradient>
+              </defs>
+            </svg>
           </motion.div>
           
           <motion.h2

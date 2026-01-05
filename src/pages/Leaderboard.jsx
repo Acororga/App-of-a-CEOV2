@@ -4,7 +4,7 @@ import { createPageUrl } from '../utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { RANK_TIERS } from '../functions/businessLogic';
-import { ArrowLeft, Trophy, Users, Flame } from 'lucide-react';
+import { ArrowLeft, Trophy, Users, Flame, Share2, Home } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 
@@ -52,11 +52,38 @@ export default function Leaderboard() {
     return `${position + 1}.`;
   };
 
+  const handleShare = () => {
+    const inviteText = `Join me on CEO App! Track your productivity, build habits, and compete on the leaderboard. 🚀`;
+    const appStoreUrl = `https://apps.apple.com/app/ceo-app/id123456789`; // Replace with actual App Store URL
+    const shareUrl = `${appStoreUrl}?ref=${myEntry?.id || 'invite'}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join CEO App',
+        text: inviteText,
+        url: shareUrl
+      }).catch(() => {});
+    } else {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(inviteText + ' ' + shareUrl)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white p-6 pt-20">
       <div className="max-w-md mx-auto">
 
         <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <Link to={createPageUrl('ScreenTimeManager')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Screen Time</span>
+            </Link>
+            <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+              <Home className="w-4 h-4" />
+              <span className="text-sm font-medium">Home</span>
+            </Link>
+          </div>
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-8 h-8 text-yellow-500" />
             <h1 className="text-2xl font-bold">Leaderboards</h1>
@@ -173,8 +200,12 @@ export default function Leaderboard() {
               )}
             </div>
 
-            <Button className="w-full bg-gray-900 border border-gray-800 hover:bg-gray-800">
-              + Add Friend by Email
+            <Button 
+              onClick={handleShare}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold flex items-center justify-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              Invite Friends
             </Button>
           </TabsContent>
         </Tabs>
