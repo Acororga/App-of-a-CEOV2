@@ -342,7 +342,7 @@ export default function Pareto() {
                                 {task.importance_level}
                               </span>
                               <span className="text-xs text-zinc-500 font-medium">
-                                {task.time_duration.replace(/_/g, ' ')}
+                                {task.time_duration?.replace(/_/g, ' ') || '1 hour'}
                               </span>
                             </div>
                           </div>
@@ -617,7 +617,7 @@ export default function Pareto() {
                             {task.importance_level}
                           </span>
                           <span className="text-[9px] text-zinc-700 font-medium">
-                            {task.time_duration.replace(/_/g, ' ')}
+                            {task.time_duration?.replace(/_/g, ' ') || '1 hour'}
                           </span>
                           {task.completed && task.completed_date && (
                             <span className="text-[9px] text-green-600 font-medium">
