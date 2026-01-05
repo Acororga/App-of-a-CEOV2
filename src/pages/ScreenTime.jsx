@@ -233,7 +233,16 @@ export default function ScreenTime() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <Shield className="w-4 h-4 text-red-400" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="4" width="16" height="16" rx="3" fill="url(#app-icon-grad)" stroke="#DC2626" strokeWidth="1.5"/>
+                <path d="M6 6L18 18M18 6L6 18" stroke="#FCA5A5" strokeWidth="2.5" strokeLinecap="round"/>
+                <defs>
+                  <linearGradient id="app-icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#7F1D1D"/>
+                    <stop offset="100%" stopColor="#991B1B"/>
+                  </linearGradient>
+                </defs>
+              </svg>
               {t('blockApps')}
             </h2>
             <button
@@ -284,7 +293,10 @@ export default function ScreenTime() {
             {blockedApps?.map(app => (
               <div key={app.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
                 <div className="w-10 h-10 rounded-lg bg-red-950/40 border border-red-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-                  <Shield className="w-5 h-5 text-red-400" />
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                    <rect x="5" y="5" width="14" height="14" rx="2.5" fill="#7F1D1D" stroke="#DC2626" strokeWidth="1.3"/>
+                    <path d="M7 7L17 17M17 7L7 17" stroke="#FCA5A5" strokeWidth="2.2" strokeLinecap="round"/>
+                  </svg>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">{app.app_name}</div>
@@ -318,7 +330,17 @@ export default function ScreenTime() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <Globe className="w-4 h-4 text-orange-400" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" fill="url(#web-icon-grad)" stroke="#EA580C" strokeWidth="1.5"/>
+                <path d="M12 3A9 9 0 0 1 21 12M12 3A9 9 0 0 0 3 12M12 3V21M3 12H21M12 21A9 9 0 0 1 3 12M12 21A9 9 0 0 0 21 12" stroke="#FB923C" strokeWidth="1.2"/>
+                <path d="M6 6L18 18" stroke="#FED7AA" strokeWidth="2.5" strokeLinecap="round"/>
+                <defs>
+                  <linearGradient id="web-icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#7C2D12"/>
+                    <stop offset="100%" stopColor="#9A3412"/>
+                  </linearGradient>
+                </defs>
+              </svg>
               {t('blockWebsites')}
             </h2>
             <button
@@ -369,7 +391,11 @@ export default function ScreenTime() {
             {blockedWebsites?.map(site => (
               <div key={site.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
                 <div className="w-10 h-10 rounded-lg bg-orange-950/40 border border-orange-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-                  <Globe className="w-5 h-5 text-orange-400" />
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="8" fill="#7C2D12" stroke="#EA580C" strokeWidth="1.3"/>
+                    <path d="M12 4A8 8 0 0 1 20 12M12 4A8 8 0 0 0 4 12M12 4V20M4 12H20M12 20A8 8 0 0 1 4 12M12 20A8 8 0 0 0 20 12" stroke="#FB923C" strokeWidth="1.1"/>
+                    <path d="M7 7L17 17" stroke="#FED7AA" strokeWidth="2.2" strokeLinecap="round"/>
+                  </svg>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">{site.url_domain}</div>
@@ -403,7 +429,16 @@ export default function ScreenTime() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <Coffee className="w-4 h-4 text-blue-400" />
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" fill="url(#rest-grad)" stroke="#3B82F6" strokeWidth="1.5"/>
+                <path d="M8 10C8 8 9 7 11 7H13C15 7 16 8 16 10C16 11.5 15 12.5 13.5 13H10.5C9 13.5 8 14.5 8 16C8 18 9 19 11 19H13C15 19 16 18 16 16" stroke="#93C5FD" strokeWidth="1.8" strokeLinecap="round"/>
+                <defs>
+                  <linearGradient id="rest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1E3A8A"/>
+                    <stop offset="100%" stopColor="#1E40AF"/>
+                  </linearGradient>
+                </defs>
+              </svg>
               Rest Periods
             </h2>
             <button
@@ -438,7 +473,10 @@ export default function ScreenTime() {
               return (
                 <div key={period.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
                   <div className="w-10 h-10 rounded-lg bg-blue-950/40 border border-blue-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-                    <Coffee className="w-5 h-5 text-blue-400" />
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="8" fill="#1E3A8A" stroke="#3B82F6" strokeWidth="1.3"/>
+                      <path d="M9 11C9 9.5 10 8.5 11.5 8.5H12.5C14 8.5 15 9.5 15 11C15 12 14 13 12.5 13.5H11.5C10 14 9 15 9 16.5C9 18 10 19 11.5 19H12.5C14 19 15 18 15 16.5" stroke="#93C5FD" strokeWidth="1.6" strokeLinecap="round"/>
+                    </svg>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-white truncate">{period.reason}</div>

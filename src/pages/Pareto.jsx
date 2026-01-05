@@ -198,7 +198,7 @@ export default function Pareto() {
 
             {/* Add Task Form */}
             {showAddForm && (
-              <div className="mb-8 relative animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="mb-6 relative animate-in fade-in slide-in-from-top-4 duration-300">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-[24px] blur-2xl" />
                 <form onSubmit={handleSubmit} className="relative p-6 rounded-[24px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)]">
                   <div className="flex items-center justify-between mb-5">
@@ -273,9 +273,9 @@ export default function Pareto() {
               </div>
             )}
 
-            {/* TOP 3 PRIORITIES - MAXIMUM VISUAL WEIGHT */}
+            {/* TOP 5 PRIORITIES - MAXIMUM VISUAL WEIGHT */}
             {topThree.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-1 h-8 bg-white rounded-full shadow-[0_0_12px_rgba(255,255,255,0.5)]" />
@@ -296,9 +296,9 @@ export default function Pareto() {
                   )}
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {topThree.map((task, index) => {
-                    const sizeScale = index === 0 ? 1 : index === 1 ? 0.9 : 0.85;
+                    const sizeScale = index === 0 ? 1 : index === 1 ? 0.95 : index === 2 ? 0.9 : index === 3 ? 0.85 : 0.8;
                     const opacityScale = index === 0 ? 1 : index === 1 ? 0.95 : 0.9;
 
                     const importanceColors = {
