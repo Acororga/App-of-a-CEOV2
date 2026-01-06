@@ -161,23 +161,54 @@ export default function Dashboard() {
 
   const validateYesterdayMutation = useMutation({
     mutationFn: async () => {
-      if (!pendingYesterdayHabits || pendingYesterdayHabits.length === 0) return;
-      const promises = pendingYesterdayHabits.map(item => 
-        checkInHabit(item.habitId, yesterday, tempYesterdayStates[item.habitId] || false)
-      );
+      console.log('\n╔════════════════════════════════════════════════════════╗');
+      console.log('║ [DASHBOARD] validateYesterdayMutation START            ║');
+      console.log('╚════════════════════════════════════════════════════════╝');
+      console.log('📋 Pending habits to validate:', pendingYesterdayHabits.length);
+      console.log('📋 Temporary states:', tempYesterdayStates);
+      
+      if (!pendingYesterdayHabits || pendingYesterdayHabits.length === 0) {
+        console.log('⚠ No pending habits, exiting');
+        console.log('╚════════════════════════════════════════════════════════╝\n');
+        return;
+      }
+      
+      const promises = pendingYesterdayHabits.map(item => {
+        const completedValue = tempYesterdayStates[item.habitId] || false;
+        console.log(`→ Validating habit ${item.habitId} (${item.habitTitle}) as ${completedValue ? 'COMPLETED' : 'MISSED'}`);
+        return checkInHabit(item.habitId, yesterday, completedValue);
+      });
+      
       await Promise.all(promises);
+      console.log('✓ All habits validated');
+      console.log('╚════════════════════════════════════════════════════════╝\n');
     },
     onSuccess: async () => {
+      console.log('\n╔════════════════════════════════════════════════════════╗');
+      console.log('║ [DASHBOARD] validateYesterdayMutation onSuccess        ║');
+      console.log('╚════════════════════════════════════════════════════════╝');
+      
+      console.log('→ Invalidating queries...');
       queryClient.invalidateQueries(['weeklyScore']);
       queryClient.invalidateQueries(['weekData']);
       queryClient.invalidateQueries(['needsCheckIn']);
+      queryClient.invalidateQueries(['completions']);
+      queryClient.invalidateQueries(['allHabits']);
+      console.log('✓ Queries invalidated');
+      
       setYesterdayVisible(false);
       setTempYesterdayStates({});
       
-      // Reload data to update UI
+      console.log('→ Reloading yesterday completions...');
       const yesterdayCompletions = await getHabitCompletionsForDate(yesterday);
+      console.log(`✓ Found ${yesterdayCompletions.length} completions for yesterday`);
+      
       const pendingCompletions = yesterdayCompletions.filter(c => c.state === 'pending_validation');
+      console.log(`✓ ${pendingCompletions.length} still pending validation`);
+      
       setPendingYesterdayHabits([]);
+      console.log('✓ UI state cleared');
+      console.log('╚════════════════════════════════════════════════════════╝\n');
     }
   });
 

@@ -629,8 +629,15 @@ export async function transitionScheduledToPending(date) {
 }
 
 export async function checkInHabit(habitId, date, completed) {
+  console.log('\n╔════════════════════════════════════════════════════════╗');
+  console.log('║ [checkInHabit] START                                   ║');
+  console.log('╚════════════════════════════════════════════════════════╝');
+  console.log('📝 Parameters:', { habitId, date, completed });
+  
   const user = await base44.auth.me();
   const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
+  console.log('✓ User:', user.email);
+  console.log('✓ Date string:', dateStr);
   
   const existing = await base44.entities.HabitCompletion.filter({
     created_by: user.email,
@@ -638,14 +645,28 @@ export async function checkInHabit(habitId, date, completed) {
     date: dateStr
   });
   
+  console.log(`✓ Found ${existing.length} existing completion(s) for habit ${habitId} on ${dateStr}`);
+  
   if (existing.length > 0) {
+    console.log('→ Updating existing completion:', existing[0].id);
+    console.log('   - Old state:', existing[0].state);
+    console.log('   - New state:', completed ? 'completed' : 'missed');
+    console.log('   - Completed flag:', completed);
+    
     await base44.entities.HabitCompletion.update(existing[0].id, {
       state: completed ? 'completed' : 'missed',
       completed,
       checked_in_date: new Date().toISOString()
     });
+    
+    console.log('✓ Update successful');
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return existing[0];
   } else {
+    console.log('→ Creating new completion record');
+    console.log('   - State:', completed ? 'completed' : 'missed');
+    console.log('   - Completed flag:', completed);
+    
     const completion = await base44.entities.HabitCompletion.create({
       habit_id: habitId,
       date: dateStr,
@@ -653,6 +674,9 @@ export async function checkInHabit(habitId, date, completed) {
       completed,
       checked_in_date: new Date().toISOString()
     });
+    
+    console.log('✓ Creation successful, ID:', completion.id);
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return completion;
   }
 }
