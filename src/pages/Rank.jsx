@@ -8,13 +8,166 @@ import { ArrowLeft, Crown, TrendingUp, Zap, Home } from 'lucide-react';
 import { useLanguage } from '../components/LanguageProvider.jsx';
 
 const RANK_TIERS = [
-  { level: 1, name: 'Bronze', icon: '🥉', description: 'Starting rank' },
-  { level: 2, name: 'Silver', icon: '🥈', description: '15 days + 10 day streak' },
-  { level: 3, name: 'Gold', icon: '🥇', description: '50 day streak' },
-  { level: 4, name: 'Platinum', icon: '💎', description: '90 day streak + 60h Focus' },
-  { level: 5, name: 'Diamond', icon: '💠', description: '180 day streak + 200h Focus' },
-  { level: 6, name: 'Batman', icon: '🦇', description: '365 day streak + 200h Focus + 100h CEO' },
-  { level: 7, name: 'CEO', icon: '👑', description: '500 day streak + 250h Focus + 250h CEO' }
+  { 
+    level: 1, 
+    name: 'Bronze', 
+    description: 'Starting rank',
+    iconComponent: () => (
+      <div className="w-20 h-20 rounded-full relative">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 shadow-[0_8px_32px_rgba(217,119,6,0.5),inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-2 rounded-full border-2 border-amber-500/30" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-3xl font-black text-amber-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">3</span>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 2, 
+    name: 'Silver', 
+    description: '15 days + 10 day streak',
+    iconComponent: () => (
+      <div className="w-20 h-20 rounded-full relative">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-400 via-gray-500 to-gray-400 shadow-[0_8px_32px_rgba(156,163,175,0.5),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-2 rounded-full border-2 border-gray-300/40" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-3xl font-black text-gray-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">2</span>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 3, 
+    name: 'Gold', 
+    description: '50 day streak',
+    iconComponent: () => (
+      <div className="w-20 h-20 rounded-full relative">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500 via-yellow-600 to-yellow-400 shadow-[0_8px_32px_rgba(234,179,8,0.6),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-2 rounded-full border-2 border-yellow-300/40" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-3xl font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">1</span>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 4, 
+    name: 'Platinum', 
+    description: '90 day streak + 60h Focus',
+    iconComponent: () => (
+      <div className="w-20 h-20 rounded-full relative">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-300 via-slate-400 to-cyan-300 shadow-[0_8px_32px_rgba(103,232,249,0.5),inset_0_2px_4px_rgba(255,255,255,0.4),inset_0_-2px_8px_rgba(0,0,0,0.3)]" />
+        <div className="absolute inset-2 rounded-full border-2 border-cyan-200/40" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                  fill="url(#platGrad)" stroke="rgba(103,232,249,0.8)" strokeWidth="1.5" />
+            <defs>
+              <linearGradient id="platGrad" x1="12" y1="2" x2="12" y2="21">
+                <stop offset="0%" stopColor="rgba(165,243,252,1)" />
+                <stop offset="100%" stopColor="rgba(103,232,249,0.6)" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 5, 
+    name: 'Diamond', 
+    description: '180 day streak + 200h Focus',
+    iconComponent: () => (
+      <div className="w-20 h-20 relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="diamondGrad" x1="50" y1="10" x2="50" y2="90">
+                <stop offset="0%" stopColor="rgba(147,197,253,1)" />
+                <stop offset="50%" stopColor="rgba(96,165,250,1)" />
+                <stop offset="100%" stopColor="rgba(59,130,246,0.8)" />
+              </linearGradient>
+              <filter id="diamondGlow">
+                <feGaussianBlur stdDeviation="2" />
+              </filter>
+            </defs>
+            <path d="M50 10 L70 35 L60 80 L40 80 L30 35 Z" 
+                  fill="url(#diamondGrad)" 
+                  stroke="rgba(147,197,253,0.9)" 
+                  strokeWidth="2"
+                  filter="drop-shadow(0 4px 16px rgba(59,130,246,0.5))" />
+            <path d="M30 35 L50 50 L70 35" stroke="rgba(191,219,254,0.6)" strokeWidth="1.5" />
+            <path d="M50 50 L40 80" stroke="rgba(191,219,254,0.4)" strokeWidth="1.5" />
+            <path d="M50 50 L60 80" stroke="rgba(191,219,254,0.4)" strokeWidth="1.5" />
+          </svg>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 6, 
+    name: 'Batman', 
+    description: '365 day streak + 200h Focus + 100h CEO',
+    iconComponent: () => (
+      <div className="w-20 h-20 relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="batGrad" x1="50" y1="20" x2="50" y2="80">
+                <stop offset="0%" stopColor="rgba(24,24,27,1)" />
+                <stop offset="100%" stopColor="rgba(0,0,0,1)" />
+              </linearGradient>
+            </defs>
+            <path d="M50 35 Q30 25, 20 30 Q15 35, 18 45 Q20 50, 30 48 Q40 46, 50 55 Q60 46, 70 48 Q80 50, 82 45 Q85 35, 80 30 Q70 25, 50 35 Z" 
+                  fill="url(#batGrad)" 
+                  stroke="rgba(113,113,122,0.8)" 
+                  strokeWidth="1.5"
+                  filter="drop-shadow(0 4px 16px rgba(0,0,0,0.8))" />
+            <circle cx="40" cy="42" r="3" fill="rgba(239,68,68,0.9)" />
+            <circle cx="60" cy="42" r="3" fill="rgba(239,68,68,0.9)" />
+            <path d="M25 55 Q30 65, 50 70 Q70 65, 75 55" 
+                  stroke="rgba(24,24,27,1)" 
+                  strokeWidth="8" 
+                  strokeLinecap="round"
+                  fill="none" />
+          </svg>
+        </div>
+      </div>
+    )
+  },
+  { 
+    level: 7, 
+    name: 'CEO', 
+    description: '500 day streak + 250h Focus + 250h CEO',
+    iconComponent: () => (
+      <div className="w-20 h-20 relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="crownGrad" x1="50" y1="25" x2="50" y2="75">
+                <stop offset="0%" stopColor="rgba(250,204,21,1)" />
+                <stop offset="50%" stopColor="rgba(234,179,8,1)" />
+                <stop offset="100%" stopColor="rgba(202,138,4,1)" />
+              </linearGradient>
+              <filter id="crownGlow">
+                <feGaussianBlur stdDeviation="3" />
+                <feColorMatrix type="saturate" values="2"/>
+              </filter>
+            </defs>
+            <path d="M25 70 L25 50 L35 55 L50 35 L65 55 L75 50 L75 70 Z" 
+                  fill="url(#crownGrad)" 
+                  stroke="rgba(250,204,21,0.9)" 
+                  strokeWidth="2"
+                  filter="drop-shadow(0 4px 20px rgba(234,179,8,0.7))" />
+            <circle cx="25" cy="50" r="4" fill="rgba(239,68,68,0.9)" />
+            <circle cx="50" cy="35" r="4" fill="rgba(239,68,68,0.9)" />
+            <circle cx="75" cy="50" r="4" fill="rgba(239,68,68,0.9)" />
+            <rect x="30" y="60" width="40" height="8" rx="1" fill="rgba(202,138,4,1)" />
+          </svg>
+        </div>
+      </div>
+    )
+  }
 ];
 
 async function calculateUserRank() {
