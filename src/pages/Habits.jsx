@@ -40,24 +40,17 @@ export default function Habits() {
     initialData: []
   });
 
-  const { data: weeklyScore, refetch: refetchWeeklyScore } = useQuery({
+  const { data: weeklyScore } = useQuery({
     queryKey: ['weeklyScore', format(weekStart, 'yyyy-MM-dd')],
     queryFn: () => {
       console.log('\n╔════════════════════════════════════════════════════════╗');
       console.log('║ [HABITS PAGE] Fetching Weekly Score                   ║');
       console.log('╚════════════════════════════════════════════════════════╝');
+      console.log(`   - Completions count: ${allCompletions?.length || 0}`);
       return calculateWeeklyHabitScore(weekStart);
     },
     enabled: !!habits && habits.length > 0
   });
-
-  React.useEffect(() => {
-    console.log('🔄 [HABITS PAGE] allCompletions changed, refetching weekly score');
-    console.log(`   - Total completions: ${allCompletions?.length || 0}`);
-    if (habits && habits.length > 0) {
-      refetchWeeklyScore();
-    }
-  }, [allCompletions, habits, refetchWeeklyScore]);
 
   const { data: allCompletions } = useQuery({
     queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
