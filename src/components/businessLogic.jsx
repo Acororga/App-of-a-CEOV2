@@ -682,28 +682,46 @@ export async function checkInHabit(habitId, date, completed) {
 }
 
 export async function calculateWeeklyHabitScore(weekStartDate) {
+  console.log('\n╔════════════════════════════════════════════════════════╗');
+  console.log('║ [calculateWeeklyHabitScore] START                      ║');
+  console.log('╚════════════════════════════════════════════════════════╝');
+  
   const user = await base44.auth.me();
   const weekStart = typeof weekStartDate === 'string' ? parseISO(weekStartDate) : weekStartDate;
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+  
+  console.log('📅 Week:', format(weekStart, 'yyyy-MM-dd'), 'to', format(weekEnd, 'yyyy-MM-dd'));
+  console.log('👤 User:', user.email);
   
   let totalExpected = 0;
   let totalCompleted = 0;
   
   for (let i = 0; i < 7; i++) {
     const currentDay = addDays(weekStart, i);
+    const dayStr = format(currentDay, 'yyyy-MM-dd');
+    console.log(`\n--- Day ${i + 1}: ${dayStr} ---`);
+    
     const habits = await getHabitsForDate(currentDay);
     const completions = await getHabitCompletionsForDate(currentDay);
+    
+    console.log(`   ${habits.length} habits scheduled`);
+    console.log(`   ${completions.length} completion records`);
     
     totalExpected += habits.length;
     
     const completionMap = {};
     completions.forEach(c => {
-      completionMap[c.habit_id] = c.completed;
+      const isCompleted = c.completed || c.state === 'completed';
+      completionMap[c.habit_id] = isCompleted;
+      console.log(`   → Completion for habit ${c.habit_id}: state="${c.state}", completed=${c.completed}, COUNTED AS: ${isCompleted}`);
     });
     
     habits.forEach(habit => {
       if (completionMap[habit.id]) {
         totalCompleted++;
+        console.log(`   ✓ "${habit.title}" counted as COMPLETED`);
+      } else {
+        console.log(`   ✗ "${habit.title}" NOT completed`);
       }
     });
   }
@@ -714,6 +732,12 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
   
   const threshold = 90;
   const thresholdMet = successPercentage >= threshold;
+  
+  console.log('\n═══ WEEK TOTALS ═══');
+  console.log(`Expected: ${totalExpected}`);
+  console.log(`Completed: ${totalCompleted}`);
+  console.log(`Percentage: ${successPercentage}%`);
+  console.log(`Threshold Met: ${thresholdMet}`);
   
   const existingScores = await base44.entities.WeeklyHabitScore.filter({
     created_by: user.email,
@@ -732,10 +756,16 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
   };
   
   if (existingScores.length > 0) {
+    console.log('→ Updating existing score record:', existingScores[0].id);
     await base44.entities.WeeklyHabitScore.update(existingScores[0].id, scoreData);
+    console.log('✓ Score updated');
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return { ...scoreData, id: existingScores[0].id };
   } else {
+    console.log('→ Creating new score record');
     const score = await base44.entities.WeeklyHabitScore.create(scoreData);
+    console.log('✓ Score created, ID:', score.id);
+    console.log('╚════════════════════════════════════════════════════════╝\n');
     return score;
   }
 }
