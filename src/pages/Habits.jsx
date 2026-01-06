@@ -40,11 +40,24 @@ export default function Habits() {
     initialData: []
   });
 
-  const { data: weeklyScore } = useQuery({
+  const { data: weeklyScore, refetch: refetchWeeklyScore } = useQuery({
     queryKey: ['weeklyScore', format(weekStart, 'yyyy-MM-dd')],
-    queryFn: () => calculateWeeklyHabitScore(weekStart),
+    queryFn: () => {
+      console.log('\n╔════════════════════════════════════════════════════════╗');
+      console.log('║ [HABITS PAGE] Fetching Weekly Score                   ║');
+      console.log('╚════════════════════════════════════════════════════════╝');
+      return calculateWeeklyHabitScore(weekStart);
+    },
     enabled: !!habits && habits.length > 0
   });
+
+  React.useEffect(() => {
+    console.log('🔄 [HABITS PAGE] allCompletions changed, refetching weekly score');
+    console.log(`   - Total completions: ${allCompletions?.length || 0}`);
+    if (habits && habits.length > 0) {
+      refetchWeeklyScore();
+    }
+  }, [allCompletions, habits, refetchWeeklyScore]);
 
   const { data: allCompletions } = useQuery({
     queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
@@ -287,8 +300,18 @@ export default function Habits() {
                             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
                           );
 
+                          console.log(`🔍 [HABITS GRID] Habit "${habit.title}" on ${dayStr}:`);
+                          console.log(`   - Completion found:`, !!completion);
+                          if (completion) {
+                            console.log(`   - Completion ID: ${completion.id}`);
+                            console.log(`   - State: "${completion.state}"`);
+                            console.log(`   - completed flag: ${completion.completed}`);
+                          }
+
                           const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
+                          
+                          console.log(`   → DISPLAY: ${!isScheduled ? 'NOT_SCHEDULED' : isCompleted ? 'COMPLETED' : isMissed ? 'MISSED' : 'PENDING'}`);
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
