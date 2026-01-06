@@ -609,7 +609,10 @@ export default function Home() {
         {filteredApps.length === 2 && (
           <div className="space-y-3">
             {filteredApps.map(app => {
-              const AppIcon = app.icon;
+              console.log('🔍 [HOME DEBUG] Rendering 2-app layout for:', app.id);
+              console.log('   - Has customIcon:', !!app.customIcon);
+              console.log('   - Has icon:', !!app.icon);
+
               return (
                 <Link key={app.id} to={createPageUrl(app.id)} className="block group relative animate-in fade-in duration-200">
                   <div className="absolute inset-0 rounded-2xl blur-[48px] opacity-60 group-hover:opacity-90 group-active:opacity-70 transition-all duration-300" style={{
@@ -626,11 +629,8 @@ export default function Home() {
                       </button>
                     )}
                     <div className="relative h-full flex flex-col justify-between">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${app.colors} flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/15" />
-                        <div className="relative z-10">
-                          {app.customIcon || <AppIcon className="w-6 h-6 text-white drop-shadow-md" />}
-                        </div>
+                      <div className="w-12 h-12 group-active:scale-[0.96] transition-transform duration-100">
+                        {app.customIcon}
                       </div>
                       <div className="text-sm font-bold text-white">{app.name}</div>
                     </div>
@@ -644,6 +644,9 @@ export default function Home() {
         {/* 1 app: single column (1-1 pattern) */}
         {filteredApps.length === 1 && (() => {
           const app = filteredApps[0];
+          console.log('🔍 [HOME DEBUG] Rendering 1-app layout for:', app.id);
+          console.log('   - Has customIcon:', !!app.customIcon);
+
           return (
             <Link to={createPageUrl(app.id)} className="block group relative">
               <div className="absolute inset-0 rounded-2xl blur-[48px] opacity-0 group-hover:opacity-90 transition-all duration-300" style={{
