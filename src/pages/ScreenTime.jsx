@@ -306,13 +306,7 @@ export default function ScreenTime() {
 
           <div className="space-y-2">
             {blockedApps?.map(app => (
-              <div key={app.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
-                <div className="w-10 h-10 rounded-lg bg-red-950/40 border border-red-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                    <rect x="5" y="5" width="14" height="14" rx="2.5" fill="#7F1D1D" stroke="#DC2626" strokeWidth="1.3"/>
-                    <path d="M7 7L17 17M17 7L7 17" stroke="#FCA5A5" strokeWidth="2.2" strokeLinecap="round"/>
-                  </svg>
-                </div>
+              <div key={app.id} className="group flex items-center gap-3 p-4 rounded-xl bg-red-500/5 border-2 border-red-500/30 hover:border-red-500/40 transition-all">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">{app.app_name}</div>
                   <div className="text-xs text-zinc-600">
@@ -415,14 +409,7 @@ export default function ScreenTime() {
 
           <div className="space-y-2">
             {blockedWebsites?.map(site => (
-              <div key={site.id} className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/40 hover:border-zinc-700/50 transition-all">
-                <div className="w-10 h-10 rounded-lg bg-orange-950/40 border border-orange-900/40 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="8" fill="#7C2D12" stroke="#EA580C" strokeWidth="1.3"/>
-                    <path d="M12 4A8 8 0 0 1 20 12M12 4A8 8 0 0 0 4 12M12 4V20M4 12H20M12 20A8 8 0 0 1 4 12M12 20A8 8 0 0 0 20 12" stroke="#FB923C" strokeWidth="1.1"/>
-                    <path d="M7 7L17 17" stroke="#FED7AA" strokeWidth="2.2" strokeLinecap="round"/>
-                  </svg>
-                </div>
+              <div key={site.id} className="group flex items-center gap-3 p-4 rounded-xl bg-red-500/5 border-2 border-red-500/30 hover:border-red-500/40 transition-all">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">{site.url_domain}</div>
                   <div className="text-xs text-zinc-600">
