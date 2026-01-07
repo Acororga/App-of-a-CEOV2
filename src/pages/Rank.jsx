@@ -11,7 +11,7 @@ const RANK_TIERS = [
   { 
     level: 1, 
     name: 'Bronze', 
-    description: t ? t('startingRank') : 'Starting rank',
+    description: 'Starting rank',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
         {/* Contour BRONZE - texture métallique brossée */}
