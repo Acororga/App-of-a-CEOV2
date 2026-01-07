@@ -40,17 +40,46 @@ export default function Habits() {
     initialData: []
   });
 
-  const { data: weeklyScore } = useQuery({
-    queryKey: ['weeklyScore', format(weekStart, 'yyyy-MM-dd')],
-    queryFn: () => {
-      console.log('\n╔════════════════════════════════════════════════════════╗');
-      console.log('║ [HABITS PAGE] Fetching Weekly Score                   ║');
-      console.log('╚════════════════════════════════════════════════════════╝');
-      console.log(`   - Completions count: ${allCompletions?.length || 0}`);
-      return calculateWeeklyHabitScore(weekStart);
-    },
-    enabled: !!habits && habits.length > 0
-  });
+  const weeklyScore = React.useMemo(() => {
+    if (!habits || habits.length === 0 || !allCompletions) return null;
+
+    let totalExpected = 0;
+    let totalCompleted = 0;
+
+    for (let i = 0; i < 7; i++) {
+      const day = addDays(weekStart, i);
+      const dayNum = day.getDay();
+      const dayStr = format(day, 'yyyy-MM-dd');
+
+      habits.forEach(habit => {
+        const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
+        if (isScheduled) {
+          totalExpected++;
+          
+          const completion = allCompletions.find(c => 
+            c.habit_id === habit.id && 
+            format(new Date(c.date), 'yyyy-MM-dd') === dayStr
+          );
+          
+          if (completion?.state === 'completed' || completion?.completed === true) {
+            totalCompleted++;
+          }
+        }
+      });
+    }
+
+    const successPercentage = totalExpected > 0 
+      ? Math.round((totalCompleted / totalExpected) * 100)
+      : 0;
+
+    return {
+      total_expected: totalExpected,
+      total_completed: totalCompleted,
+      success_percentage: successPercentage,
+      threshold_percentage: 90,
+      threshold_met: successPercentage >= 90
+    };
+  }, [habits, allCompletions, weekStart]);
 
   const { data: allCompletions } = useQuery({
     queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
@@ -65,27 +94,6 @@ export default function Habits() {
       });
     },
     initialData: []
-  });
-
-  const { data: weekData } = useQuery({
-    queryKey: ['weekData', format(weekStart, 'yyyy-MM-dd')],
-    queryFn: async () => {
-      const data = {};
-      for (let i = 0; i < 7; i++) {
-        const day = addDays(weekStart, i);
-        const dayStr = format(day, 'yyyy-MM-dd');
-        const habits = await getHabitsForDate(day);
-        const completions = await getHabitCompletionsForDate(day);
-        
-        const completionMap = {};
-        completions.forEach(c => {
-          completionMap[c.habit_id] = c.completed;
-        });
-        
-        data[dayStr] = { habits, completions: completionMap };
-      }
-      return data;
-    }
   });
 
   const { data: weeklyContract } = useQuery({
@@ -285,7 +293,6 @@ export default function Habits() {
                         {[1,2,3,4,5,6,0].map((dayNum, index) => {
                           const day = addDays(weekStart, index);
                           const dayStr = format(day, 'yyyy-MM-dd');
-                          const dayData = weekData?.[dayStr];
                           const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
 
                           const completion = allCompletions?.find(c => 
@@ -293,18 +300,8 @@ export default function Habits() {
                             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
                           );
 
-                          console.log(`🔍 [HABITS GRID] Habit "${habit.title}" on ${dayStr}:`);
-                          console.log(`   - Completion found:`, !!completion);
-                          if (completion) {
-                            console.log(`   - Completion ID: ${completion.id}`);
-                            console.log(`   - State: "${completion.state}"`);
-                            console.log(`   - completed flag: ${completion.completed}`);
-                          }
-
                           const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
-                          
-                          console.log(`   → DISPLAY: ${!isScheduled ? 'NOT_SCHEDULED' : isCompleted ? 'COMPLETED' : isMissed ? 'MISSED' : 'PENDING'}`);
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
