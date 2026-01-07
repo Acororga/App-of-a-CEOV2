@@ -236,16 +236,28 @@ export default function ScreenTime() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                <rect x="4" y="4" width="16" height="16" rx="3" fill="url(#app-icon-grad)" stroke="#DC2626" strokeWidth="1.5"/>
-                <path d="M6 6L18 18M18 6L6 18" stroke="#FCA5A5" strokeWidth="2.5" strokeLinecap="round"/>
-                <defs>
-                  <linearGradient id="app-icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#7F1D1D"/>
-                    <stop offset="100%" stopColor="#991B1B"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <div className="w-10 h-10 rounded-xl relative">
+                {/* Base noire mate avec relief */}
+                <div className="absolute inset-0 rounded-xl"
+                     style={{
+                       background: '#2e2e2e',
+                       boxShadow: `
+                         0 2px 6px rgba(0, 0, 0, 0.35),
+                         inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                         inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                       `
+                     }}
+                />
+                {/* Icône mobile avec accent rouge */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <rect x="6" y="3" width="12" height="18" rx="2.5" 
+                          stroke="#ef4444" strokeWidth="2"/>
+                    <line x1="9" y1="18" x2="15" y2="18" 
+                          stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              </div>
               {t('blockApps')}
             </h2>
             <button
@@ -333,17 +345,28 @@ export default function ScreenTime() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="9" fill="url(#web-icon-grad)" stroke="#EA580C" strokeWidth="1.5"/>
-                <path d="M12 3A9 9 0 0 1 21 12M12 3A9 9 0 0 0 3 12M12 3V21M3 12H21M12 21A9 9 0 0 1 3 12M12 21A9 9 0 0 0 21 12" stroke="#FB923C" strokeWidth="1.2"/>
-                <path d="M6 6L18 18" stroke="#FED7AA" strokeWidth="2.5" strokeLinecap="round"/>
-                <defs>
-                  <linearGradient id="web-icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#7C2D12"/>
-                    <stop offset="100%" stopColor="#9A3412"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <div className="w-10 h-10 rounded-xl relative">
+                {/* Base noire mate avec relief */}
+                <div className="absolute inset-0 rounded-xl"
+                     style={{
+                       background: '#2e2e2e',
+                       boxShadow: `
+                         0 2px 6px rgba(0, 0, 0, 0.35),
+                         inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                         inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                       `
+                     }}
+                />
+                {/* Icône globe avec accent rouge */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" 
+                            stroke="#ef4444" strokeWidth="2"/>
+                    <path d="M12 3c-2.5 3-2.5 15 0 18M12 3c2.5 3 2.5 15 0 18M3 12h18" 
+                          stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              </div>
               {t('blockWebsites')}
             </h2>
             <button
@@ -432,16 +455,30 @@ export default function ScreenTime() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-zinc-300 tracking-tight flex items-center gap-2">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="9" fill="url(#rest-grad)" stroke="#3B82F6" strokeWidth="1.5"/>
-                <path d="M8 10C8 8 9 7 11 7H13C15 7 16 8 16 10C16 11.5 15 12.5 13.5 13H10.5C9 13.5 8 14.5 8 16C8 18 9 19 11 19H13C15 19 16 18 16 16" stroke="#93C5FD" strokeWidth="1.8" strokeLinecap="round"/>
-                <defs>
-                  <linearGradient id="rest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#1E3A8A"/>
-                    <stop offset="100%" stopColor="#1E40AF"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <div className="w-10 h-10 rounded-xl relative">
+                {/* Base noire mate avec relief */}
+                <div className="absolute inset-0 rounded-xl"
+                     style={{
+                       background: '#2e2e2e',
+                       boxShadow: `
+                         0 2px 6px rgba(0, 0, 0, 0.35),
+                         inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                         inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                       `
+                     }}
+                />
+                {/* Icône pause/relax avec accent rouge */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" 
+                            stroke="#ef4444" strokeWidth="2"/>
+                    <rect x="9" y="8" width="2" height="8" rx="1" 
+                          fill="#ef4444"/>
+                    <rect x="13" y="8" width="2" height="8" rx="1" 
+                          fill="#ef4444"/>
+                  </svg>
+                </div>
+              </div>
               Rest Periods
             </h2>
             <button
