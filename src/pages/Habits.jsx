@@ -40,6 +40,21 @@ export default function Habits() {
     initialData: []
   });
 
+  const { data: allCompletions } = useQuery({
+    queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const allCompletions = await base44.entities.HabitCompletion.filter({
+        created_by: user.email
+      });
+      return allCompletions.filter(c => {
+        const cDate = new Date(c.date);
+        return cDate >= weekStart && cDate < addDays(weekStart, 7);
+      });
+    },
+    initialData: []
+  });
+
   const weeklyScore = React.useMemo(() => {
     if (!habits || habits.length === 0 || !allCompletions) return null;
 
@@ -80,21 +95,6 @@ export default function Habits() {
       threshold_met: successPercentage >= 90
     };
   }, [habits, allCompletions, weekStart]);
-
-  const { data: allCompletions } = useQuery({
-    queryKey: ['completions', format(weekStart, 'yyyy-MM-dd')],
-    queryFn: async () => {
-      const user = await base44.auth.me();
-      const allCompletions = await base44.entities.HabitCompletion.filter({
-        created_by: user.email
-      });
-      return allCompletions.filter(c => {
-        const cDate = new Date(c.date);
-        return cDate >= weekStart && cDate < addDays(weekStart, 7);
-      });
-    },
-    initialData: []
-  });
 
   const { data: weeklyContract } = useQuery({
     queryKey: ['currentContract', format(weekStart, 'yyyy-MM-dd')],
