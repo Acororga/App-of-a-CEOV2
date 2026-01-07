@@ -77,6 +77,18 @@ export default function Pareto() {
     }
   });
 
+  const uncompleteTaskMutation = useMutation({
+    mutationFn: async (taskId) => {
+      await base44.entities.ParetoTask.update(taskId, {
+        completed: false,
+        completed_date: null
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paretoTasks']);
+    }
+  });
+
   const uncompletedTasks = tasks?.filter(t => !t.completed) || [];
   
   const prioritizedTasks = React.useMemo(() => {
@@ -627,10 +639,17 @@ export default function Pareto() {
                           )}
                         </div>
                       </div>
-                      {!task.completed && (
+                      {task.completed ? (
+                        <button
+                          onClick={() => uncompleteTaskMutation.mutate(task.id)}
+                          className="p-2 hover:bg-zinc-800/50 rounded-lg transition-colors active:scale-95"
+                        >
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        </button>
+                      ) : (
                         <button
                           onClick={() => completeTaskMutation.mutate(task.id)}
-                          className="p-2 hover:bg-zinc-800/50 rounded-lg transition-colors"
+                          className="p-2 hover:bg-zinc-800/50 rounded-lg transition-colors active:scale-95"
                         >
                           <CheckCircle2 className="w-5 h-5 text-green-500" />
                         </button>

@@ -18,10 +18,10 @@ const tutorialSteps = [
     customIcon: (
       <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
         <path d="M3 3v18h18" 
-              stroke="#6b7280" strokeWidth="1.8" 
+              stroke="#6366f1" strokeWidth="1.8" 
               strokeLinecap="round" strokeLinejoin="round"/>
         <rect x="6.5" y="13" width="2.5" height="4" rx="0.5"
-              fill="#6b7280" opacity="0.85"/>
+              fill="#6366f1" opacity="0.85"/>
         <rect x="10.5" y="9" width="2.5" height="8" rx="0.5"
               fill="#6366f1" opacity="0.9"/>
         <rect x="14.5" y="7" width="2.5" height="10" rx="0.5"
@@ -37,7 +37,7 @@ const tutorialSteps = [
     customIcon: (
       <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
         <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" 
-              stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              stroke="#6366f1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M9 14l2 2 4-4" 
               stroke="#6366f1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
@@ -50,7 +50,7 @@ const tutorialSteps = [
     color: 'from-emerald-500 to-teal-500',
     customIcon: (
       <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="9.5" stroke="#6b7280" strokeWidth="1.6"/>
+        <circle cx="12" cy="12" r="9.5" stroke="#6366f1" strokeWidth="1.6"/>
         <path d="M7.5 12.5l3 3L17 9" 
               stroke="#6366f1" strokeWidth="2.4" 
               strokeLinecap="round" strokeLinejoin="round"/>
@@ -65,7 +65,7 @@ const tutorialSteps = [
     customIcon: (
       <svg className="w-16 h-16" viewBox="0 0 24 24" fill="none">
         <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
-              stroke="#6b7280" strokeWidth="1.9" strokeLinejoin="round"/>
+              stroke="#6366f1" strokeWidth="1.9" strokeLinejoin="round"/>
         <circle cx="12" cy="12.5" r="3.2" 
                 stroke="#6366f1" strokeWidth="1.7"/>
         <path d="M12 9.5v3.5l2.2 2.2" 

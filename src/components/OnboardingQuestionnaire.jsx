@@ -94,47 +94,41 @@ export default function OnboardingQuestionnaire({ onComplete }) {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-20 h-20 mx-auto mb-6 relative"
-          >
-            {/* Base noire texturée */}
-            <div className="absolute inset-0 rounded-[20px]"
-                 style={{
-                   background: 'linear-gradient(135deg, #27272a 0%, #18181b 50%, #09090b 100%)',
-                   boxShadow: `
-                     0 10px 40px rgba(0, 0, 0, 0.9),
-                     inset 0 2px 2px rgba(255, 255, 255, 0.02),
-                     inset 0 -4px 8px rgba(0, 0, 0, 0.8)
-                   `
-                 }}
-            />
-            {/* Cercle intérieur bleu lumineux */}
-            <div className="absolute inset-[8px] rounded-[16px] overflow-hidden">
-              <div className="absolute inset-0"
-                   style={{
-                     background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%)',
-                     boxShadow: `
-                       inset 0 3px 8px rgba(0, 0, 0, 0.6),
-                       0 0 20px rgba(59, 130, 246, 0.5)
-                     `
-                   }}
-              />
-              {/* Reflets brillants */}
-              <div className="absolute top-0 left-0 right-1/2 bottom-1/2"
-                   style={{
-                     background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 100%)'
-                   }}
-              />
-            </div>
-            {/* Points lumineux */}
+          {/* Indicateur de chargement moderne et sobre */}
+          <div className="w-20 h-20 mx-auto mb-6 relative flex items-center justify-center">
+            {/* Cercle animé extérieur */}
             <motion.div
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-200 shadow-[0_0_8px_rgba(147,197,253,0.8)]"
+              className="absolute inset-0"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              <svg className="w-full h-full" viewBox="0 0 80 80">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="36"
+                  fill="none"
+                  stroke="url(#gradient)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray="180 40"
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#6366f1" stopOpacity="0.4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </motion.div>
+            
+            {/* Point central pulsant */}
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_16px_rgba(96,165,250,0.8)]"
             />
-          </motion.div>
+          </div>
           
           <motion.h2
             initial={{ y: 20, opacity: 0 }}
