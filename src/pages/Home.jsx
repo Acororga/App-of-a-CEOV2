@@ -433,8 +433,8 @@ export default function Home() {
             }} />
 
             <div className="relative flex items-center justify-between h-full">
-              <div className="flex items-center gap-6">
-                <div className="w-20 h-20 group-active:scale-[0.96] transition-transform duration-100 relative">
+              <div className="flex items-center gap-4 sm:gap-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 group-active:scale-[0.96] transition-transform duration-100 relative">
                   {/* Matte dark container */}
                   <div className="absolute inset-0 rounded-[16px]"
                        style={{
@@ -447,14 +447,14 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol with blue accent lines */}
+                  {/* Icon symbol tout en bleu */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
                       <path d="M3 3v18h18" 
-                            stroke="#6b7280" strokeWidth="1.8" 
+                            stroke="#6366f1" strokeWidth="1.8" 
                             strokeLinecap="round" strokeLinejoin="round"/>
                       <rect x="6.5" y="13" width="3" height="4" rx="0.5"
-                            fill="#6b7280" opacity="0.85"/>
+                            fill="#6366f1" opacity="0.85"/>
                       <rect x="11" y="9" width="3" height="8" rx="0.5"
                             fill="#6366f1" opacity="0.9"/>
                       <rect x="15.5" y="7" width="3" height="10" rx="0.5"
@@ -463,15 +463,15 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">{t('dashboard')}</div>
-                  <div className="text-xs text-zinc-500 font-medium">{t('yourDailyControlCenter')}</div>
+                  <div className="text-xl sm:text-2xl font-black mb-1 bg-gradient-to-r from-white via-white to-zinc-200 bg-clip-text text-transparent drop-shadow-sm tracking-tight">{t('dashboard')}</div>
+                  <div className="text-[10px] sm:text-xs text-zinc-500 font-medium">{t('yourDailyControlCenter')}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className={`relative text-center px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className={`relative text-center px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
                   (todayHabits || 0) === 0 && needsCheckIn
                     ? 'bg-red-950/40 border-red-600/50'
-                    : 'bg-blue-950/40 border-blue-600/50'
+                    : 'bg-blue-950/40 border-blue-700/60'
                 }`}>
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 overflow-hidden rounded-b-xl">
                     <div 
@@ -479,12 +479,12 @@ export default function Home() {
                       style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
                     />
                   </div>
-                  <div className={`text-xl sm:text-2xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-1 ${
+                  <div className={`text-lg sm:text-2xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-0.5 sm:mb-1 ${
                     (todayHabits || 0) === 0 && needsCheckIn
                       ? 'from-red-300 to-red-500'
-                      : 'from-blue-200 to-blue-400'
+                      : 'from-blue-300 to-blue-500'
                   }`}>{todayHabits || 0}</div>
-                  <div className="text-[7px] sm:text-[8px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
+                  <div className="text-[6px] sm:text-[8px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
                 </div>
                 {needsCheckIn && (
                   <div className="relative flex items-center gap-1">
