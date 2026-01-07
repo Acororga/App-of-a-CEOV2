@@ -97,21 +97,43 @@ export default function OnboardingQuestionnaire({ onComplete }) {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-20 h-20 mx-auto mb-6"
+            className="w-20 h-20 mx-auto mb-6 relative"
           >
-            <svg className="w-20 h-20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2l2.5 7.5H22l-6 5 2.5 7.5L12 17l-6.5 5 2.5-7.5-6-5h7.5z" 
-                    fill="url(#sparkle-gradient)" 
-                    stroke="#60A5FA" 
-                    strokeWidth="0.5"/>
-              <defs>
-                <linearGradient id="sparkle-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3B82F6"/>
-                  <stop offset="50%" stopColor="#60A5FA"/>
-                  <stop offset="100%" stopColor="#93C5FD"/>
-                </linearGradient>
-              </defs>
-            </svg>
+            {/* Base noire texturée */}
+            <div className="absolute inset-0 rounded-[20px]"
+                 style={{
+                   background: 'linear-gradient(135deg, #27272a 0%, #18181b 50%, #09090b 100%)',
+                   boxShadow: `
+                     0 10px 40px rgba(0, 0, 0, 0.9),
+                     inset 0 2px 2px rgba(255, 255, 255, 0.02),
+                     inset 0 -4px 8px rgba(0, 0, 0, 0.8)
+                   `
+                 }}
+            />
+            {/* Cercle intérieur bleu lumineux */}
+            <div className="absolute inset-[8px] rounded-[16px] overflow-hidden">
+              <div className="absolute inset-0"
+                   style={{
+                     background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%)',
+                     boxShadow: `
+                       inset 0 3px 8px rgba(0, 0, 0, 0.6),
+                       0 0 20px rgba(59, 130, 246, 0.5)
+                     `
+                   }}
+              />
+              {/* Reflets brillants */}
+              <div className="absolute top-0 left-0 right-1/2 bottom-1/2"
+                   style={{
+                     background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 100%)'
+                   }}
+              />
+            </div>
+            {/* Points lumineux */}
+            <motion.div
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-200 shadow-[0_0_8px_rgba(147,197,253,0.8)]"
+            />
           </motion.div>
           
           <motion.h2
