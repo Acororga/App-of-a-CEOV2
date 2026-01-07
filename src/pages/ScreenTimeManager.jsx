@@ -104,24 +104,12 @@ export default function ScreenTimeManager() {
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-700/10 to-zinc-600/10 rounded-[28px] blur-2xl" />
           <div className="relative p-6 rounded-[28px] bg-zinc-900/70 backdrop-blur-xl border border-zinc-800/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.02)]">
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* Today's Usage - Adaptive */}
+              {/* Today's Usage - Bleu uniforme */}
               <div className="relative">
-                <div className={`absolute inset-0 rounded-2xl blur-xl transition-all ${
-                  isGoodUsage ? 'bg-emerald-500/20 opacity-70' :
-                  isModerateUsage ? 'bg-yellow-500/20 opacity-60' :
-                  'bg-red-500/25 opacity-65'
-                }`} />
-                <div className={`relative p-5 rounded-2xl border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] ${
-                  isGoodUsage ? 'bg-emerald-950/50 border-emerald-700/50' :
-                  isModerateUsage ? 'bg-yellow-950/50 border-yellow-700/50' :
-                  'bg-red-950/50 border-red-700/50'
-                }`}>
+                <div className="absolute inset-0 rounded-2xl blur-xl bg-blue-500/20 opacity-70 transition-all" />
+                <div className="relative p-5 rounded-2xl border-2 bg-blue-950/50 border-blue-700/50 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]">
                   <div className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-2">{t('today')}</div>
-                  <div className={`text-4xl font-black mb-1 ${
-                    isGoodUsage ? 'text-emerald-300' :
-                    isModerateUsage ? 'text-yellow-300' :
-                    'text-red-300'
-                  }`}>
+                  <div className="text-4xl font-black mb-1 text-blue-300">
                     {Math.round(todayScreenTime || 0)}
                   </div>
                   <div className="text-[10px] text-zinc-700 font-medium">minutes</div>
@@ -178,7 +166,7 @@ export default function ScreenTimeManager() {
             to={createPageUrl('ScreenTime')}
             className="group relative block"
             >
-            <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
+            <div className="absolute inset-0 bg-blue-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl relative">
@@ -193,11 +181,11 @@ export default function ScreenTimeManager() {
                          `
                        }}
                   />
-                  {/* Symbole d'interdiction avec accent rouge */}
+                  {/* Symbole d'interdiction tout en bleu */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9.5" stroke="#6b7280" strokeWidth="1.8"/>
-                      <line x1="6.5" y1="6.5" x2="17.5" y2="17.5" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"/>
+                      <circle cx="12" cy="12" r="9.5" stroke="#3b82f6" strokeWidth="1.8"/>
+                      <line x1="6.5" y1="6.5" x2="17.5" y2="17.5" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
                   </div>
                 </div>
@@ -211,7 +199,7 @@ export default function ScreenTimeManager() {
             </Link>
 
           <Link to={createPageUrl('Leaderboard')} className="group relative block">
-            <div className="absolute inset-0 bg-cyan-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
+            <div className="absolute inset-0 bg-blue-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl relative">
@@ -226,15 +214,15 @@ export default function ScreenTimeManager() {
                          `
                        }}
                   />
-                  {/* Icône trophée avec accent cyan */}
+                  {/* Icône trophée tout en bleu */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
-                      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
-                      <path d="M4 22h16" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
-                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" stroke="#6b7280" strokeWidth="1.6" strokeLinecap="round"/>
-                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke="#6b7280" strokeWidth="1.6" strokeLinecap="round"/>
-                      <path d="M18 2H6v7a6 6 0 0012 0V2z" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M4 22h16" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" stroke="#3b82f6" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke="#3b82f6" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M18 2H6v7a6 6 0 0012 0V2z" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
                 </div>
@@ -248,7 +236,7 @@ export default function ScreenTimeManager() {
           </Link>
 
           <Link to={createPageUrl('BlockingDemo')} className="group relative block">
-            <div className="absolute inset-0 bg-purple-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
+            <div className="absolute inset-0 bg-blue-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl relative">
@@ -265,8 +253,8 @@ export default function ScreenTimeManager() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                       <path d="M12 2.5L4.5 6.5v5.5c0 5.2 3.6 10.1 7.5 11.5 3.9-1.4 7.5-6.3 7.5-11.5V6.5L12 2.5z" 
-                            stroke="#6b7280" strokeWidth="1.9" strokeLinejoin="round"/>
-                      <rect x="10" y="10" width="4" height="6" rx="0.5" stroke="#6366f1" strokeWidth="2"/>
+                            stroke="#3b82f6" strokeWidth="1.9" strokeLinejoin="round"/>
+                      <rect x="10" y="10" width="4" height="6" rx="0.5" stroke="#3b82f6" strokeWidth="2"/>
                     </svg>
                   </div>
                 </div>
