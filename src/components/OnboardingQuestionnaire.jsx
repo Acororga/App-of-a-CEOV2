@@ -217,7 +217,7 @@ export default function OnboardingQuestionnaire({ onComplete }) {
                     : 'bg-zinc-900 border-zinc-800 text-white hover:border-zinc-700'
                 }`}
               >
-                <Icon className="w-6 h-6 mx-auto mb-2" />
+                <Icon className={`w-6 h-6 mx-auto mb-2 ${isSelected ? 'text-black' : 'text-blue-500'}`} />
                 <div className="text-sm font-medium">{cat.label}</div>
               </button>
             );

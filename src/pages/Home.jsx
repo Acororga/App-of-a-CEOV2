@@ -468,33 +468,23 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className={`relative text-center px-3 py-2 rounded-xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
+                <div className={`relative text-center px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl backdrop-blur-sm border-2 transition-all shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] ${
                   (todayHabits || 0) === 0 && needsCheckIn
                     ? 'bg-red-950/40 border-red-600/50'
-                    : (todayHabits || 0) >= 5
-                    ? 'bg-emerald-950/40 border-emerald-600/50'
-                    : (todayHabits || 0) >= 3
-                    ? 'bg-blue-950/40 border-blue-600/50'
-                    : 'bg-zinc-800/60 border-zinc-700/50'
+                    : 'bg-blue-950/40 border-blue-600/50'
                 }`}>
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 overflow-hidden rounded-b-xl">
                     <div 
-                      className={`h-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${
-                        (todayHabits || 0) >= 5 ? 'bg-emerald-400' : (todayHabits || 0) >= 3 ? 'bg-blue-400' : 'bg-zinc-600'
-                      }`}
+                      className="h-full bg-blue-400 transition-all duration-500 shadow-[0_0_8px_currentColor]"
                       style={{ width: `${Math.min(100, ((todayHabits || 0) / 7) * 100)}%` }}
                     />
                   </div>
-                  <div className={`text-2xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-1 ${
+                  <div className={`text-xl sm:text-2xl font-black bg-gradient-to-b bg-clip-text text-transparent leading-none mb-1 ${
                     (todayHabits || 0) === 0 && needsCheckIn
                       ? 'from-red-300 to-red-500'
-                      : (todayHabits || 0) >= 5
-                      ? 'from-emerald-200 to-emerald-400'
-                      : (todayHabits || 0) >= 3
-                      ? 'from-blue-200 to-blue-400'
-                      : 'from-white to-zinc-400'
+                      : 'from-blue-200 to-blue-400'
                   }`}>{todayHabits || 0}</div>
-                  <div className="text-[8px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
+                  <div className="text-[7px] sm:text-[8px] text-zinc-500 uppercase tracking-widest font-black">{t('habits')}</div>
                 </div>
                 {needsCheckIn && (
                   <div className="relative flex items-center gap-1">
@@ -877,13 +867,13 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol with blue accent lines */}
+                  {/* Icon symbol tout en bleu */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
                       <rect x="3" y="3" width="18" height="18" rx="2.5" 
-                            stroke="#6b7280" strokeWidth="1.8"/>
+                            stroke="#6366f1" strokeWidth="1.8"/>
                       <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
-                            fill="#6b7280"/>
+                            fill="#6366f1"/>
                       <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
                             fill="#6366f1"/>
                       <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
@@ -967,16 +957,16 @@ export default function Home() {
                        }}
                   />
 
-                  {/* Icon symbol with blue accent lines */}
+                  {/* Icon symbol tout en bleu */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="3.5" 
                               stroke="#6366f1" strokeWidth="2"/>
                       <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                            stroke="#6b7280" strokeWidth="1.8" 
+                            stroke="#6366f1" strokeWidth="1.8" 
                             strokeLinecap="round"/>
                       <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                            stroke="#6b7280" strokeWidth="1.6" 
+                            stroke="#6366f1" strokeWidth="1.6" 
                             strokeLinecap="round"/>
                     </svg>
                   </div>
