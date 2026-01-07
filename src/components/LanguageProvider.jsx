@@ -256,6 +256,20 @@ const translations = {
 
     // Calendar
     newEvent: "New",
+    createNewEvent: "Create New Event",
+    personName: "Person's name",
+    relationship: "Relationship",
+    notesOptional: "Notes (Optional)",
+    giftPreferences: "Gifts, preferences, etc.",
+    titleEvent: "Title",
+    teamMeeting: "e.g., Team meeting",
+    descriptionOptional: "Description (Optional)",
+    addEventDetails: "Add event details",
+    durationMinutes: "Duration (minutes)",
+    createBirthday: "Create Birthday",
+    birthday: "Birthday",
+    modeActivated: "Mode activated",
+    clickToActivate: "Click to activate",
 
     // BiannualReport
     executiveSnapshot: "Executive Snapshot",
@@ -546,6 +560,20 @@ const translations = {
 
     // Calendar
     newEvent: "Nouveau",
+    createNewEvent: "Créer un nouvel événement",
+    personName: "Nom de la personne",
+    relationship: "Relation",
+    notesOptional: "Notes (Optionnel)",
+    giftPreferences: "Cadeaux, préférences, etc.",
+    titleEvent: "Titre",
+    teamMeeting: "ex., Réunion d'équipe",
+    descriptionOptional: "Description (Optionnel)",
+    addEventDetails: "Ajouter des détails",
+    durationMinutes: "Durée (minutes)",
+    createBirthday: "Créer Anniversaire",
+    birthday: "Anniversaire",
+    modeActivated: "Mode activé",
+    clickToActivate: "Cliquer pour activer",
 
     // BiannualReport
     executiveSnapshot: "Aperçu général",

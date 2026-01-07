@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, isSameMonth, isSameDay, isToday, isFuture, isPast, startOfDay } from 'date-fns';
+import { fr, es, zhCN, hi, id as idLocale, ru, ar, pt } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '../LanguageProvider';
 
 export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick }) {
+  const { language, t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState('yearly');
+  
+  const getDateFnsLocale = () => {
+    const locales = { fr, es, zh: zhCN, hi, id: idLocale, ru, ar, pt };
+    return locales[language] || undefined;
+  };
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -40,7 +48,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
           className="relative p-5 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150"
         >
           <div className="text-center font-bold text-zinc-300 text-base mb-1">
-            {format(monthDate, 'MMM')}
+            {format(monthDate, 'MMM', { locale: getDateFnsLocale() })}
           </div>
           {eventCount > 0 && (
             <div className="text-center">
@@ -138,7 +146,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
     return (
       <div>
         <div className="grid grid-cols-7 gap-2 mb-4">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+          {[t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday'), t('sunday')].map(day => (
             <div key={day} className="text-center text-[10px] font-black text-zinc-700 uppercase tracking-widest py-2">
               {day}
             </div>
@@ -170,7 +178,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
         <div className="relative rounded-2xl bg-zinc-900/60 border border-zinc-800/50 overflow-hidden shadow-[0_12px_48px_rgba(0,0,0,0.5)]">
           <div className="bg-gradient-to-r from-zinc-900/80 to-zinc-850/80 text-center py-5 border-b border-zinc-800/50">
             <div className={`text-xl font-black tracking-tight ${isCurrentDay ? 'text-blue-300' : 'text-white'}`}>
-              {format(currentDate, 'EEEE, MMM d')}
+              {format(currentDate, 'EEEE, MMM d', { locale: getDateFnsLocale() })}
             </div>
           </div>
           
@@ -270,14 +278,15 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   };
 
   const getHeaderText = () => {
+    const locale = getDateFnsLocale();
     if (view === 'yearly') return currentDate.getFullYear();
-    if (view === 'monthly') return format(currentDate, 'MMMM yyyy');
+    if (view === 'monthly') return format(currentDate, 'MMMM yyyy', { locale });
     if (view === 'weekly') {
       const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
       const weekEnd = addDays(weekStart, 6);
-      return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+      return `${format(weekStart, 'MMM d', { locale })} - ${format(weekEnd, 'MMM d, yyyy', { locale })}`;
     }
-    if (view === 'daily') return format(currentDate, 'MMMM d, yyyy');
+    if (view === 'daily') return format(currentDate, 'MMMM d, yyyy', { locale });
   };
 
   const handleBackNavigation = () => {

@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { format } from 'date-fns';
 import { Cake } from 'lucide-react';
+import { useLanguage } from '../LanguageProvider';
 
 export default function EventModal({ open, onClose, onSubmit, initialData }) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -56,7 +58,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
         <DialogHeader>
-          <DialogTitle>Create New Event</DialogTitle>
+          <DialogTitle>{t('createNewEvent')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <button
@@ -77,10 +79,10 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
             </div>
             <div className="flex-1 text-left">
               <div className={`font-bold text-sm ${formData.is_birthday ? 'text-pink-200' : 'text-zinc-400'}`}>
-                🎂 Anniversaire
+                🎂 {t('birthday')}
               </div>
               <div className="text-xs text-zinc-500">
-                {formData.is_birthday ? 'Mode activé' : 'Cliquer pour activer'}
+                {formData.is_birthday ? t('modeActivated') : t('clickToActivate')}
               </div>
             </div>
           </button>
@@ -88,7 +90,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
           {formData.is_birthday ? (
             <>
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Nom de la personne</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('personName')}</label>
                 <Input
                   value={formData.birthday_person_name}
                   onChange={(e) => setFormData({ ...formData, birthday_person_name: e.target.value })}
@@ -99,7 +101,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
               </div>
 
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Relation</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('relationship')}</label>
                 <Input
                   value={formData.birthday_relationship}
                   onChange={(e) => setFormData({ ...formData, birthday_relationship: e.target.value })}
@@ -109,11 +111,11 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
               </div>
 
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Notes (Optionnel)</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('notesOptional')}</label>
                 <Textarea
                   value={formData.birthday_notes}
                   onChange={(e) => setFormData({ ...formData, birthday_notes: e.target.value })}
-                  placeholder="Cadeaux, préférences, etc."
+                  placeholder={t('giftPreferences')}
                   className="bg-zinc-800 border-zinc-700"
                 />
               </div>
@@ -121,22 +123,22 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
           ) : (
             <>
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Title</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('titleEvent')}</label>
                 <Input
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., Team meeting"
+                  placeholder={t('teamMeeting')}
                   className="bg-zinc-800 border-zinc-700"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Description (Optional)</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('descriptionOptional')}</label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Add event details"
+                  placeholder={t('addEventDetails')}
                   className="bg-zinc-800 border-zinc-700"
                 />
               </div>
@@ -145,7 +147,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
 
           <div className={formData.is_birthday ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>
             <div>
-              <label className="text-sm text-zinc-400 mb-2 block">Date</label>
+              <label className="text-sm text-zinc-400 mb-2 block">{t('date')}</label>
               <Input
                 type="date"
                 value={formData.event_date}
@@ -157,7 +159,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
 
             {!formData.is_birthday && (
               <div>
-                <label className="text-sm text-zinc-400 mb-2 block">Time</label>
+                <label className="text-sm text-zinc-400 mb-2 block">{t('time')}</label>
                 <Input
                   type="time"
                   value={formData.event_time}
@@ -171,7 +173,7 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
 
           {!formData.is_birthday && (
             <div>
-              <label className="text-sm text-zinc-400 mb-2 block">Duration (minutes)</label>
+              <label className="text-sm text-zinc-400 mb-2 block">{t('durationMinutes')}</label>
               <Input
                 type="number"
                 value={formData.duration_minutes}
@@ -186,10 +188,10 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" className="flex-1 bg-white text-black hover:bg-zinc-200">
-              {formData.is_birthday ? 'Créer Anniversaire' : 'Create Event'}
+              {formData.is_birthday ? t('createBirthday') : t('createEvent')}
             </Button>
           </div>
         </form>

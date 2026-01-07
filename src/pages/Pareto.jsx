@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Plus, X, Trash2, Zap, Grid3x3, Check, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -21,6 +22,7 @@ export default function Pareto() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('list');
+  const [direction, setDirection] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -144,12 +146,16 @@ export default function Pareto() {
     const isRightSwipe = distance < -minSwipeDistance;
 
     if (isLeftSwipe && activeTab === 'list') {
+      setDirection(1);
       setActiveTab('matrix');
     } else if (isLeftSwipe && activeTab === 'matrix') {
+      setDirection(1);
       setActiveTab('history');
     } else if (isRightSwipe && activeTab === 'matrix') {
+      setDirection(-1);
       setActiveTab('list');
     } else if (isRightSwipe && activeTab === 'history') {
+      setDirection(-1);
       setActiveTab('matrix');
     }
   };
@@ -199,8 +205,17 @@ export default function Pareto() {
           <div className="w-20" />
         </div>
 
-        {/* List View */}
+        {/* Tabs with swipe animation */}
+        <AnimatePresence mode="wait" custom={direction}>
         {activeTab === 'list' && (
+          <motion.div
+            key="list"
+            custom={direction}
+            initial={{ x: direction * 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction * -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
           <>
             <div className="mb-10">
               <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent tracking-tight">
@@ -460,12 +475,18 @@ export default function Pareto() {
             >
               {t('swipeRightForMatrix')}
             </button>
-          </>
+          </motion.div>
         )}
 
-        {/* Matrix View */}
         {activeTab === 'matrix' && (
-          <div className="space-y-6">
+          <motion.div
+            key="matrix"
+            custom={direction}
+            initial={{ x: direction * 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction * -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
                 {t('paretoMatrix')}
@@ -590,12 +611,18 @@ export default function Pareto() {
                 {t('swipeRightForHistory')}
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        {/* History View */}
         {activeTab === 'history' && (
-          <div className="space-y-6">
+          <motion.div
+            key="history"
+            custom={direction}
+            initial={{ x: direction * 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction * -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
                 {t('allTasks')}
@@ -679,8 +706,9 @@ export default function Pareto() {
             >
               {t('swipeLeftToReturn')}
             </button>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
     </div>
   );
