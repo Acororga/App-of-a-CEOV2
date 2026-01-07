@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft, ChevronRight, ChevronLeft } from 'lucide-react';
 import { format, subDays, differenceInDays, startOfMonth, endOfMonth, eachMonthOfInterval } from 'date-fns';
+import { useLanguage } from '../components/LanguageProvider';
 
 export default function BiannualReport() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -196,36 +197,38 @@ export default function BiannualReport() {
     }
   });
 
+  const { t } = useLanguage();
+
   const pages = [
     {
       id: 'executive',
-      title: 'Executive Snapshot',
-      subtitle: 'Last 6 months'
+      title: t('executiveSnapshot'),
+      subtitle: t('last6Months')
     },
     {
       id: 'trends',
-      title: 'Trend Evolution',
-      subtitle: 'First 90d vs. Last 90d'
+      title: t('trendEvolution'),
+      subtitle: t('first90VsLast90')
     },
     {
       id: 'habits',
-      title: 'Habits & Consistency',
-      subtitle: 'Performance by objective'
+      title: t('habitsConsistency'),
+      subtitle: t('performanceByObjective')
     },
     {
       id: 'focus',
-      title: 'Focus & Discipline',
-      subtitle: 'Deep work patterns'
+      title: t('focusDiscipline'),
+      subtitle: t('deepWorkPatterns')
     },
     {
       id: 'pareto',
-      title: 'Pareto & Priorities',
-      subtitle: 'Task impact distribution'
+      title: t('paretoPriorities'),
+      subtitle: t('taskImpactDistribution')
     },
     {
       id: 'insight',
-      title: 'Key Insight',
-      subtitle: 'What matters most'
+      title: t('keyInsight'),
+      subtitle: t('whatMattersMost')
     }
   ];
 
@@ -249,28 +252,28 @@ export default function BiannualReport() {
               {reportData?.rankName === 'CEO' && '👑'}
             </div>
             <div className="text-4xl font-bold mb-2">{reportData?.rankName || 'Bronze'}</div>
-            <div className="text-sm text-zinc-600">Current Rank</div>
+            <div className="text-sm text-zinc-600">{t('currentRank')}</div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-1">{reportData?.totalFocusHours || 0}h</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Deep Work</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('deepWork')}</div>
             </div>
             
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-1">{reportData?.habitSuccessRate || 0}%</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Habits</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('habits')}</div>
             </div>
             
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-1">{reportData?.productivityIndex || 0}%</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">High-Impact</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('highImpact')}</div>
             </div>
             
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-1">{reportData?.completedTasks || 0}</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Tasks Done</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('tasksDone')}</div>
             </div>
           </div>
         </div>
@@ -282,32 +285,32 @@ export default function BiannualReport() {
         <div className="space-y-8">
           <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
             <div className="flex items-baseline justify-between mb-2">
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">Deep Work</div>
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('deepWork')}</div>
               <div className={`text-2xl font-bold ${reportData?.focusTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {reportData?.focusTrend >= 0 ? '+' : ''}{reportData?.focusTrend || 0}%
               </div>
             </div>
-            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
+            <div className="text-xs text-zinc-600">{t('vsPrevious3Months')}</div>
           </div>
 
           <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
             <div className="flex items-baseline justify-between mb-2">
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">Habit Execution</div>
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('habitExecution')}</div>
               <div className={`text-2xl font-bold ${reportData?.habitTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {reportData?.habitTrend >= 0 ? '+' : ''}{reportData?.habitTrend || 0}%
               </div>
             </div>
-            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
+            <div className="text-xs text-zinc-600">{t('vsPrevious3Months')}</div>
           </div>
 
           <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
             <div className="flex items-baseline justify-between mb-2">
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">Task Velocity</div>
+              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('taskVelocity')}</div>
               <div className={`text-2xl font-bold ${reportData?.paretoTaskTrend >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {reportData?.paretoTaskTrend >= 0 ? '+' : ''}{reportData?.paretoTaskTrend || 0}%
               </div>
             </div>
-            <div className="text-xs text-zinc-600">vs. previous 3 months</div>
+            <div className="text-xs text-zinc-600">{t('vsPrevious3Months')}</div>
           </div>
         </div>
       );
@@ -318,7 +321,7 @@ export default function BiannualReport() {
         <div className="space-y-6">
           <div className="text-center mb-8">
             <div className="text-5xl font-bold mb-2">{reportData?.habitSuccessRate || 0}%</div>
-            <div className="text-sm text-zinc-600">Overall Completion Rate</div>
+            <div className="text-sm text-zinc-600">{t('overallCompletionRate')}</div>
           </div>
 
           <div className="space-y-3">
@@ -351,26 +354,26 @@ export default function BiannualReport() {
           <div className="grid grid-cols-2 gap-4">
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-2">{reportData?.totalCompletedSessions || 0}</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Focus Sessions</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('focusSessions')}</div>
             </div>
             
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
               <div className="text-4xl font-bold mb-2">{reportData?.currentStreak || 0}</div>
-              <div className="text-xs text-zinc-500 uppercase tracking-wider">Win Streak</div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">{t('winStreak')}</div>
             </div>
           </div>
 
           <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
-            <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">Screen Time</div>
+            <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">{t('screenTime')}</div>
             <div className="text-3xl font-bold mb-1">{reportData?.avgDailyScreenMinutes || 0}m</div>
-            <div className="text-xs text-zinc-600">Daily average</div>
+            <div className="text-xs text-zinc-600">{t('dailyAverage')}</div>
           </div>
 
           {reportData?.totalCEOHours > 0 && (
             <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
-              <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">CEO Mode</div>
+              <div className="text-sm text-zinc-500 uppercase tracking-wider mb-4">{t('ceoMode')}</div>
               <div className="text-3xl font-bold mb-1">{reportData?.totalCEOHours || 0}h</div>
-              <div className="text-xs text-zinc-600">Maximum focus hours</div>
+              <div className="text-xs text-zinc-600">{t('maximumFocusHours')}</div>
             </div>
           )}
         </div>
@@ -382,27 +385,27 @@ export default function BiannualReport() {
         <div className="space-y-8">
           <div className="text-center mb-8">
             <div className="text-5xl font-bold mb-2">{reportData?.productivityIndex || 0}%</div>
-            <div className="text-sm text-zinc-600">High-Impact Work</div>
+            <div className="text-sm text-zinc-600">{t('highImpactWork')}</div>
           </div>
 
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
-              <span className="text-zinc-400">Crucial</span>
+              <span className="text-zinc-400">{t('crucial')}</span>
               <span className="text-xl font-bold">{(reportData?.paretoBreakdown?.crucialShort || 0) + (reportData?.paretoBreakdown?.crucialLong || 0)}</span>
             </div>
             <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40">
-              <span className="text-zinc-400">Essential</span>
+              <span className="text-zinc-400">{t('essential')}</span>
               <span className="text-xl font-bold">{(reportData?.paretoBreakdown?.essentialShort || 0) + (reportData?.paretoBreakdown?.essentialLong || 0)}</span>
             </div>
             <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/40 opacity-40">
-              <span className="text-zinc-600">Low Priority</span>
+              <span className="text-zinc-600">{t('lowPriority')}</span>
               <span className="text-xl font-bold text-zinc-600">{reportData?.paretoBreakdown?.lowPriority || 0}</span>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-green-950/20 border border-green-900/40">
             <div className="text-xs text-green-400">
-              Quick wins: <span className="font-bold">{reportData?.quickWinsRate || 0}%</span> of tasks
+              {t('quickWins')}: <span className="font-bold">{reportData?.quickWinsRate || 0}%</span> {t('ofTasks')}
             </div>
           </div>
         </div>
@@ -413,16 +416,16 @@ export default function BiannualReport() {
       return (
         <div className="space-y-8">
           <div className="p-8 rounded-2xl bg-zinc-900/60 border border-zinc-800/40">
-            <div className="text-sm text-zinc-600 uppercase tracking-wider mb-6">Dominant Insight</div>
+            <div className="text-sm text-zinc-600 uppercase tracking-wider mb-6">{t('dominantInsight')}</div>
             <div className="text-lg leading-relaxed text-zinc-200">
               {reportData?.dominantInsight || 'Continue building consistency across all areas.'}
             </div>
           </div>
 
           <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/30">
-            <div className="text-xs text-zinc-600 uppercase tracking-wider mb-3">Report Period</div>
+            <div className="text-xs text-zinc-600 uppercase tracking-wider mb-3">{t('reportPeriod')}</div>
             <div className="text-sm text-zinc-400">
-              {reportData?.daysActive || 0} days tracked
+              {reportData?.daysActive || 0} {t('daysTracked')}
             </div>
           </div>
         </div>
@@ -435,7 +438,7 @@ export default function BiannualReport() {
       <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col">
         <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-400 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Home</span>
+          <span className="text-sm font-medium">{t('home')}</span>
         </Link>
 
         <div className="text-center mb-12">

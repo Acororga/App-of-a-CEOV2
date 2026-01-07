@@ -11,7 +11,7 @@ const RANK_TIERS = [
   { 
     level: 1, 
     name: 'Bronze', 
-    description: 'Starting rank',
+    description: t ? t('startingRank') : 'Starting rank',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
         {/* Contour BRONZE - texture métallique brossée */}
@@ -672,7 +672,7 @@ export default function Rank() {
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-yellow-500" />
-              <h2 className="text-lg font-semibold">Path to {nextRequirements.name}</h2>
+              <h2 className="text-lg font-semibold">{t('pathTo')} {nextRequirements.name}</h2>
             </div>
             <div className="space-y-2">
               {nextRequirements.needs.map((need, idx) => (
@@ -686,24 +686,24 @@ export default function Rank() {
         )}
 
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-300 mb-4">YOUR STATS</h2>
+          <h2 className="text-lg font-semibold text-gray-300 mb-4">{t('yourStats')}</h2>
           <div className="space-y-3">
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Days in App</span>
+              <span className="text-sm text-gray-400">{t('daysInApp')}</span>
               <span className="text-sm font-semibold">{rankData?.daysInApp || 0}</span>
             </div>
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Win Streak</span>
+              <span className="text-sm text-gray-400">{t('streak')}</span>
               <span className="text-sm font-semibold text-orange-400">
-                {rankData?.currentStreak || 0} days
+                {rankData?.currentStreak || 0} {t('days')}
               </span>
             </div>
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">Focus Mode</span>
+              <span className="text-sm text-gray-400">{t('focusMode')}</span>
               <span className="text-sm font-semibold">{rankData?.totalFocusHours || 0}h</span>
             </div>
             <div className="flex justify-between p-4 rounded-lg bg-gray-900">
-              <span className="text-sm text-gray-400">CEO Mode</span>
+              <span className="text-sm text-gray-400">{t('ceoMode')}</span>
               <span className="text-sm font-semibold">{rankData?.totalCEOHours || 0}h</span>
             </div>
           </div>
@@ -712,7 +712,7 @@ export default function Rank() {
 
 
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-300 mb-4">RANK LADDER</h2>
+          <h2 className="text-lg font-semibold text-gray-300 mb-4">{t('rankLadder')}</h2>
         </div>
 
         <div className="space-y-2">

@@ -466,7 +466,7 @@ export default function ScreenTime() {
                   </svg>
                 </div>
               </div>
-              Rest Periods
+              {t('restPeriod')}
             </h2>
             <button
               onClick={() => setShowRestPeriodModal(true)}
