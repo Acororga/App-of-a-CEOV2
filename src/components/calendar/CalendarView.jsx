@@ -74,6 +74,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
     let days = [];
     let day = startDate;
     const today = startOfDay(new Date());
+    const weekDaysLabels = [t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday'), t('sunday')];
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
@@ -143,14 +144,12 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
       days = [];
     }
 
-    const weekDays = [t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday'), t('sunday')];
-    
     return (
       <div>
         <div className="grid grid-cols-7 gap-2 mb-4">
-          {weekDays.map(day => (
-            <div key={day} className="text-center text-[10px] font-black text-zinc-700 uppercase tracking-widest py-2">
-              {day}
+          {weekDaysLabels.map(dayLabel => (
+            <div key={dayLabel} className="text-center text-[10px] font-black text-zinc-700 uppercase tracking-widest py-2">
+              {dayLabel}
             </div>
           ))}
         </div>
