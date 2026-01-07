@@ -177,11 +177,12 @@ export default function ScreenTimeManager() {
           <Link
             to={createPageUrl('ScreenTime')}
             className="group relative block"
-          >
+            >
             <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl relative">
+                  {/* Base noire mate avec relief */}
                   <div className="absolute inset-0 rounded-xl"
                        style={{
                          background: '#2e2e2e',
@@ -192,10 +193,11 @@ export default function ScreenTimeManager() {
                          `
                        }}
                   />
+                  {/* Symbole d'interdiction avec accent rouge */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="10" stroke="#6b7280" strokeWidth="2"/>
-                      <line x1="6" y1="6" x2="18" y2="18" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round"/>
+                    <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9.5" stroke="#6b7280" strokeWidth="1.8"/>
+                      <line x1="6.5" y1="6.5" x2="17.5" y2="17.5" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
                   </div>
                 </div>
@@ -206,13 +208,14 @@ export default function ScreenTimeManager() {
               </div>
               <div className="text-xs text-zinc-700">→</div>
             </div>
-          </Link>
+            </Link>
 
           <Link to={createPageUrl('Leaderboard')} className="group relative block">
             <div className="absolute inset-0 bg-cyan-500/10 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-200" />
             <div className="relative flex items-center justify-between p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 group-hover:border-zinc-700/60 group-hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl relative">
+                  {/* Base noire mate avec relief */}
                   <div className="absolute inset-0 rounded-xl"
                        style={{
                          background: '#2e2e2e',
@@ -223,14 +226,15 @@ export default function ScreenTimeManager() {
                          `
                        }}
                   />
+                  {/* Icône trophée avec accent cyan */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M4 22h16" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M18 2H6v7a6 6 0 0012 0V2z" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M4 22h16" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round"/>
+                      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" stroke="#6b7280" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke="#6b7280" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M18 2H6v7a6 6 0 0012 0V2z" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
                 </div>

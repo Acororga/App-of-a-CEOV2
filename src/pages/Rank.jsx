@@ -13,12 +13,22 @@ const RANK_TIERS = [
     name: 'Bronze', 
     description: 'Starting rank',
     iconComponent: () => (
-      <div className="w-20 h-20 rounded-full relative">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 shadow-[0_8px_32px_rgba(217,119,6,0.5),inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
-        <div className="absolute inset-2 rounded-full border-2 border-amber-500/30" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-3xl font-black text-amber-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">3</span>
-        </div>
+      <div className="w-20 h-20 relative">
+        {/* Base noire avec relief profond */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               boxShadow: `
+                 0 8px 32px rgba(0, 0, 0, 0.8),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        {/* Accent bronze subtil - bord fin */}
+        <div className="absolute inset-[3px] rounded-[17px] border border-amber-900/20" />
+        {/* Point d'accent bronze */}
+        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-800/40 shadow-[0_0_6px_rgba(217,119,6,0.3)]" />
       </div>
     )
   },
@@ -27,12 +37,26 @@ const RANK_TIERS = [
     name: 'Silver', 
     description: '15 days + 10 day streak',
     iconComponent: () => (
-      <div className="w-20 h-20 rounded-full relative">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-400 via-gray-500 to-gray-400 shadow-[0_8px_32px_rgba(156,163,175,0.5),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
-        <div className="absolute inset-2 rounded-full border-2 border-gray-300/40" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-3xl font-black text-gray-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">2</span>
+      <div className="w-20 h-20 relative">
+        {/* Base noire avec relief profond */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               boxShadow: `
+                 0 8px 32px rgba(0, 0, 0, 0.8),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        {/* Accent argent - ligne diagonale */}
+        <div className="absolute inset-[3px] rounded-[17px]">
+          <div className="absolute top-0 right-0 w-12 h-[1px] bg-gradient-to-r from-transparent via-gray-500/30 to-transparent transform rotate-45 origin-top-right" 
+               style={{ transformOrigin: 'top right' }} />
         </div>
+        {/* Points d'accent argent */}
+        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-gray-400/30 shadow-[0_0_6px_rgba(156,163,175,0.25)]" />
+        <div className="absolute bottom-2 left-2 w-1 h-1 rounded-full bg-gray-400/20" />
       </div>
     )
   },
@@ -41,12 +65,23 @@ const RANK_TIERS = [
     name: 'Gold', 
     description: '50 day streak',
     iconComponent: () => (
-      <div className="w-20 h-20 rounded-full relative">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500 via-yellow-600 to-yellow-400 shadow-[0_8px_32px_rgba(234,179,8,0.6),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-2px_8px_rgba(0,0,0,0.4)]" />
-        <div className="absolute inset-2 rounded-full border-2 border-yellow-300/40" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-3xl font-black text-yellow-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">1</span>
-        </div>
+      <div className="w-20 h-20 relative">
+        {/* Base noire avec relief profond */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               boxShadow: `
+                 0 8px 32px rgba(0, 0, 0, 0.8),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        {/* Accent or - bordure partielle */}
+        <div className="absolute inset-[3px] rounded-[17px] border-t border-r border-yellow-700/25" />
+        {/* Points d'accent or */}
+        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-yellow-600/35 shadow-[0_0_8px_rgba(234,179,8,0.3)]" />
+        <div className="absolute top-3.5 right-3.5 w-1 h-1 rounded-full bg-yellow-500/25" />
       </div>
     )
   },
@@ -55,21 +90,26 @@ const RANK_TIERS = [
     name: 'Platinum', 
     description: '90 day streak + 60h Focus',
     iconComponent: () => (
-      <div className="w-20 h-20 rounded-full relative">
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-300 via-slate-400 to-cyan-300 shadow-[0_8px_32px_rgba(103,232,249,0.5),inset_0_2px_4px_rgba(255,255,255,0.4),inset_0_-2px_8px_rgba(0,0,0,0.3)]" />
-        <div className="absolute inset-2 rounded-full border-2 border-cyan-200/40" />
+      <div className="w-20 h-20 relative">
+        {/* Base noire avec relief profond */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               boxShadow: `
+                 0 8px 32px rgba(0, 0, 0, 0.8),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        {/* Accent platine - croix subtile */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-                  fill="url(#platGrad)" stroke="rgba(103,232,249,0.8)" strokeWidth="1.5" />
-            <defs>
-              <linearGradient id="platGrad" x1="12" y1="2" x2="12" y2="21">
-                <stop offset="0%" stopColor="rgba(165,243,252,1)" />
-                <stop offset="100%" stopColor="rgba(103,232,249,0.6)" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-slate-400/20 to-transparent" />
+          <div className="absolute w-8 h-[1px] bg-gradient-to-r from-transparent via-slate-400/20 to-transparent" />
         </div>
+        {/* Points d'accent platine */}
+        <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-slate-300/25 shadow-[0_0_6px_rgba(148,163,184,0.2)]" />
+        <div className="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-300/25 shadow-[0_0_6px_rgba(148,163,184,0.2)]" />
       </div>
     )
   },
@@ -79,28 +119,30 @@ const RANK_TIERS = [
     description: '180 day streak + 200h Focus',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
+        {/* Base noire avec relief profond */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               boxShadow: `
+                 0 8px 32px rgba(0, 0, 0, 0.8),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        {/* Accent diamant - forme géométrique cristalline */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <linearGradient id="diamondGrad" x1="50" y1="10" x2="50" y2="90">
-                <stop offset="0%" stopColor="rgba(147,197,253,1)" />
-                <stop offset="50%" stopColor="rgba(96,165,250,1)" />
-                <stop offset="100%" stopColor="rgba(59,130,246,0.8)" />
-              </linearGradient>
-              <filter id="diamondGlow">
-                <feGaussianBlur stdDeviation="2" />
-              </filter>
-            </defs>
-            <path d="M50 10 L70 35 L60 80 L40 80 L30 35 Z" 
-                  fill="url(#diamondGrad)" 
-                  stroke="rgba(147,197,253,0.9)" 
-                  strokeWidth="2"
-                  filter="drop-shadow(0 4px 16px rgba(59,130,246,0.5))" />
-            <path d="M30 35 L50 50 L70 35" stroke="rgba(191,219,254,0.6)" strokeWidth="1.5" />
-            <path d="M50 50 L40 80" stroke="rgba(191,219,254,0.4)" strokeWidth="1.5" />
-            <path d="M50 50 L60 80" stroke="rgba(191,219,254,0.4)" strokeWidth="1.5" />
+          <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none">
+            <path d="M20 4 L28 14 L24 32 L16 32 L12 14 Z" 
+                  fill="none"
+                  stroke="rgba(96,165,250,0.25)" 
+                  strokeWidth="1.2" />
+            <line x1="12" y1="14" x2="20" y2="20" stroke="rgba(147,197,253,0.15)" strokeWidth="0.8" />
+            <line x1="28" y1="14" x2="20" y2="20" stroke="rgba(147,197,253,0.15)" strokeWidth="0.8" />
           </svg>
         </div>
+        {/* Points lumineux diamant */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400/30 shadow-[0_0_8px_rgba(96,165,250,0.4)]" />
       </div>
     )
   },
@@ -110,28 +152,47 @@ const RANK_TIERS = [
     description: '365 day streak + 200h Focus + 100h CEO',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <linearGradient id="batGrad" x1="50" y1="20" x2="50" y2="80">
-                <stop offset="0%" stopColor="rgba(24,24,27,1)" />
-                <stop offset="100%" stopColor="rgba(0,0,0,1)" />
-              </linearGradient>
-            </defs>
-            <path d="M50 35 Q30 25, 20 30 Q15 35, 18 45 Q20 50, 30 48 Q40 46, 50 55 Q60 46, 70 48 Q80 50, 82 45 Q85 35, 80 30 Q70 25, 50 35 Z" 
-                  fill="url(#batGrad)" 
-                  stroke="rgba(113,113,122,0.8)" 
-                  strokeWidth="1.5"
-                  filter="drop-shadow(0 4px 16px rgba(0,0,0,0.8))" />
-            <circle cx="40" cy="42" r="3" fill="rgba(239,68,68,0.9)" />
-            <circle cx="60" cy="42" r="3" fill="rgba(239,68,68,0.9)" />
-            <path d="M25 55 Q30 65, 50 70 Q70 65, 75 55" 
-                  stroke="rgba(24,24,27,1)" 
-                  strokeWidth="8" 
-                  strokeLinecap="round"
-                  fill="none" />
-          </svg>
-        </div>
+        {/* Réplication exacte de l'image Batman - fond gris foncé arrondi */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
+               boxShadow: `
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
+               `
+             }}
+        />
+        
+        {/* Carré intérieur noir profond - réplication exacte */}
+        <div className="absolute inset-[12px] rounded-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 50%, #09090b 100%)',
+               boxShadow: `
+                 inset 0 3px 8px rgba(0, 0, 0, 0.9),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.02),
+                 0 1px 0 rgba(255, 255, 255, 0.03)
+               `
+             }}
+        />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
@@ -141,30 +202,69 @@ const RANK_TIERS = [
     description: '500 day streak + 250h Focus + 250h CEO',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <linearGradient id="crownGrad" x1="50" y1="25" x2="50" y2="75">
-                <stop offset="0%" stopColor="rgba(250,204,21,1)" />
-                <stop offset="50%" stopColor="rgba(234,179,8,1)" />
-                <stop offset="100%" stopColor="rgba(202,138,4,1)" />
-              </linearGradient>
-              <filter id="crownGlow">
-                <feGaussianBlur stdDeviation="3" />
-                <feColorMatrix type="saturate" values="2"/>
-              </filter>
-            </defs>
-            <path d="M25 70 L25 50 L35 55 L50 35 L65 55 L75 50 L75 70 Z" 
-                  fill="url(#crownGrad)" 
-                  stroke="rgba(250,204,21,0.9)" 
-                  strokeWidth="2"
-                  filter="drop-shadow(0 4px 20px rgba(234,179,8,0.7))" />
-            <circle cx="25" cy="50" r="4" fill="rgba(239,68,68,0.9)" />
-            <circle cx="50" cy="35" r="4" fill="rgba(239,68,68,0.9)" />
-            <circle cx="75" cy="50" r="4" fill="rgba(239,68,68,0.9)" />
-            <rect x="30" y="60" width="40" height="8" rx="1" fill="rgba(202,138,4,1)" />
-          </svg>
+        {/* Fond noir mat */}
+        <div className="absolute inset-0 rounded-[20px]"
+             style={{
+               background: '#1a1a1a',
+               boxShadow: `
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.02)
+               `
+             }}
+        />
+        
+        {/* Cercle extérieur doré - texture métallique brossée */}
+        <div className="absolute inset-[6px] rounded-full"
+             style={{
+               background: 'linear-gradient(135deg, #f5d97f 0%, #d4a843 25%, #c89b3c 50%, #b88a2f 75%, #9a7728 100%)',
+               boxShadow: `
+                 0 4px 16px rgba(234, 179, 8, 0.4),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.15),
+                 inset 0 -2px 4px rgba(0, 0, 0, 0.4)
+               `,
+             }}
+        />
+        
+        {/* Espace noir entre les cercles */}
+        <div className="absolute inset-[10px] rounded-full bg-black shadow-[inset_0_2px_8px_rgba(0,0,0,0.9)]" />
+        
+        {/* Cercle intérieur doré - partie supérieure */}
+        <div className="absolute inset-[14px] rounded-full overflow-hidden">
+          {/* Partie dorée supérieure avec texture */}
+          <div className="absolute inset-0"
+               style={{
+                 background: 'linear-gradient(180deg, #f5d97f 0%, #d4a843 30%, #c89b3c 60%, #b88a2f 100%)',
+                 clipPath: 'ellipse(100% 60% at 50% 0%)'
+               }}
+          />
+          
+          {/* Partie argentée inférieure avec texture */}
+          <div className="absolute inset-0"
+               style={{
+                 background: 'linear-gradient(0deg, #71717a 0%, #a1a1aa 30%, #d4d4d8 50%, #a1a1aa 70%, #71717a 100%)',
+                 clipPath: 'ellipse(100% 50% at 50% 100%)'
+               }}
+          />
+          
+          {/* Ombre intérieure pour le relief */}
+          <div className="absolute inset-0 rounded-full"
+               style={{
+                 boxShadow: 'inset 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+               }}
+          />
         </div>
+        
+        {/* Centre noir profond */}
+        <div className="absolute inset-[22px] rounded-full"
+             style={{
+               background: 'radial-gradient(circle, #0a0a0a 0%, #000000 100%)',
+               boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.95)'
+             }}
+        />
+        
+        {/* Reflets lumineux sur l'or */}
+        <div className="absolute top-[14px] left-[18px] w-6 h-1 rounded-full bg-gradient-to-r from-transparent via-yellow-200/20 to-transparent blur-[0.5px]" />
+        <div className="absolute bottom-[18px] right-[20px] w-4 h-0.5 rounded-full bg-gradient-to-r from-transparent via-gray-300/15 to-transparent blur-[0.5px]" />
       </div>
     )
   }
