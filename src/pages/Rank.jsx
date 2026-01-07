@@ -14,21 +14,47 @@ const RANK_TIERS = [
     description: 'Starting rank',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        {/* Base noire avec relief profond */}
+        {/* Réplication exacte structure Batman - fond gris foncé arrondi */}
         <div className="absolute inset-0 rounded-[20px]"
              style={{
-               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
                boxShadow: `
-                 0 8px 32px rgba(0, 0, 0, 0.8),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
                `
              }}
         />
-        {/* Accent bronze subtil - bord fin */}
-        <div className="absolute inset-[3px] rounded-[17px] border border-amber-900/20" />
-        {/* Point d'accent bronze */}
-        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-800/40 shadow-[0_0_6px_rgba(217,119,6,0.3)]" />
+        
+        {/* Carré intérieur BRONZE - texture métallique brossée */}
+        <div className="absolute inset-[12px] rounded-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #cd7f32 0%, #b87333 25%, #8b5a2b 50%, #a0664f 75%, #cd7f32 100%)',
+               boxShadow: `
+                 inset 0 3px 8px rgba(0, 0, 0, 0.5),
+                 inset 0 1px 0 rgba(255, 200, 150, 0.15),
+                 0 1px 0 rgba(255, 255, 255, 0.03)
+               `
+             }}
+        />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
@@ -38,25 +64,47 @@ const RANK_TIERS = [
     description: '15 days + 10 day streak',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        {/* Base noire avec relief profond */}
+        {/* Réplication exacte structure Batman - fond gris foncé arrondi */}
         <div className="absolute inset-0 rounded-[20px]"
              style={{
-               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
                boxShadow: `
-                 0 8px 32px rgba(0, 0, 0, 0.8),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
                `
              }}
         />
-        {/* Accent argent - ligne diagonale */}
-        <div className="absolute inset-[3px] rounded-[17px]">
-          <div className="absolute top-0 right-0 w-12 h-[1px] bg-gradient-to-r from-transparent via-gray-500/30 to-transparent transform rotate-45 origin-top-right" 
-               style={{ transformOrigin: 'top right' }} />
-        </div>
-        {/* Points d'accent argent */}
-        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-gray-400/30 shadow-[0_0_6px_rgba(156,163,175,0.25)]" />
-        <div className="absolute bottom-2 left-2 w-1 h-1 rounded-full bg-gray-400/20" />
+        
+        {/* Carré intérieur ARGENT - texture métallique brossée */}
+        <div className="absolute inset-[12px] rounded-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 25%, #a8a8a8 50%, #d3d3d3 75%, #e8e8e8 100%)',
+               boxShadow: `
+                 inset 0 3px 8px rgba(0, 0, 0, 0.5),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                 0 1px 0 rgba(255, 255, 255, 0.03)
+               `
+             }}
+        />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
@@ -66,22 +114,47 @@ const RANK_TIERS = [
     description: '50 day streak',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        {/* Base noire avec relief profond */}
+        {/* Réplication exacte structure Batman - fond gris foncé arrondi */}
         <div className="absolute inset-0 rounded-[20px]"
              style={{
-               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
                boxShadow: `
-                 0 8px 32px rgba(0, 0, 0, 0.8),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
                `
              }}
         />
-        {/* Accent or - bordure partielle */}
-        <div className="absolute inset-[3px] rounded-[17px] border-t border-r border-yellow-700/25" />
-        {/* Points d'accent or */}
-        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-yellow-600/35 shadow-[0_0_8px_rgba(234,179,8,0.3)]" />
-        <div className="absolute top-3.5 right-3.5 w-1 h-1 rounded-full bg-yellow-500/25" />
+        
+        {/* Carré intérieur OR - texture métallique brossée */}
+        <div className="absolute inset-[12px] rounded-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #d4af37 50%, #f9d71c 75%, #ffd700 100%)',
+               boxShadow: `
+                 inset 0 3px 8px rgba(0, 0, 0, 0.5),
+                 inset 0 1px 0 rgba(255, 255, 220, 0.2),
+                 0 1px 0 rgba(255, 255, 255, 0.03)
+               `
+             }}
+        />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
@@ -91,25 +164,47 @@ const RANK_TIERS = [
     description: '90 day streak + 60h Focus',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        {/* Base noire avec relief profond */}
+        {/* Réplication exacte structure Batman - fond gris foncé arrondi */}
         <div className="absolute inset-0 rounded-[20px]"
              style={{
-               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
                boxShadow: `
-                 0 8px 32px rgba(0, 0, 0, 0.8),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
                `
              }}
         />
-        {/* Accent platine - croix subtile */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-slate-400/20 to-transparent" />
-          <div className="absolute w-8 h-[1px] bg-gradient-to-r from-transparent via-slate-400/20 to-transparent" />
-        </div>
-        {/* Points d'accent platine */}
-        <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-slate-300/25 shadow-[0_0_6px_rgba(148,163,184,0.2)]" />
-        <div className="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-slate-300/25 shadow-[0_0_6px_rgba(148,163,184,0.2)]" />
+        
+        {/* Carré intérieur PLATINE - texture métallique brossée argentée brillante */}
+        <div className="absolute inset-[12px] rounded-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #e5e4e2 0%, #d0d0d0 25%, #bfc0c0 50%, #e8e8e8 75%, #e5e4e2 100%)',
+               boxShadow: `
+                 inset 0 3px 8px rgba(0, 0, 0, 0.5),
+                 inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                 0 1px 0 rgba(255, 255, 255, 0.03)
+               `
+             }}
+        />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
@@ -119,30 +214,69 @@ const RANK_TIERS = [
     description: '180 day streak + 200h Focus',
     iconComponent: () => (
       <div className="w-20 h-20 relative">
-        {/* Base noire avec relief profond */}
+        {/* Réplication exacte structure Batman - fond gris foncé arrondi */}
         <div className="absolute inset-0 rounded-[20px]"
              style={{
-               background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 50%, #27272a 100%)',
                boxShadow: `
-                 0 8px 32px rgba(0, 0, 0, 0.8),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                 inset 0 -2px 4px rgba(0, 0, 0, 0.6)
+                 0 10px 40px rgba(0, 0, 0, 0.9),
+                 inset 0 2px 2px rgba(255, 255, 255, 0.05),
+                 inset 0 -4px 8px rgba(0, 0, 0, 0.6)
                `
              }}
         />
-        {/* Accent diamant - forme géométrique cristalline */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg className="w-10 h-10" viewBox="0 0 40 40" fill="none">
-            <path d="M20 4 L28 14 L24 32 L16 32 L12 14 Z" 
-                  fill="none"
-                  stroke="rgba(96,165,250,0.25)" 
-                  strokeWidth="1.2" />
-            <line x1="12" y1="14" x2="20" y2="20" stroke="rgba(147,197,253,0.15)" strokeWidth="0.8" />
-            <line x1="28" y1="14" x2="20" y2="20" stroke="rgba(147,197,253,0.15)" strokeWidth="0.8" />
-          </svg>
+        
+        {/* Carré intérieur DIAMANT - texture cristalline avec facettes */}
+        <div className="absolute inset-[12px] rounded-[14px] overflow-hidden">
+          {/* Base diamant avec dégradé cristallin */}
+          <div className="absolute inset-0"
+               style={{
+                 background: `
+                   linear-gradient(135deg, 
+                     #b9f2ff 0%, 
+                     #7dd3fc 20%, 
+                     #38bdf8 40%, 
+                     #0ea5e9 60%, 
+                     #7dd3fc 80%, 
+                     #b9f2ff 100%
+                   )`,
+                 boxShadow: `
+                   inset 0 3px 8px rgba(0, 0, 0, 0.5),
+                   inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                   0 1px 0 rgba(255, 255, 255, 0.03)
+                 `
+               }}
+          />
+          {/* Effet de facettes - reflets cristallins */}
+          <div className="absolute top-0 left-0 right-1/2 bottom-1/2"
+               style={{
+                 background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)'
+               }}
+          />
+          <div className="absolute bottom-0 right-0 left-1/2 top-1/2"
+               style={{
+                 background: 'linear-gradient(315deg, rgba(0,0,0,0.15) 0%, transparent 100%)'
+               }}
+          />
         </div>
-        {/* Points lumineux diamant */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400/30 shadow-[0_0_8px_rgba(96,165,250,0.4)]" />
+        
+        {/* Coins coupés caractéristiques - haut gauche et bas droite */}
+        <div className="absolute top-[12px] left-[12px] w-3 h-3 rounded-tl-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #52525b 0%, #3f3f46 100%)',
+               clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+             }}
+        />
+        <div className="absolute bottom-[12px] right-[12px] w-3 h-3 rounded-br-[14px]"
+             style={{
+               background: 'linear-gradient(135deg, #27272a 0%, #18181b 100%)',
+               clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+             }}
+        />
+        
+        {/* Lignes de contour subtiles argentées */}
+        <div className="absolute top-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/15 to-transparent" />
+        <div className="absolute bottom-[11px] left-[15px] right-[15px] h-[1px] bg-gradient-to-r from-transparent via-zinc-400/10 to-transparent" />
       </div>
     )
   },
