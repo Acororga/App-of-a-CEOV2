@@ -293,7 +293,7 @@ export default function Pareto() {
                   <div className="flex items-center gap-3">
                     <div className="w-1 h-8 bg-white rounded-full shadow-[0_0_12px_rgba(255,255,255,0.5)]" />
                     <h2 className="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
-                      YOUR PRIORITIES
+                      {t('yourPriorities')}
                     </h2>
                   </div>
                   {!showAddForm && (
@@ -458,7 +458,7 @@ export default function Pareto() {
               onClick={() => setActiveTab('matrix')}
               className="mt-8 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
             >
-              Swipe right for Matrix view →
+              {t('swipeRightForMatrix')}
             </button>
           </>
         )}
@@ -468,9 +468,9 @@ export default function Pareto() {
           <div className="space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-                Pareto Matrix
+                {t('paretoMatrix')}
               </h1>
-              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Impact vs Time Investment</div>
+              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">{t('impactVsTime')}</div>
             </div>
 
             {/* Matrix with visible axes */}
@@ -485,8 +485,8 @@ export default function Pareto() {
                   <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl blur-xl" />
                   <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-red-700/40 min-h-[280px]">
                     <div className="mb-3">
-                      <div className="text-xs font-black text-red-300 uppercase tracking-wider mb-1">DO NOW</div>
-                      <div className="text-[10px] text-red-400/60">Quick • High Impact</div>
+                      <div className="text-xs font-black text-red-300 uppercase tracking-wider mb-1">{t('doNow')}</div>
+                      <div className="text-[10px] text-red-400/60">{t('quickHighImpact')}</div>
                     </div>
                     <div className="space-y-2">
                       {quickImportant.map(task => (
@@ -499,7 +499,7 @@ export default function Pareto() {
                         </button>
                       ))}
                       {quickImportant.length === 0 && (
-                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                        <div className="text-center py-8 text-zinc-700 text-xs">{t('empty')}</div>
                       )}
                     </div>
                   </div>
@@ -510,8 +510,8 @@ export default function Pareto() {
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl" />
                   <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-blue-700/40 min-h-[280px]">
                     <div className="mb-3">
-                      <div className="text-xs font-black text-blue-300 uppercase tracking-wider mb-1">PLAN</div>
-                      <div className="text-[10px] text-blue-400/60">Takes Time • High Impact</div>
+                      <div className="text-xs font-black text-blue-300 uppercase tracking-wider mb-1">{t('plan')}</div>
+                      <div className="text-[10px] text-blue-400/60">{t('takesTimeHighImpact')}</div>
                     </div>
                     <div className="space-y-2">
                       {slowImportant.map(task => (
@@ -524,7 +524,7 @@ export default function Pareto() {
                         </button>
                       ))}
                       {slowImportant.length === 0 && (
-                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                        <div className="text-center py-8 text-zinc-700 text-xs">{t('empty')}</div>
                       )}
                     </div>
                   </div>
@@ -535,8 +535,8 @@ export default function Pareto() {
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl" />
                   <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-yellow-700/40 min-h-[280px]">
                     <div className="mb-3">
-                      <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">DELEGATE</div>
-                      <div className="text-[10px] text-yellow-400/60">Quick • Low Impact</div>
+                      <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">{t('delegate')}</div>
+                      <div className="text-[10px] text-yellow-400/60">{t('quickLowImpact')}</div>
                     </div>
                     <div className="space-y-2">
                       {quickNotImportant.map(task => (
@@ -549,7 +549,7 @@ export default function Pareto() {
                         </button>
                       ))}
                       {quickNotImportant.length === 0 && (
-                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                        <div className="text-center py-8 text-zinc-700 text-xs">{t('empty')}</div>
                       )}
                     </div>
                   </div>
@@ -560,8 +560,8 @@ export default function Pareto() {
                   <div className="absolute inset-0 bg-gradient-to-br from-zinc-600/20 to-zinc-500/20 rounded-2xl blur-xl" />
                   <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-zinc-700/40 min-h-[280px]">
                     <div className="mb-3">
-                      <div className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">ELIMINATE</div>
-                      <div className="text-[10px] text-zinc-500/60">Takes Time • Low Impact</div>
+                      <div className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">{t('eliminate')}</div>
+                      <div className="text-[10px] text-zinc-500/60">{t('takesTimeLowImpact')}</div>
                     </div>
                     <div className="space-y-2">
                       {slowNotImportant.map(task => (
@@ -574,7 +574,7 @@ export default function Pareto() {
                         </button>
                       ))}
                       {slowNotImportant.length === 0 && (
-                        <div className="text-center py-8 text-zinc-700 text-xs">Empty</div>
+                        <div className="text-center py-8 text-zinc-700 text-xs">{t('empty')}</div>
                       )}
                     </div>
                   </div>
@@ -584,10 +584,10 @@ export default function Pareto() {
 
             <div className="mt-6 flex justify-center gap-4 text-xs text-zinc-600">
               <button onClick={() => setActiveTab('list')} className="hover:text-zinc-400 transition-colors">
-                ← Swipe left for list
+                {t('swipeLeftForList')}
               </button>
               <button onClick={() => setActiveTab('history')} className="hover:text-zinc-400 transition-colors">
-                Swipe right for history →
+                {t('swipeRightForHistory')}
               </button>
             </div>
           </div>
@@ -598,9 +598,9 @@ export default function Pareto() {
           <div className="space-y-6">
             <div className="mb-6">
               <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-                All Tasks
+                {t('allTasks')}
               </h1>
-              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">Complete History</div>
+              <div className="text-xs text-zinc-700 font-semibold uppercase tracking-widest">{t('completeHistory')}</div>
             </div>
 
             <div className="space-y-3">
@@ -659,7 +659,7 @@ export default function Pareto() {
                 ))
               ) : (
                 <div className="text-center py-16">
-                  <div className="text-zinc-600 mb-2">No tasks</div>
+                  <div className="text-zinc-600 mb-2">{t('noTasks')}</div>
                   <button
                     onClick={() => {
                       setActiveTab('list');
@@ -667,7 +667,7 @@ export default function Pareto() {
                     }}
                     className="text-sm text-blue-400 hover:text-blue-300"
                   >
-                    Add your first task
+                    {t('addYourFirstTask')}
                   </button>
                 </div>
               )}
@@ -677,7 +677,7 @@ export default function Pareto() {
               onClick={() => setActiveTab('matrix')}
               className="mt-6 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
             >
-              ← Swipe left to return to matrix
+              {t('swipeLeftToReturn')}
             </button>
           </div>
         )}

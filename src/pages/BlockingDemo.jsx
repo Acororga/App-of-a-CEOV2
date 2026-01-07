@@ -28,7 +28,7 @@ export default function BlockingDemo() {
           </Link>
           
           <h1 className="text-xl font-black bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Blocking Preview
+            {t('blockingPreview')}
           </h1>
           
           <div className="w-20" />
@@ -36,34 +36,34 @@ export default function BlockingDemo() {
 
         <div className="space-y-4">
           <div className="p-6 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
-            <h2 className="text-base font-bold text-white mb-2">Normal Mode Blocking</h2>
+            <h2 className="text-base font-bold text-white mb-2">{t('normalModeBlocking')}</h2>
             <p className="text-xs text-zinc-500 mb-4">
-              When a blocked app is accessed in normal mode, this screen appears with increased friction.
+              {t('whenBlockedAppAccessed')}
             </p>
             <Button
               onClick={() => setShowNormalBlock(true)}
               className="bg-white text-black hover:bg-zinc-200"
             >
-              Preview Normal Mode Block
+              {t('previewNormalMode')}
             </Button>
           </div>
 
           <div className="p-6 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
-            <h2 className="text-base font-bold text-white mb-2">Focus Mode Blocking</h2>
+            <h2 className="text-base font-bold text-white mb-2">{t('focusModeBlocking')}</h2>
             <p className="text-xs text-zinc-500 mb-4">
-              During Focus Mode, blocked apps show a stricter screen with win streak warnings.
+              {t('duringFocusMode')}
             </p>
             <Button
               onClick={() => setShowFocusBlock(true)}
               className="bg-white text-black hover:bg-zinc-200"
             >
-              Preview Focus Mode Block
+              {t('previewFocusMode')}
             </Button>
           </div>
 
           <div className="p-5 rounded-xl bg-blue-950/20 border border-blue-900/30">
             <p className="text-xs text-blue-300/80 leading-relaxed">
-              <span className="font-bold">Note:</span> In a production environment, these blocking screens would be triggered automatically by a browser extension or mobile app when detecting access to blocked apps/websites.
+              <span className="font-bold">{t('note')}:</span> {t('productionNote')}
             </p>
           </div>
         </div>
