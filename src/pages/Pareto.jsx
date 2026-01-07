@@ -216,7 +216,6 @@ export default function Pareto() {
             exit={{ x: direction * -300, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-          <>
             <div className="mb-10">
               <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-red-100 to-orange-100 bg-clip-text text-transparent tracking-tight">
                 {t('todo')}
