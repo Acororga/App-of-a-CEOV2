@@ -686,7 +686,7 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
   const weekStart = typeof weekStartDate === 'string' ? parseISO(weekStartDate) : weekStartDate;
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
   
-  let totalExpected = 0;
+  let totalValidated = 0;
   let totalCompleted = 0;
   
   for (let i = 0; i < 7; i++) {
@@ -694,23 +694,29 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
     const habits = await getHabitsForDate(currentDay);
     const completions = await getHabitCompletionsForDate(currentDay);
     
-    totalExpected += habits.length;
-    
     const completionMap = {};
     completions.forEach(c => {
-      const isCompleted = c.completed || c.state === 'completed';
-      completionMap[c.habit_id] = isCompleted;
+      // Ne compter que les habitudes validées (completed ou missed)
+      if (c.state === 'completed' || c.state === 'missed') {
+        completionMap[c.habit_id] = {
+          validated: true,
+          completed: c.state === 'completed' || c.completed === true
+        };
+      }
     });
     
     habits.forEach(habit => {
-      if (completionMap[habit.id]) {
-        totalCompleted++;
+      if (completionMap[habit.id]?.validated) {
+        totalValidated++;
+        if (completionMap[habit.id].completed) {
+          totalCompleted++;
+        }
       }
     });
   }
   
-  const successPercentage = totalExpected > 0 
-    ? Math.round((totalCompleted / totalExpected) * 100)
+  const successPercentage = totalValidated > 0 
+    ? Math.round((totalCompleted / totalValidated) * 100)
     : 0;
   
   const threshold = 90;
@@ -724,7 +730,7 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
   const scoreData = {
     week_start_date: format(weekStart, 'yyyy-MM-dd'),
     week_end_date: format(weekEnd, 'yyyy-MM-dd'),
-    total_expected: totalExpected,
+    total_expected: totalValidated,
     total_completed: totalCompleted,
     success_percentage: successPercentage,
     threshold_percentage: threshold,

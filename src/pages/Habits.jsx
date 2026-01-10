@@ -58,7 +58,7 @@ export default function Habits() {
   const weeklyScore = React.useMemo(() => {
     if (!habits || habits.length === 0 || !allCompletions) return null;
 
-    let totalExpected = 0;
+    let totalValidated = 0;
     let totalCompleted = 0;
 
     for (let i = 0; i < 7; i++) {
@@ -69,26 +69,29 @@ export default function Habits() {
       habits.forEach(habit => {
         const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
         if (isScheduled) {
-          totalExpected++;
-          
           const completion = allCompletions.find(c => 
             c.habit_id === habit.id && 
             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
           );
           
-          if (completion?.state === 'completed' || completion?.completed === true) {
-            totalCompleted++;
+          // Ne compter que les habitudes validées (completed ou missed)
+          if (completion?.state === 'completed' || completion?.state === 'missed') {
+            totalValidated++;
+            
+            if (completion.state === 'completed' || completion.completed === true) {
+              totalCompleted++;
+            }
           }
         }
       });
     }
 
-    const successPercentage = totalExpected > 0 
-      ? Math.round((totalCompleted / totalExpected) * 100)
+    const successPercentage = totalValidated > 0 
+      ? Math.round((totalCompleted / totalValidated) * 100)
       : 0;
 
     return {
-      total_expected: totalExpected,
+      total_expected: totalValidated,
       total_completed: totalCompleted,
       success_percentage: successPercentage,
       threshold_percentage: 90,

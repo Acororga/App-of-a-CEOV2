@@ -146,16 +146,16 @@ export default function Pareto() {
     const isRightSwipe = distance < -minSwipeDistance;
 
     if (isLeftSwipe && activeTab === 'list') {
-      setDirection(1);
+      setDirection(-1);
       setActiveTab('matrix');
     } else if (isLeftSwipe && activeTab === 'matrix') {
-      setDirection(1);
+      setDirection(-1);
       setActiveTab('history');
     } else if (isRightSwipe && activeTab === 'matrix') {
-      setDirection(-1);
+      setDirection(1);
       setActiveTab('list');
     } else if (isRightSwipe && activeTab === 'history') {
-      setDirection(-1);
+      setDirection(1);
       setActiveTab('matrix');
     }
   };
