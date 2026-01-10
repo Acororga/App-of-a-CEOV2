@@ -8,16 +8,21 @@ import { ArrowLeft, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { differenceInSeconds, parseISO } from 'date-fns';
 import { useLanguage } from '../components/LanguageProvider.jsx';
+import { usePremium } from '../components/PremiumProvider';
+import { canStartFocusSession, PREMIUM_LIMITS } from '../components/premiumLimits';
+import PremiumGate from '../components/PremiumGate';
 import CooldownScreen from '../components/blocking/CooldownScreen';
 
 export default function FocusMode() {
   const { t } = useLanguage();
+  const { isPremiumUser } = usePremium();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [duration, setDuration] = useState(45);
   const [activeSession, setActiveSession] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [premiumBlock, setPremiumBlock] = useState(null);
 
   const { data: streak } = useQuery({
     queryKey: ['winStreak'],
@@ -72,12 +77,25 @@ export default function FocusMode() {
 
   const startMutation = useMutation({
     mutationFn: async (mins) => {
+      // Vérifier les limites premium
+      const check = await canStartFocusSession(isPremiumUser, mins);
+      if (!check.allowed) {
+        setPremiumBlock(check);
+        throw new Error('Premium limit reached');
+      }
+
       const session = await startFocusSession(mins);
       return session;
     },
     onSuccess: (session) => {
       setActiveSession(session);
       queryClient.invalidateQueries(['activeSessions']);
+      setPremiumBlock(null);
+    },
+    onError: (error) => {
+      if (error.message !== 'Premium limit reached') {
+        console.error('Focus session error:', error);
+      }
     }
   });
 
@@ -224,6 +242,28 @@ export default function FocusMode() {
     );
   }
 
+  // Bloquer si limite premium atteinte
+  if (premiumBlock) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative">
+        <div className="max-w-md mx-auto">
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">{t('home')}</span>
+          </Link>
+          
+          <PremiumGate
+            feature={premiumBlock.reason}
+            limit={premiumBlock.limit}
+            current={premiumBlock.current}
+          >
+            {null}
+          </PremiumGate>
+        </div>
+      </div>
+    );
+  }
+
   // Session setup state
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -240,20 +280,27 @@ export default function FocusMode() {
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-8">
-          {[25, 45, 90].map(mins => (
-            <button
-              key={mins}
-              onClick={() => setDuration(mins)}
-              className={`p-6 rounded-xl border transition-all ${
-                duration === mins
-                  ? 'bg-purple-600 border-purple-500'
-                  : 'bg-gray-900 border-gray-800 hover:border-gray-700'
-              }`}
-            >
-              <div className="text-2xl font-bold">{mins}</div>
-              <div className="text-xs text-gray-400">{t('min')}</div>
-            </button>
-          ))}
+          {[25, 45, 90].map(mins => {
+            const isDisabled = !isPremiumUser && mins > PREMIUM_LIMITS.FOCUS_MAX_DURATION_MINUTES;
+            
+            return (
+              <button
+                key={mins}
+                onClick={() => !isDisabled && setDuration(mins)}
+                disabled={isDisabled}
+                className={`p-6 rounded-xl border transition-all ${
+                  duration === mins
+                    ? 'bg-purple-600 border-purple-500'
+                    : isDisabled
+                    ? 'bg-gray-950 border-gray-900 opacity-40 cursor-not-allowed'
+                    : 'bg-gray-900 border-gray-800 hover:border-gray-700'
+                }`}
+              >
+                <div className="text-2xl font-bold">{mins}</div>
+                <div className="text-xs text-gray-400">{t('min')}</div>
+              </button>
+            );
+          })}
         </div>
 
         <div className="mb-8">

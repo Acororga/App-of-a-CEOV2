@@ -11,9 +11,12 @@ import {
 import { format } from 'date-fns';
 import { Cake } from 'lucide-react';
 import { useLanguage } from '../LanguageProvider';
+import { usePremium } from '../PremiumProvider';
+import { canAccessAdvancedCalendar } from '../premiumLimits';
 
 export default function EventModal({ open, onClose, onSubmit, initialData }) {
   const { t } = useLanguage();
+  const { isPremiumUser } = usePremium();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -63,10 +66,18 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <button
             type="button"
-            onClick={() => setFormData({ ...formData, is_birthday: !formData.is_birthday })}
+            onClick={() => {
+              if (!isPremiumUser && !canAccessAdvancedCalendar(isPremiumUser).allowed) {
+                return;
+              }
+              setFormData({ ...formData, is_birthday: !formData.is_birthday });
+            }}
+            disabled={!isPremiumUser && !canAccessAdvancedCalendar(isPremiumUser).allowed}
             className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 ${
               formData.is_birthday
                 ? 'bg-gradient-to-br from-pink-950/60 to-purple-950/60 border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.3)]'
+                : (!isPremiumUser && !canAccessAdvancedCalendar(isPremiumUser).allowed)
+                ? 'bg-zinc-900/30 border-zinc-800/40 opacity-50 cursor-not-allowed'
                 : 'bg-zinc-800/30 border-zinc-700/50 hover:border-zinc-600/50'
             }`}
           >
@@ -80,6 +91,9 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
             <div className="flex-1 text-left">
               <div className={`font-bold text-sm ${formData.is_birthday ? 'text-pink-200' : 'text-zinc-400'}`}>
                 🎂 {t('birthday')}
+                {!isPremiumUser && !canAccessAdvancedCalendar(isPremiumUser).allowed && (
+                  <span className="ml-2 text-xs text-amber-400 font-semibold">Premium</span>
+                )}
               </div>
               <div className="text-xs text-zinc-500">
                 {formData.is_birthday ? t('modeActivated') : t('clickToActivate')}

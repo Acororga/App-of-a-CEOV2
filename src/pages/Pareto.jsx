@@ -16,9 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from '../components/LanguageProvider.jsx';
+import { usePremium } from '../components/PremiumProvider';
+import { canCreateTask } from '../components/premiumLimits';
+import PremiumGate from '../components/PremiumGate';
 
 export default function Pareto() {
   const { t } = useLanguage();
+  const { isPremiumUser } = usePremium();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('list');
@@ -26,6 +30,7 @@ export default function Pareto() {
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [premiumBlock, setPremiumBlock] = useState(null);
   const [newTask, setNewTask] = useState({
     title: '',
     time_duration: '1_hour',
@@ -45,6 +50,14 @@ export default function Pareto() {
 
   const createTaskMutation = useMutation({
     mutationFn: async (taskData) => {
+      // Vérifier les limites premium
+      const check = await canCreateTask(isPremiumUser);
+      if (!check.allowed) {
+        setPremiumBlock(check);
+        setShowAddForm(false);
+        throw new Error('Premium limit reached');
+      }
+
       const user = await base44.auth.me();
       return await base44.entities.ParetoTask.create({
         ...taskData,
@@ -55,6 +68,12 @@ export default function Pareto() {
       queryClient.invalidateQueries(['paretoTasks']);
       setShowAddForm(false);
       setNewTask({ title: '', time_duration: '1_hour', importance_level: 'crucial' });
+      setPremiumBlock(null);
+    },
+    onError: (error) => {
+      if (error.message !== 'Premium limit reached') {
+        console.error('Task creation error:', error);
+      }
     }
   });
 
@@ -211,6 +230,19 @@ export default function Pareto() {
 
           <div className="w-20" />
         </div>
+
+        {premiumBlock && (
+          <div className="mb-6">
+            <PremiumGate
+              feature={premiumBlock.reason}
+              limit={premiumBlock.limit}
+              current={premiumBlock.current}
+              compact={true}
+            >
+              {null}
+            </PremiumGate>
+          </div>
+        )}
 
         {/* Tabs with swipe animation */}
         <AnimatePresence mode="wait" custom={direction}>
