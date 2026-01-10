@@ -8,11 +8,15 @@ import { Button } from '@/components/ui/button';
 import { differenceInMinutes, addMinutes, parseISO } from 'date-fns';
 import { useLanguage } from '../components/LanguageProvider';
 import { resetWinStreak } from '../components/businessLogic';
+import { usePremium } from '../components/PremiumProvider';
+import { canStartCEOSession, PREMIUM_LIMITS } from '../components/premiumLimits';
+import PremiumGate from '../components/PremiumGate';
 import CEOExitConfirmation from '../components/blocking/CEOExitConfirmation';
 import CEOExitCountdown from '../components/blocking/CEOExitCountdown';
 
 export default function CEOMode() {
   const { t } = useLanguage();
+  const { isPremiumUser } = usePremium();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [duration, setDuration] = useState(() => {
@@ -22,6 +26,7 @@ export default function CEOMode() {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const [showExitCountdown, setShowExitCountdown] = useState(false);
+  const [premiumBlock, setPremiumBlock] = useState(null);
 
   const { data: activeSession, refetch: refetchSession } = useQuery({
     queryKey: ['ceoModeSession'],
@@ -58,6 +63,13 @@ export default function CEOMode() {
 
   const startMutation = useMutation({
     mutationFn: async () => {
+      // Vérifier les limites premium
+      const check = await canStartCEOSession(isPremiumUser, duration);
+      if (!check.allowed) {
+        setPremiumBlock(check);
+        throw new Error('Premium limit reached');
+      }
+
       const now = new Date();
       const plannedEnd = addMinutes(now, duration);
       
@@ -74,6 +86,12 @@ export default function CEOMode() {
     onSuccess: () => {
       queryClient.invalidateQueries(['ceoModeSession']);
       refetchSession();
+      setPremiumBlock(null);
+    },
+    onError: (error) => {
+      if (error.message !== 'Premium limit reached') {
+        console.error('CEO Mode error:', error);
+      }
     }
   });
 
@@ -231,6 +249,28 @@ export default function CEOMode() {
     );
   }
 
+  // Bloquer si limite premium atteinte
+  if (premiumBlock) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative">
+        <div className="max-w-md mx-auto">
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">{t('home')}</span>
+          </Link>
+          
+          <PremiumGate
+            feature={premiumBlock.reason}
+            limit={premiumBlock.limit}
+            current={premiumBlock.current}
+          >
+            {null}
+          </PremiumGate>
+        </div>
+      </div>
+    );
+  }
+
   // Setup - Stark, clear
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
@@ -264,19 +304,26 @@ export default function CEOMode() {
         <div className="mb-12">
           <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">{t('duration')}</div>
           <div className="grid grid-cols-3 gap-3">
-            {[30, 60, 90, 120, 180, 240].map(mins => (
-              <button
-                key={mins}
-                onClick={() => setDuration(mins)}
-                className={`p-5 rounded-2xl font-black text-lg transition-all duration-150 shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
-                  duration === mins
-                    ? 'bg-white text-black scale-105 shadow-[0_12px_32px_rgba(255,255,255,0.15)]'
-                    : 'bg-zinc-900/60 border border-zinc-800/60 text-zinc-500 hover:border-zinc-700/60 active:scale-95'
-                }`}
-              >
-                {mins >= 60 ? `${mins / 60}h` : `${mins}m`}
-              </button>
-            ))}
+            {[30, 60, 90, 120, 180, 240].map(mins => {
+              const isDisabled = !isPremiumUser && mins > PREMIUM_LIMITS.CEO_MAX_DURATION_MINUTES;
+              
+              return (
+                <button
+                  key={mins}
+                  onClick={() => !isDisabled && setDuration(mins)}
+                  disabled={isDisabled}
+                  className={`p-5 rounded-2xl font-black text-lg transition-all duration-150 shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
+                    duration === mins
+                      ? 'bg-white text-black scale-105 shadow-[0_12px_32px_rgba(255,255,255,0.15)]'
+                      : isDisabled
+                      ? 'bg-zinc-950/60 border border-zinc-900/40 text-zinc-800 cursor-not-allowed'
+                      : 'bg-zinc-900/60 border border-zinc-800/60 text-zinc-500 hover:border-zinc-700/60 active:scale-95'
+                  }`}
+                >
+                  {mins >= 60 ? `${mins / 60}h` : `${mins}m`}
+                </button>
+              );
+            })}
           </div>
         </div>
 

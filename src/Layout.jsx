@@ -6,12 +6,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, FileText, Shield, BarChart3, X, ClipboardList, CheckSquare, Calendar as CalendarIcon } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './components/LanguageProvider';
 import { RankAmbientProvider, useRankAmbient } from './components/RankAmbientProvider';
+import { PremiumProvider } from './components/PremiumProvider';
 
 export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       <RankAmbientProvider>
-        <LayoutContent children={children} currentPageName={currentPageName} />
+        <PremiumProvider>
+          <LayoutContent children={children} currentPageName={currentPageName} />
+        </PremiumProvider>
       </RankAmbientProvider>
     </LanguageProvider>
   );

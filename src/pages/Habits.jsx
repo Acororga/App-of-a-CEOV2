@@ -11,9 +11,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
 import HabitModal from '../components/habits/HabitModal';
 import { useLanguage } from '../components/LanguageProvider.jsx';
+import { usePremium } from '../components/PremiumProvider';
+import { canCreateHabit } from '../components/premiumLimits';
+import PremiumGate from '../components/PremiumGate';
 
 export default function Habits() {
   const { t } = useLanguage();
+  const { isPremiumUser } = usePremium();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('grid');
@@ -22,6 +26,7 @@ export default function Habits() {
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [premiumBlock, setPremiumBlock] = useState(null);
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   
   const { data: objectives } = useQuery({
@@ -129,6 +134,14 @@ export default function Habits() {
 
   const createHabitMutation = useMutation({
     mutationFn: async (data) => {
+      // Vérifier les limites premium
+      const check = await canCreateHabit(isPremiumUser);
+      if (!check.allowed) {
+        setPremiumBlock(check);
+        setShowHabitModal(false);
+        throw new Error('Premium limit reached');
+      }
+
       const user = await base44.auth.me();
       return await base44.entities.Habit.create({
         ...data,
@@ -138,6 +151,12 @@ export default function Habits() {
     onSuccess: () => {
       queryClient.invalidateQueries(['allHabits']);
       setShowHabitModal(false);
+      setPremiumBlock(null);
+    },
+    onError: (error) => {
+      if (error.message !== 'Premium limit reached') {
+        console.error('Habit creation error:', error);
+      }
     }
   });
 
@@ -269,6 +288,19 @@ export default function Habits() {
           
           <div className="w-20" />
         </div>
+
+        {premiumBlock && (
+          <div className="mb-6">
+            <PremiumGate
+              feature={premiumBlock.reason}
+              limit={premiumBlock.limit}
+              current={premiumBlock.current}
+              compact={true}
+            >
+              {null}
+            </PremiumGate>
+          </div>
+        )}
 
         <AnimatePresence mode="wait" custom={direction}>
         {activeTab === 'grid' && (

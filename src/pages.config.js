@@ -4,6 +4,7 @@ import CEOMode from './pages/CEOMode';
 import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
 import FocusMode from './pages/FocusMode';
+import FocusModeExit from './pages/FocusModeExit';
 import Habits from './pages/Habits';
 import Home from './pages/Home';
 import Leaderboard from './pages/Leaderboard';
@@ -21,7 +22,6 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
-import FocusModeExit from './pages/FocusModeExit';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +32,7 @@ export const PAGES = {
     "Calendar": Calendar,
     "Dashboard": Dashboard,
     "FocusMode": FocusMode,
+    "FocusModeExit": FocusModeExit,
     "Habits": Habits,
     "Home": Home,
     "Leaderboard": Leaderboard,
@@ -49,7 +50,6 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
-    "FocusModeExit": FocusModeExit,
 }
 
 export const pagesConfig = {
