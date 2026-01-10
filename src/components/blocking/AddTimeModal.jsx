@@ -11,10 +11,10 @@ export default function AddTimeModal({
   onClose 
 }) {
   const { t } = useLanguage();
-  const [selectedMinutes, setSelectedMinutes] = useState(5);
+  const [selectedMinutes, setSelectedMinutes] = useState(10);
   const [showCooldown, setShowCooldown] = useState(false);
 
-  const timeOptions = [1, 2, 5, 10];
+  const timeOptions = [10];
 
   const handleConfirm = () => {
     setShowCooldown(true);
@@ -66,22 +66,12 @@ export default function AddTimeModal({
 
           <div className="mb-8">
             <div className="text-xs text-zinc-600 font-bold uppercase tracking-wider mb-4 text-center">
-              Select Duration
+              Fixed Duration
             </div>
-            <div className="grid grid-cols-4 gap-3">
-              {timeOptions.map(mins => (
-                <button
-                  key={mins}
-                  onClick={() => setSelectedMinutes(mins)}
-                  className={`p-4 rounded-xl font-black text-base transition-all duration-150 ${
-                    selectedMinutes === mins
-                      ? 'bg-white text-black scale-105 shadow-[0_8px_24px_rgba(255,255,255,0.2)]'
-                      : 'bg-zinc-900/60 border border-zinc-800/60 text-zinc-500 hover:border-zinc-700/60 active:scale-95'
-                  }`}
-                >
-                  {mins}m
-                </button>
-              ))}
+            <div className="flex justify-center">
+              <div className="p-6 rounded-xl bg-white text-black font-black text-2xl shadow-[0_8px_24px_rgba(255,255,255,0.2)]">
+                10 minutes
+              </div>
             </div>
           </div>
 

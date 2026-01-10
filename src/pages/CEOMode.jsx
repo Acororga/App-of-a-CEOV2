@@ -7,6 +7,9 @@ import { ArrowLeft, Circle, Phone, MessageSquare, Calendar as CalendarIcon, Cloc
 import { Button } from '@/components/ui/button';
 import { differenceInMinutes, addMinutes, parseISO } from 'date-fns';
 import { useLanguage } from '../components/LanguageProvider';
+import { resetWinStreak } from '../components/businessLogic';
+import CEOExitConfirmation from '../components/blocking/CEOExitConfirmation';
+import CEOExitCountdown from '../components/blocking/CEOExitCountdown';
 
 export default function CEOMode() {
   const { t } = useLanguage();
@@ -17,6 +20,8 @@ export default function CEOMode() {
     return lastDuration ? parseInt(lastDuration) : 30;
   });
   const [timeRemaining, setTimeRemaining] = useState(null);
+  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
+  const [showExitCountdown, setShowExitCountdown] = useState(false);
 
   const { data: activeSession, refetch: refetchSession } = useQuery({
     queryKey: ['ceoModeSession'],
@@ -82,12 +87,39 @@ export default function CEOMode() {
         end_time: now.toISOString(),
         early_exit: isEarlyExit
       });
+
+      // Réinitialiser la streak car sortie du CEO Mode
+      await resetWinStreak();
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['ceoModeSession']);
+      queryClient.invalidateQueries(['winStreak']);
       navigate(createPageUrl('Home'));
     }
   });
+
+  const handleRequestExit = () => {
+    setShowExitConfirmation(true);
+  };
+
+  const handleConfirmExit = () => {
+    setShowExitConfirmation(false);
+    setShowExitCountdown(true);
+  };
+
+  const handleCancelExit = () => {
+    setShowExitConfirmation(false);
+    setShowExitCountdown(false);
+  };
+
+  const handleCountdownComplete = () => {
+    setShowExitCountdown(false);
+    endMutation.mutate();
+  };
+
+  const handleCountdownCancel = () => {
+    setShowExitCountdown(false);
+  };
 
   const formatTime = (minutes) => {
     const hrs = Math.floor(minutes / 60);
@@ -95,6 +127,26 @@ export default function CEOMode() {
     if (hrs > 0) return `${hrs}h ${mins}m`;
     return `${mins}m`;
   };
+
+  // Afficher la confirmation de sortie
+  if (showExitConfirmation) {
+    return (
+      <CEOExitConfirmation
+        onConfirm={handleConfirmExit}
+        onCancel={handleCancelExit}
+      />
+    );
+  }
+
+  // Afficher le compte à rebours
+  if (showExitCountdown) {
+    return (
+      <CEOExitCountdown
+        onComplete={handleCountdownComplete}
+        onCancel={handleCountdownCancel}
+      />
+    );
+  }
 
   // Active CEO Mode - MONOCHROME, MINIMAL
   if (activeSession) {
@@ -159,7 +211,7 @@ export default function CEOMode() {
         </div>
 
         <Button
-          onClick={() => endMutation.mutate()}
+          onClick={() => canExit ? handleRequestExit() : null}
           disabled={!canExit || endMutation.isPending}
           className={`px-10 py-4 rounded-2xl text-base font-black transition-all duration-300 ${
             canExit 

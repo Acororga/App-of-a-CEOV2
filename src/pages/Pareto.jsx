@@ -145,13 +145,20 @@ export default function Pareto() {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
+    // Swipe vers la droite = accéder à l'onglet à droite
+    // L'onglet actuel part vers la gauche (direction = -1)
+    // L'onglet suivant arrive de la droite
     if (isLeftSwipe && activeTab === 'list') {
       setDirection(-1);
       setActiveTab('matrix');
     } else if (isLeftSwipe && activeTab === 'matrix') {
       setDirection(-1);
       setActiveTab('history');
-    } else if (isRightSwipe && activeTab === 'matrix') {
+    }
+    // Swipe vers la gauche = accéder à l'onglet à gauche
+    // L'onglet actuel part vers la droite (direction = 1)
+    // L'onglet précédent arrive de la gauche
+    else if (isRightSwipe && activeTab === 'matrix') {
       setDirection(1);
       setActiveTab('list');
     } else if (isRightSwipe && activeTab === 'history') {
@@ -211,9 +218,9 @@ export default function Pareto() {
           <motion.div
             key="list"
             custom={direction}
-            initial={{ x: direction * 300, opacity: 0 }}
+            initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction * -300, opacity: 0 }}
+            exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <div className="mb-10">
@@ -481,9 +488,9 @@ export default function Pareto() {
           <motion.div
             key="matrix"
             custom={direction}
-            initial={{ x: direction * 300, opacity: 0 }}
+            initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction * -300, opacity: 0 }}
+            exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="space-y-6">
             <div className="mb-6">
@@ -617,9 +624,9 @@ export default function Pareto() {
           <motion.div
             key="history"
             custom={direction}
-            initial={{ x: direction * 300, opacity: 0 }}
+            initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction * -300, opacity: 0 }}
+            exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="space-y-6">
             <div className="mb-6">

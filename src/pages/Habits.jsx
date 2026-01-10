@@ -7,6 +7,7 @@ import { getHabitsForDate, getHabitCompletionsForDate, calculateWeeklyHabitScore
 import { format, startOfWeek, addDays } from 'date-fns';
 import { ArrowLeft, Plus, CheckCircle2, XCircle, Trash2, Award, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 import ObjectiveModal from '../components/habits/ObjectiveModal';
 import HabitModal from '../components/habits/HabitModal';
 import { useLanguage } from '../components/LanguageProvider.jsx';
@@ -16,6 +17,7 @@ export default function Habits() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('grid');
+  const [direction, setDirection] = useState(0);
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -226,9 +228,16 @@ export default function Habits() {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
+    // Swipe vers la droite = accéder à goals (onglet à droite)
+    // grid part vers la gauche, goals arrive de la droite
     if (isLeftSwipe && activeTab === 'grid') {
+      setDirection(-1);
       setActiveTab('goals');
-    } else if (isRightSwipe && activeTab === 'goals') {
+    }
+    // Swipe vers la gauche = retour à grid (onglet à gauche)
+    // goals part vers la droite, grid arrive de la gauche
+    else if (isRightSwipe && activeTab === 'goals') {
+      setDirection(1);
       setActiveTab('grid');
     }
   };
@@ -261,8 +270,16 @@ export default function Habits() {
           <div className="w-20" />
         </div>
 
-        {activeTab === 'grid' ? (
-          <div className="space-y-5">
+        <AnimatePresence mode="wait" custom={direction}>
+        {activeTab === 'grid' && (
+          <motion.div
+            key="grid"
+            custom={direction}
+            initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="space-y-5">
             {/* Add Habit Button */}
             <div className="flex justify-end">
               <button
@@ -401,9 +418,17 @@ export default function Habits() {
                 {t('swipeRightForGoals')}
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="space-y-5">
+          </motion.div>
+        )}
+        {activeTab === 'goals' && (
+          <motion.div
+            key="goals"
+            custom={direction}
+            initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="space-y-5">
             {/* Add Objective Button */}
             <div className="flex justify-end">
               <button
@@ -557,8 +582,9 @@ export default function Habits() {
                 {t('swipeLeftForHabits')}
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
 
       <ObjectiveModal
