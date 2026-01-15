@@ -149,7 +149,6 @@ function LayoutContent({ children, currentPageName }) {
                   className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
                   <div className="w-10 h-10 rounded-xl relative">
-                    {/* Base noire mate avec relief */}
                     <div className="absolute inset-0 rounded-xl"
                          style={{
                            background: '#2e2e2e',
@@ -160,25 +159,92 @@ function LayoutContent({ children, currentPageName }) {
                            `
                          }}
                     />
-                    {/* Icon symbol tout en bleu */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="3.5" 
-                                stroke="#6366f1" strokeWidth="2"/>
-                        <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                              stroke="#6366f1" strokeWidth="1.8" 
-                              strokeLinecap="round"/>
-                        <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                              stroke="#6366f1" strokeWidth="1.6" 
-                              strokeLinecap="round"/>
+                      <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="18" height="18" rx="2.5" 
+                              stroke="#6366f1" strokeWidth="1.8"/>
+                        <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
+                              fill="#6366f1"/>
+                        <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
+                              fill="#6366f1"/>
+                        <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
+                              fill="#6366f1"/>
                       </svg>
                     </div>
                   </div>
-                  <div className="text-left">
-                    <div className="font-semibold">{t('settingsAndLegal')}</div>
-                    <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
+                  <div>
+                    <div className="font-semibold">{t('sixMonthReport')}</div>
+                    <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
                   </div>
                 </Link>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">{t('activeApps')}</div>
+                {availableApps.map(app => {
+                  const currentApps = appSettings?.active_apps || [];
+                  const isActive = currentApps.includes(app.id);
+                  const Icon = app.icon;
+                  return (
+                    <button
+                      key={app.id}
+                      onClick={() => toggleAppMutation.mutate(app.id)}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                        isActive
+                          ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
+                          : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
+                      <div className="text-left flex-1">
+                        <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
+                          {app.name}
+                        </div>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        isActive ? 'border-green-500 bg-green-500' : 'border-zinc-700'
+                      }`}>
+                        {isActive && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Link
+                to={createPageUrl('Settings')}
+                onClick={() => setShowMenu(false)}
+                className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl relative">
+                  <div className="absolute inset-0 rounded-xl"
+                       style={{
+                         background: '#2e2e2e',
+                         boxShadow: `
+                           0 2px 6px rgba(0, 0, 0, 0.35),
+                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                         `
+                       }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="3.5" 
+                              stroke="#6366f1" strokeWidth="2"/>
+                      <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
+                            stroke="#6366f1" strokeWidth="1.8" 
+                            strokeLinecap="round"/>
+                      <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
+                            stroke="#6366f1" strokeWidth="1.6" 
+                            strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <div className="font-semibold">{t('settingsAndLegal')}</div>
+                  <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
+                </div>
+              </Link>
               </div>
 
               <div className="mt-8 pt-8 border-t border-zinc-800">
