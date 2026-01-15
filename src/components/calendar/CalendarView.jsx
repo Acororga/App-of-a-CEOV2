@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '../LanguageProvider';
 
-export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick }) {
+export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick, onDateChange }) {
   const { language, t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState('yearly');
@@ -45,7 +45,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
             setCurrentDate(monthDate);
             setView('monthly');
           }}
-          className="relative p-5 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150"
+          className="relative p-5 h-24 bg-zinc-900/60 rounded-xl border border-zinc-800/50 hover:bg-zinc-900/80 hover:border-zinc-700/60 active:scale-[0.98] transition-all duration-150 flex flex-col items-center justify-center"
         >
           <div className="text-center font-bold text-zinc-300 text-base mb-1">
             {format(monthDate, 'MMM', { locale: getDateFnsLocale() })}
@@ -91,6 +91,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
             onClick={() => {
               setCurrentDate(clickDay);
               setView('daily');
+              onDateChange?.(clickDay);
             }}
             className={`relative min-h-24 p-3 border transition-all duration-150 text-left ${
               !isCurrentMonth 
@@ -255,27 +256,33 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   };
 
   const navigatePrev = () => {
+    let newDate;
     if (view === 'yearly') {
-      setCurrentDate(prev => new Date(prev.getFullYear() - 1, 0, 1));
+      newDate = new Date(currentDate.getFullYear() - 1, 0, 1);
     } else if (view === 'monthly') {
-      setCurrentDate(prev => addMonths(prev, -1));
+      newDate = addMonths(currentDate, -1);
     } else if (view === 'weekly') {
-      setCurrentDate(prev => addDays(prev, -7));
+      newDate = addDays(currentDate, -7);
     } else if (view === 'daily') {
-      setCurrentDate(prev => addDays(prev, -1));
+      newDate = addDays(currentDate, -1);
     }
+    setCurrentDate(newDate);
+    onDateChange?.(newDate);
   };
 
   const navigateNext = () => {
+    let newDate;
     if (view === 'yearly') {
-      setCurrentDate(prev => new Date(prev.getFullYear() + 1, 0, 1));
+      newDate = new Date(currentDate.getFullYear() + 1, 0, 1);
     } else if (view === 'monthly') {
-      setCurrentDate(prev => addMonths(prev, 1));
+      newDate = addMonths(currentDate, 1);
     } else if (view === 'weekly') {
-      setCurrentDate(prev => addDays(prev, 7));
+      newDate = addDays(currentDate, 7);
     } else if (view === 'daily') {
-      setCurrentDate(prev => addDays(prev, 1));
+      newDate = addDays(currentDate, 1);
     }
+    setCurrentDate(newDate);
+    onDateChange?.(newDate);
   };
 
   const getHeaderText = () => {
