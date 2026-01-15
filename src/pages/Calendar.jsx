@@ -4,6 +4,7 @@ import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import EventModal from '../components/calendar/EventModal';
 import CalendarView from '../components/calendar/CalendarView';
 import DayIntelligence from '../components/calendar/DayIntelligence';
@@ -28,6 +29,10 @@ export default function Calendar() {
   const [prefilledEvent, setPrefilledEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showConflictWarning, setShowConflictWarning] = useState(null);
+  const [activeTab, setActiveTab] = useState('calendar');
+  const [direction, setDirection] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   
   const { data: events } = useQuery({
     queryKey: ['allEvents'],
@@ -82,8 +87,39 @@ export default function Calendar() {
     navigate(createPageUrl('FocusMode'));
   };
 
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeTab === 'calendar') {
+      setDirection(-1);
+      setActiveTab('stats');
+    } else if (isRightSwipe && activeTab === 'stats') {
+      setDirection(1);
+      setActiveTab('calendar');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
+    <div 
+      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Noise texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -105,28 +141,67 @@ export default function Calendar() {
           <div className="w-20" />
         </div>
 
-        <DayIntelligence
-          overloadInfo={dayIntelligence.overload}
-          focusSuggestion={dayIntelligence.focusSuggestion}
-          freeTime={dayIntelligence.freeTime}
-          habitConflict={dayIntelligence.habitConflict}
-          onStartFocus={handleStartFocusFromSuggestion}
-        />
+        <AnimatePresence mode="wait" custom={direction}>
+          {activeTab === 'calendar' && (
+            <motion.div
+              key="calendar"
+              custom={direction}
+              initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <CalendarView
+                events={prioritizeEvents(events)}
+                onNewEvent={() => {
+                  setPrefilledEvent(null);
+                  setShowEventModal(true);
+                }}
+                onTimeClick={(date, time) => {
+                  setPrefilledEvent({ event_date: date, event_time: time });
+                  setShowEventModal(true);
+                }}
+                onDateChange={setSelectedDate}
+              />
 
-        <WeeklyAnalysis analysis={weekAnalysis} />
+              <button
+                onClick={() => setActiveTab('stats')}
+                className="mt-6 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
+              >
+                Swipe right for stats & insights →
+              </button>
+            </motion.div>
+          )}
 
-        <CalendarView
-          events={prioritizeEvents(events)}
-          onNewEvent={() => {
-            setPrefilledEvent(null);
-            setShowEventModal(true);
-          }}
-          onTimeClick={(date, time) => {
-            setPrefilledEvent({ event_date: date, event_time: time });
-            setShowEventModal(true);
-          }}
-          onDateChange={setSelectedDate}
-        />
+          {activeTab === 'stats' && (
+            <motion.div
+              key="stats"
+              custom={direction}
+              initial={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="space-y-6"
+            >
+              <DayIntelligence
+                overloadInfo={dayIntelligence.overload}
+                focusSuggestion={dayIntelligence.focusSuggestion}
+                freeTime={dayIntelligence.freeTime}
+                habitConflict={dayIntelligence.habitConflict}
+                onStartFocus={handleStartFocusFromSuggestion}
+              />
+
+              <WeeklyAnalysis analysis={weekAnalysis} />
+
+              <button
+                onClick={() => setActiveTab('calendar')}
+                className="mt-6 text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors w-full"
+              >
+                ← Swipe left for calendar view
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {showConflictWarning && (
           <FocusCEOConflictWarning

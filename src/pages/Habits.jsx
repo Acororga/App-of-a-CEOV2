@@ -373,15 +373,18 @@ export default function Habits() {
                                     <CheckCircle2 className="relative w-5 h-5 text-green-400" />
                                   </div>
                                 </div>
-                              ) : isMissed || notValidated ? (
+                              ) : notValidated ? (
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
                                     <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
-                                    {notValidated ? (
-                                      <div className="relative w-5 h-5 rounded-full border-2 border-red-400 bg-red-950/50" />
-                                    ) : (
-                                      <X className="relative w-5 h-5 text-red-400" />
-                                    )}
+                                    <div className="relative w-5 h-5 rounded-full bg-red-500" />
+                                  </div>
+                                </div>
+                              ) : isMissed ? (
+                                <div className="inline-flex items-center justify-center">
+                                  <div className="relative">
+                                    <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
+                                    <X className="relative w-5 h-5 text-red-400" />
                                   </div>
                                 </div>
                               ) : (
