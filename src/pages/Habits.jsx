@@ -63,16 +63,35 @@ export default function Habits() {
   });
 
   const weeklyScore = React.useMemo(() => {
-    if (!habits || habits.length === 0 || !allCompletions) return null;
+    console.log('\n╔════════════════════════════════════════════════════════╗');
+    console.log('║ [WEEKLY SCORE CALCULATION] START                       ║');
+    console.log('╚════════════════════════════════════════════════════════╝');
+    
+    if (!habits || habits.length === 0 || !allCompletions) {
+      console.log('⚠ No habits or completions, returning null');
+      return null;
+    }
 
     let totalValidated = 0;
     let totalCompleted = 0;
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    console.log(`📅 Today: ${format(today, 'yyyy-MM-dd')}`);
+    console.log(`📅 Yesterday: ${format(yesterday, 'yyyy-MM-dd')}`);
+    console.log(`📅 Week start: ${format(weekStart, 'yyyy-MM-dd')}\n`);
 
     for (let i = 0; i < 7; i++) {
       const day = addDays(weekStart, i);
       const dayNum = day.getDay();
       const dayStr = format(day, 'yyyy-MM-dd');
-      const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+      const isPast = day < today;
+      const isYesterday = day.getTime() === yesterday.getTime();
+      const isLocked = isPast && !isYesterday;
+
+      console.log(`\n--- Day ${i + 1}: ${dayStr} (${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dayNum]}) ---`);
+      console.log(`   isPast: ${isPast}, isYesterday: ${isYesterday}, isLocked: ${isLocked}`);
 
       habits.forEach(habit => {
         const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
@@ -82,17 +101,29 @@ export default function Habits() {
             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
           );
           
-          // Si passé et non validé = compte comme missed (rond rouge)
-          const notValidated = isPast && !completion;
+          console.log(`   Habit "${habit.title}":`);
+          console.log(`     - isScheduled: ${isScheduled}`);
+          console.log(`     - completion: ${completion ? `state=${completion.state}` : 'NONE'}`);
+          console.log(`     - isLocked: ${isLocked}`);
           
-          // Compter les habitudes validées OU passées non validées
-          if (completion?.state === 'completed' || completion?.state === 'missed' || notValidated) {
+          // Seuls les jours LOCKED (passés sauf hier) comptent automatiquement
+          const notValidatedAndLocked = isLocked && !completion;
+          
+          console.log(`     - notValidatedAndLocked: ${notValidatedAndLocked}`);
+          
+          // Compter les habitudes validées OU locked non validées
+          if (completion?.state === 'completed' || completion?.state === 'missed' || notValidatedAndLocked) {
             totalValidated++;
+            console.log(`     → COUNT in total_expected (totalValidated++)`);
             
             if (completion?.state === 'completed' || completion?.completed === true) {
               totalCompleted++;
+              console.log(`     → COUNT in total_completed (totalCompleted++)`);
+            } else {
+              console.log(`     → NOT completed (missed or locked)`);
             }
-            // notValidated et missed comptent comme 0 (non complété)
+          } else {
+            console.log(`     → NOT counted (future, today, or yesterday)`);
           }
         }
       });
@@ -101,6 +132,12 @@ export default function Habits() {
     const successPercentage = totalValidated > 0 
       ? Math.round((totalCompleted / totalValidated) * 100)
       : 0;
+
+    console.log(`\n═══ FINAL RESULT ═══`);
+    console.log(`✓ total_expected: ${totalValidated}`);
+    console.log(`✓ total_completed: ${totalCompleted}`);
+    console.log(`✓ success_percentage: ${successPercentage}%`);
+    console.log('╚════════════════════════════════════════════════════════╝\n');
 
     return {
       total_expected: totalValidated,
@@ -357,10 +394,17 @@ export default function Habits() {
                             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
                           );
 
+                          const today = new Date(new Date().setHours(0, 0, 0, 0));
+                          const yesterday = new Date(today);
+                          yesterday.setDate(yesterday.getDate() - 1);
+                          
+                          const isPast = day < today;
+                          const isYesterday = day.getTime() === yesterday.getTime();
+                          const isLocked = isPast && !isYesterday;
+
                           const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
-                          const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
-                          const notValidated = isPast && isScheduled && !completion;
+                          const notValidatedAndLocked = isLocked && isScheduled && !completion;
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
@@ -373,11 +417,11 @@ export default function Habits() {
                                     <CheckCircle2 className="relative w-5 h-5 text-green-400" />
                                   </div>
                                 </div>
-                              ) : notValidated ? (
+                              ) : notValidatedAndLocked ? (
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
                                     <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
-                                    <div className="relative w-5 h-5 rounded-full bg-red-500" />
+                                    <div className="relative w-5 h-5 rounded-full border-2 border-red-400 bg-red-950/50" />
                                   </div>
                                 </div>
                               ) : isMissed ? (
