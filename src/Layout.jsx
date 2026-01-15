@@ -111,20 +111,21 @@ function LayoutContent({ children, currentPageName }) {
                 <div className="text-sm text-zinc-500">{user?.email}</div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Link
                   to={createPageUrl('Notes')}
                   onClick={() => setShowMenu(false)}
-                  className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                  className="group flex items-center gap-3 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-indigo-500/30 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150 relative overflow-hidden"
                 >
-                  <div className="w-10 h-10 rounded-xl relative">
-                    <div className="absolute inset-0 rounded-xl"
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/5 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="w-10 h-10 group-active:scale-[0.96] transition-transform duration-100 relative">
+                    <div className="absolute inset-0 rounded-[11px]"
                          style={{
                            background: '#2e2e2e',
                            boxShadow: `
-                             0 2px 6px rgba(0, 0, 0, 0.35),
-                             inset 0 1px 1px rgba(255, 255, 255, 0.03),
-                             inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                             0 1.5px 4px rgba(0, 0, 0, 0.35),
+                             inset 0 0.5px 0.5px rgba(255, 255, 255, 0.03),
+                             inset 0 -0.5px 0.5px rgba(0, 0, 0, 0.15)
                            `
                          }}
                     />
@@ -137,7 +138,7 @@ function LayoutContent({ children, currentPageName }) {
                       </svg>
                     </div>
                   </div>
-                  <div>
+                  <div className="text-left flex-1">
                     <div className="font-semibold">Notes</div>
                     <div className="text-xs text-zinc-500">Your quick notes</div>
                   </div>
