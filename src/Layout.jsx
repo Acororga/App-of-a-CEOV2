@@ -148,42 +148,6 @@ function LayoutContent({ children, currentPageName }) {
                   onClick={() => setShowMenu(false)}
                   className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">{t('activeApps')}</div>
-                  {availableApps.map(app => {
-                    const currentApps = appSettings?.active_apps || [];
-                    const isActive = currentApps.includes(app.id);
-                    const Icon = app.icon;
-                    return (
-                      <button
-                        key={app.id}
-                        onClick={() => toggleAppMutation.mutate(app.id)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                          isActive
-                            ? 'bg-zinc-900/50 border-zinc-700 hover:border-zinc-600'
-                            : 'bg-zinc-950/50 border-zinc-800 opacity-50 hover:opacity-100'
-                        }`}
-                      >
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-600'}`} />
-                        <div className="text-left flex-1">
-                          <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-zinc-600'}`}>
-                            {app.name}
-                          </div>
-                        </div>
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          isActive ? 'border-green-500 bg-green-500' : 'border-zinc-700'
-                        }`}>
-                          {isActive && <div className="w-2 h-2 rounded-full bg-white" />}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <Link
-                  to={createPageUrl('Settings')}
-                  onClick={() => setShowMenu(false)}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
-                >
                   <div className="w-10 h-10 rounded-xl relative">
                     {/* Base noire mate avec relief */}
                     <div className="absolute inset-0 rounded-xl"
