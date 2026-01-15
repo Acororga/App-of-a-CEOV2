@@ -371,12 +371,12 @@ export default function Home() {
           </div>
           
           {/* Streak */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
+          <Link to={createPageUrl('WinStreak')} className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] hover:scale-105 active:scale-100 transition-transform duration-150">
             <span className="text-base drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
             <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
               {streakData?.current_streak || 0}
             </span>
-          </div>
+          </Link>
           
           {/* Focus Mode Quick Button */}
           <button

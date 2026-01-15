@@ -1,24 +1,48 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { ArrowLeft } from 'lucide-react';
 import EventModal from '../components/calendar/EventModal';
 import CalendarView from '../components/calendar/CalendarView';
+import DayIntelligence from '../components/calendar/DayIntelligence';
+import WeeklyAnalysis from '../components/calendar/WeeklyAnalysis';
+import FocusCEOConflictWarning from '../components/calendar/FocusCEOConflictWarning';
 import { useLanguage } from '../components/LanguageProvider';
+import { 
+  detectOverloadedDay, 
+  suggestFocusTime, 
+  calculateRealFreeTime,
+  checkHabitCalendarCoherence,
+  analyzeWeeklyCalendar,
+  prioritizeEvents
+} from '../components/calendar/CalendarIntelligence';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 export default function Calendar() {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [showEventModal, setShowEventModal] = useState(false);
   const [prefilledEvent, setPrefilledEvent] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showConflictWarning, setShowConflictWarning] = useState(null);
   
   const { data: events } = useQuery({
     queryKey: ['allEvents'],
     queryFn: async () => {
       const user = await base44.auth.me();
       return await base44.entities.CalendarEvent.filter({ created_by: user.email }, '-event_date');
+    },
+    initialData: []
+  });
+
+  const { data: habits } = useQuery({
+    queryKey: ['habits'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.Habit.filter({ created_by: user.email, archived: false });
     },
     initialData: []
   });
@@ -36,6 +60,27 @@ export default function Calendar() {
       setShowEventModal(false);
     }
   });
+
+  // Analyse intelligente pour la journée sélectionnée
+  const dayIntelligence = React.useMemo(() => {
+    const overload = detectOverloadedDay(events, selectedDate);
+    const focusSuggestion = suggestFocusTime(events, selectedDate);
+    const freeTime = calculateRealFreeTime(events, selectedDate);
+    const habitConflict = checkHabitCalendarCoherence(habits, events, selectedDate);
+    
+    return { overload, focusSuggestion, freeTime, habitConflict };
+  }, [events, habits, selectedDate]);
+
+  // Analyse hebdomadaire
+  const weekAnalysis = React.useMemo(() => {
+    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+    return analyzeWeeklyCalendar(events, weekStart, weekEnd);
+  }, [events, selectedDate]);
+
+  const handleStartFocusFromSuggestion = () => {
+    navigate(createPageUrl('FocusMode'));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 relative overflow-hidden">
@@ -60,8 +105,18 @@ export default function Calendar() {
           <div className="w-20" />
         </div>
 
+        <DayIntelligence
+          overloadInfo={dayIntelligence.overload}
+          focusSuggestion={dayIntelligence.focusSuggestion}
+          freeTime={dayIntelligence.freeTime}
+          habitConflict={dayIntelligence.habitConflict}
+          onStartFocus={handleStartFocusFromSuggestion}
+        />
+
+        <WeeklyAnalysis analysis={weekAnalysis} />
+
         <CalendarView
-          events={events}
+          events={prioritizeEvents(events)}
           onNewEvent={() => {
             setPrefilledEvent(null);
             setShowEventModal(true);
@@ -70,7 +125,19 @@ export default function Calendar() {
             setPrefilledEvent({ event_date: date, event_time: time });
             setShowEventModal(true);
           }}
+          onDateChange={setSelectedDate}
         />
+
+        {showConflictWarning && (
+          <FocusCEOConflictWarning
+            conflict={showConflictWarning}
+            onProceed={() => {
+              setShowConflictWarning(null);
+              navigate(createPageUrl('FocusMode'));
+            }}
+            onCancel={() => setShowConflictWarning(null)}
+          />
+        )}
 
         <EventModal
           open={showEventModal}

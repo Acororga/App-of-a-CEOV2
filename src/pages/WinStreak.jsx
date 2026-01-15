@@ -27,6 +27,18 @@ export default function WinStreak() {
     initialData: []
   });
 
+  const { data: habitHistory } = useQuery({
+    queryKey: ['habitHistory'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const scores = await base44.entities.WeeklyHabitScore.filter({ 
+        created_by: user.email 
+      }, '-week_start_date', 10);
+      return scores;
+    },
+    initialData: []
+  });
+
   const currentStreak = streak?.current_streak || 0;
   const longestStreak = streak?.longest_streak || 0;
   const totalCompleted = streak?.total_completed_sessions || 0;
@@ -120,6 +132,41 @@ export default function WinStreak() {
             </div>
           </div>
         </div>
+
+        {/* Habit Performance History */}
+        {habitHistory && habitHistory.length > 0 && (
+          <div className="relative mb-12">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-purple-500/15 rounded-2xl blur-xl" />
+            <div className="relative p-6 rounded-2xl bg-zinc-900/70 border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.6)]">
+              <h2 className="text-base font-black text-zinc-300 mb-5 tracking-tight uppercase">Habit Performance</h2>
+              
+              <div className="space-y-2">
+                {habitHistory.map(score => (
+                  <div
+                    key={score.id}
+                    className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:bg-zinc-900/70 transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-sm font-semibold text-white">
+                        Week of {format(new Date(score.week_start_date), 'MMM d')}
+                      </div>
+                      <div className={`px-3 py-1.5 rounded-lg text-xs font-black ${
+                        score.threshold_met
+                          ? 'bg-green-950/40 text-green-300 border border-green-700/60'
+                          : 'bg-red-950/40 text-red-300 border border-red-700/60'
+                      }`}>
+                        {Math.round(score.success_percentage)}%
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-zinc-500">
+                      <span>{score.total_completed} / {score.total_expected} habits completed</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Recent Sessions */}
         <div className="relative">
