@@ -148,39 +148,6 @@ function LayoutContent({ children, currentPageName }) {
                   onClick={() => setShowMenu(false)}
                   className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
                 >
-                  <div className="w-10 h-10 rounded-xl relative">
-                    {/* Base noire mate avec relief */}
-                    <div className="absolute inset-0 rounded-xl"
-                         style={{
-                           background: '#2e2e2e',
-                           boxShadow: `
-                             0 2px 6px rgba(0, 0, 0, 0.35),
-                             inset 0 1px 1px rgba(255, 255, 255, 0.03),
-                             inset 0 -1px 1px rgba(0, 0, 0, 0.15)
-                           `
-                         }}
-                    />
-                    {/* Icon symbol tout en bleu */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="18" height="18" rx="2.5" 
-                              stroke="#6366f1" strokeWidth="1.8"/>
-                        <rect x="6.5" y="13" width="2.5" height="7" rx="0.5"
-                              fill="#6366f1"/>
-                        <rect x="10.5" y="7" width="2.5" height="13" rx="0.5"
-                              fill="#6366f1"/>
-                        <rect x="14.5" y="10" width="2.5" height="10" rx="0.5"
-                              fill="#6366f1"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-semibold">{t('sixMonthReport')}</div>
-                    <div className="text-xs text-zinc-500">{t('yourProgressOverview')}</div>
-                  </div>
-                </Link>
-
-                <div className="space-y-2">
                   <div className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-2 px-2">{t('activeApps')}</div>
                   {availableApps.map(app => {
                     const currentApps = appSettings?.active_apps || [];
