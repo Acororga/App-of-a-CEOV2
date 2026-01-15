@@ -594,7 +594,7 @@ export default function Pareto() {
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 rounded-2xl blur-xl" />
                   <div className="relative p-4 rounded-2xl bg-zinc-900/70 border border-yellow-700/40 min-h-[280px]">
                     <div className="mb-3">
-                      <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">{t('delegate')}</div>
+                      <div className="text-xs font-black text-yellow-300 uppercase tracking-wider mb-1">IF TIME</div>
                       <div className="text-[10px] text-yellow-400/60">{t('quickLowImpact')}</div>
                     </div>
                     <div className="space-y-2">

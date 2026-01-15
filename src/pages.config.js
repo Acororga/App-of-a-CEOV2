@@ -22,6 +22,7 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
+import Notes from './pages/Notes';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
+    "Notes": Notes,
 }
 
 export const pagesConfig = {

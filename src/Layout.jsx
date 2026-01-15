@@ -113,6 +113,37 @@ function LayoutContent({ children, currentPageName }) {
 
               <div className="space-y-2">
                 <Link
+                  to={createPageUrl('Notes')}
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl relative">
+                    <div className="absolute inset-0 rounded-xl"
+                         style={{
+                           background: '#2e2e2e',
+                           boxShadow: `
+                             0 2px 6px rgba(0, 0, 0, 0.35),
+                             inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                             inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                           `
+                         }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg className="w-[54%] h-[54%]" viewBox="0 0 24 24" fill="none">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" 
+                              stroke="#6366f1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" 
+                              stroke="#6366f1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold">Notes</div>
+                    <div className="text-xs text-zinc-500">Your quick notes</div>
+                  </div>
+                </Link>
+
+                <Link
                   to={createPageUrl('BiannualReport')}
                   onClick={() => setShowMenu(false)}
                   className="flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"

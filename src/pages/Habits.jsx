@@ -72,6 +72,7 @@ export default function Habits() {
       const day = addDays(weekStart, i);
       const dayNum = day.getDay();
       const dayStr = format(day, 'yyyy-MM-dd');
+      const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
 
       habits.forEach(habit => {
         const isScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(dayNum));
@@ -81,13 +82,17 @@ export default function Habits() {
             format(new Date(c.date), 'yyyy-MM-dd') === dayStr
           );
           
-          // Ne compter que les habitudes validées (completed ou missed)
-          if (completion?.state === 'completed' || completion?.state === 'missed') {
+          // Si passé et non validé = compte comme missed (rond rouge)
+          const notValidated = isPast && !completion;
+          
+          // Compter les habitudes validées OU passées non validées
+          if (completion?.state === 'completed' || completion?.state === 'missed' || notValidated) {
             totalValidated++;
             
-            if (completion.state === 'completed' || completion.completed === true) {
+            if (completion?.state === 'completed' || completion?.completed === true) {
               totalCompleted++;
             }
+            // notValidated et missed comptent comme 0 (non complété)
           }
         }
       });
@@ -354,6 +359,8 @@ export default function Habits() {
 
                           const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
+                          const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+                          const notValidated = isPast && isScheduled && !completion;
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
@@ -366,11 +373,15 @@ export default function Habits() {
                                     <CheckCircle2 className="relative w-5 h-5 text-green-400" />
                                   </div>
                                 </div>
-                              ) : isMissed ? (
+                              ) : isMissed || notValidated ? (
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
                                     <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
-                                    <X className="relative w-5 h-5 text-red-400" />
+                                    {notValidated ? (
+                                      <div className="relative w-5 h-5 rounded-full border-2 border-red-400 bg-red-950/50" />
+                                    ) : (
+                                      <X className="relative w-5 h-5 text-red-400" />
+                                    )}
                                   </div>
                                 </div>
                               ) : (
