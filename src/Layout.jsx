@@ -211,40 +211,41 @@ function LayoutContent({ children, currentPageName }) {
                 })}
               </div>
 
-              <Link
-                to={createPageUrl('Settings')}
-                onClick={() => setShowMenu(false)}
-                className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
-              >
-                <div className="w-10 h-10 rounded-xl relative">
-                  <div className="absolute inset-0 rounded-xl"
-                       style={{
-                         background: '#2e2e2e',
-                         boxShadow: `
-                           0 2px 6px rgba(0, 0, 0, 0.35),
-                           inset 0 1px 1px rgba(255, 255, 255, 0.03),
-                           inset 0 -1px 1px rgba(0, 0, 0, 0.15)
-                         `
-                       }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="3.5" 
-                              stroke="#6366f1" strokeWidth="2"/>
-                      <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
-                            stroke="#6366f1" strokeWidth="1.8" 
-                            strokeLinecap="round"/>
-                      <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
-                            stroke="#6366f1" strokeWidth="1.6" 
-                            strokeLinecap="round"/>
-                    </svg>
+              <div className="space-y-2">
+                <Link
+                  to={createPageUrl('Settings')}
+                  onClick={() => setShowMenu(false)}
+                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl relative">
+                    <div className="absolute inset-0 rounded-xl"
+                         style={{
+                           background: '#2e2e2e',
+                           boxShadow: `
+                             0 2px 6px rgba(0, 0, 0, 0.35),
+                             inset 0 1px 1px rgba(255, 255, 255, 0.03),
+                             inset 0 -1px 1px rgba(0, 0, 0, 0.15)
+                           `
+                         }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg className="w-[56%] h-[56%]" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3.5" 
+                                stroke="#6366f1" strokeWidth="2"/>
+                        <path d="M12 1v6m0 6v10M23 12h-6m-6 0H1" 
+                              stroke="#6366f1" strokeWidth="1.8" 
+                              strokeLinecap="round"/>
+                        <path d="M4.5 4.5l4 4m7 7l4 4M19.5 4.5l-4 4m-7 7l-4 4" 
+                              stroke="#6366f1" strokeWidth="1.6" 
+                              strokeLinecap="round"/>
+                      </svg>
+                    </div>
                   </div>
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold">{t('settingsAndLegal')}</div>
-                  <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
-                </div>
-              </Link>
+                  <div className="text-left">
+                    <div className="font-semibold">{t('settingsAndLegal')}</div>
+                    <div className="text-xs text-zinc-500">{t('termsAndConditions')}</div>
+                  </div>
+                </Link>
               </div>
 
               <div className="mt-8 pt-8 border-t border-zinc-800">
