@@ -9,6 +9,7 @@ import Habits from './pages/Habits';
 import Home from './pages/Home';
 import Leaderboard from './pages/Leaderboard';
 import MigrateHabits from './pages/MigrateHabits';
+import Notes from './pages/Notes';
 import Pareto from './pages/Pareto';
 import Rank from './pages/Rank';
 import Rewards from './pages/Rewards';
@@ -22,7 +23,6 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
-import Notes from './pages/Notes';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +38,7 @@ export const PAGES = {
     "Home": Home,
     "Leaderboard": Leaderboard,
     "MigrateHabits": MigrateHabits,
+    "Notes": Notes,
     "Pareto": Pareto,
     "Rank": Rank,
     "Rewards": Rewards,
@@ -51,7 +52,6 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
-    "Notes": Notes,
 }
 
 export const pagesConfig = {
