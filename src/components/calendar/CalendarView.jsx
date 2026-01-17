@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '../LanguageProvider';
 
 const colorMap = {
-  blue: { bg: 'bg-cyan-500/35', text: 'text-cyan-100', border: 'border-cyan-400/50', darkBg: 'bg-cyan-950/45', darkText: 'text-cyan-300/90', darkBorder: 'border-cyan-800/50' },
-  green: { bg: 'bg-emerald-500/35', text: 'text-emerald-100', border: 'border-emerald-400/50', darkBg: 'bg-emerald-950/45', darkText: 'text-emerald-300/90', darkBorder: 'border-emerald-800/50' },
-  purple: { bg: 'bg-violet-500/35', text: 'text-violet-100', border: 'border-violet-400/50', darkBg: 'bg-violet-950/45', darkText: 'text-violet-300/90', darkBorder: 'border-violet-800/50' },
-  pink: { bg: 'bg-fuchsia-500/35', text: 'text-fuchsia-100', border: 'border-fuchsia-400/50', darkBg: 'bg-fuchsia-950/45', darkText: 'text-fuchsia-300/90', darkBorder: 'border-fuchsia-800/50' },
-  orange: { bg: 'bg-amber-500/35', text: 'text-amber-100', border: 'border-amber-400/50', darkBg: 'bg-amber-950/45', darkText: 'text-amber-300/90', darkBorder: 'border-amber-800/50' },
-  red: { bg: 'bg-rose-500/35', text: 'text-rose-100', border: 'border-rose-400/50', darkBg: 'bg-rose-950/45', darkText: 'text-rose-300/90', darkBorder: 'border-rose-800/50' },
-  yellow: { bg: 'bg-lime-500/35', text: 'text-lime-100', border: 'border-lime-400/50', darkBg: 'bg-lime-950/45', darkText: 'text-lime-300/90', darkBorder: 'border-lime-800/50' },
-  teal: { bg: 'bg-teal-500/35', text: 'text-teal-100', border: 'border-teal-400/50', darkBg: 'bg-teal-950/45', darkText: 'text-teal-300/90', darkBorder: 'border-teal-800/50' }
+  blue: { bg: 'bg-blue-100/80', text: 'text-blue-700', border: 'border-blue-300/60', darkBg: 'bg-blue-900/30', darkText: 'text-blue-300', darkBorder: 'border-blue-700/40' },
+  green: { bg: 'bg-green-100/80', text: 'text-green-700', border: 'border-green-300/60', darkBg: 'bg-green-900/30', darkText: 'text-green-300', darkBorder: 'border-green-700/40' },
+  purple: { bg: 'bg-purple-100/80', text: 'text-purple-700', border: 'border-purple-300/60', darkBg: 'bg-purple-900/30', darkText: 'text-purple-300', darkBorder: 'border-purple-700/40' },
+  pink: { bg: 'bg-pink-100/80', text: 'text-pink-700', border: 'border-pink-300/60', darkBg: 'bg-pink-900/30', darkText: 'text-pink-300', darkBorder: 'border-pink-700/40' },
+  orange: { bg: 'bg-orange-100/80', text: 'text-orange-700', border: 'border-orange-300/60', darkBg: 'bg-orange-900/30', darkText: 'text-orange-300', darkBorder: 'border-orange-700/40' },
+  red: { bg: 'bg-red-100/80', text: 'text-red-700', border: 'border-red-300/60', darkBg: 'bg-red-900/30', darkText: 'text-red-300', darkBorder: 'border-red-700/40' },
+  yellow: { bg: 'bg-yellow-100/80', text: 'text-yellow-700', border: 'border-yellow-300/60', darkBg: 'bg-yellow-900/30', darkText: 'text-yellow-300', darkBorder: 'border-yellow-700/40' },
+  teal: { bg: 'bg-teal-100/80', text: 'text-teal-700', border: 'border-teal-300/60', darkBg: 'bg-teal-900/30', darkText: 'text-teal-300', darkBorder: 'border-teal-700/40' }
 };
 
 export default function CalendarView({ events, onEventClick, onNewEvent, onTimeClick, onDateChange, eventTypes = [] }) {
@@ -24,13 +24,12 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   const getEventColor = (event) => {
     if (event.is_birthday) {
       return { 
-        bg: 'bg-gradient-to-r from-pink-300/40 via-yellow-200/40 to-purple-300/40', 
-        text: 'text-white', 
-        border: 'border-yellow-300/50 shadow-[0_0_12px_rgba(253,224,71,0.3),inset_0_1px_4px_rgba(255,255,255,0.2)]', 
-        darkBg: 'bg-gradient-to-r from-pink-400/50 via-yellow-300/50 to-purple-400/50', 
-        darkText: 'text-yellow-50 font-bold', 
-        darkBorder: 'border-yellow-300/60 shadow-[0_0_16px_rgba(253,224,71,0.4),inset_0_2px_6px_rgba(255,255,255,0.15)]',
-        extraClass: 'animate-pulse'
+        bg: 'bg-gradient-to-r from-pink-500 via-yellow-400 to-purple-500', 
+        text: 'text-white font-bold', 
+        border: 'border-yellow-400/80 shadow-[0_0_20px_rgba(253,224,71,0.5),0_0_40px_rgba(236,72,153,0.3),inset_0_2px_6px_rgba(255,255,255,0.2)]', 
+        darkBg: 'bg-gradient-to-r from-pink-600/90 via-yellow-500/90 to-purple-600/90', 
+        darkText: 'text-white font-bold', 
+        darkBorder: 'border-yellow-400/80 shadow-[0_0_20px_rgba(253,224,71,0.4),0_0_40px_rgba(236,72,153,0.2),inset_0_2px_6px_rgba(255,255,255,0.15)]'
       };
     }
     if (event.event_type_id) {
@@ -149,7 +148,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
               {dayEvents.slice(0, 2).map(event => {
                 const eventColor = getEventColor(event);
                 return (
-                  <div key={event.id} className={`text-xs px-2 py-1 rounded-lg font-medium truncate transition-all border ${eventColor.extraClass || ''} ${
+                  <div key={event.id} className={`text-xs px-2 py-1 rounded-lg font-medium truncate transition-all border ${
                     isCurrentDay
                       ? `${event.is_birthday ? eventColor.bg : eventColor.bg} ${eventColor.text} ${eventColor.border} shadow-[0_0_8px_rgba(59,130,246,0.3)]`
                       : `${event.is_birthday ? eventColor.darkBg : eventColor.darkBg} ${eventColor.darkText} ${eventColor.darkBorder}`
@@ -216,22 +215,22 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
           </div>
           
           {birthdayEvents.length > 0 && (
-            <div className="p-4 border-b border-zinc-800/50">
-              {birthdayEvents.map(event => (
-                <div key={event.id} className="p-4 rounded-xl bg-gradient-to-br from-pink-300/50 via-yellow-200/50 to-purple-300/50 border-2 border-yellow-300/60 shadow-[0_0_24px_rgba(253,224,71,0.4),0_6px_20px_rgba(236,72,153,0.3),inset_0_2px_6px_rgba(255,255,255,0.15)] mb-3 last:mb-0 animate-pulse">
-                  <div className="text-center">
-                    <div className="text-3xl mb-2">🎂✨🎉</div>
-                    <div className="text-lg font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] mb-1">{event.birthday_person_name}</div>
-                    {event.birthday_relationship && (
-                      <div className="text-xs text-yellow-50/90 mb-2">{event.birthday_relationship}</div>
-                    )}
-                    {event.birthday_notes && (
-                      <div className="text-xs text-yellow-50/70 mt-2 italic">{event.birthday_notes}</div>
-                    )}
-                  </div>
+          <div className="p-4 border-b border-zinc-800/50">
+            {birthdayEvents.map(event => (
+              <div key={event.id} className="p-4 rounded-xl bg-gradient-to-br from-pink-500 via-yellow-400 to-purple-500 border-2 border-yellow-400/80 shadow-[0_0_24px_rgba(253,224,71,0.5),0_6px_20px_rgba(236,72,153,0.4),inset_0_2px_6px_rgba(255,255,255,0.2)] mb-3 last:mb-0">
+                <div className="text-center">
+                  <div className="text-3xl mb-2">🎂✨🎉</div>
+                  <div className="text-lg font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] mb-1">{event.birthday_person_name}</div>
+                  {event.birthday_relationship && (
+                    <div className="text-xs text-white/90 mb-2">{event.birthday_relationship}</div>
+                  )}
+                  {event.birthday_notes && (
+                    <div className="text-xs text-white/80 mt-2 italic">{event.birthday_notes}</div>
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
           )}
           
           <div className="max-h-[500px] overflow-y-auto">
