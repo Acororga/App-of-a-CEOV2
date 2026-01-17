@@ -146,7 +146,7 @@ export default function Calendar() {
             {t('schedule')}
           </h1>
           
-          <Link to={createPageUrl('EventTypes')} className="text-xs text-zinc-600 hover:text-zinc-400 font-medium transition-colors">
+          <Link to={createPageUrl('EventTypes')} className="px-3 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/50 hover:border-zinc-700/60 text-xs text-zinc-300 hover:text-white font-bold transition-all active:scale-95">
             Types
           </Link>
         </div>

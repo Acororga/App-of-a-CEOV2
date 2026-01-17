@@ -243,8 +243,10 @@ export default function Notes() {
     }
   }, [selectedNote]);
 
-  // Get 5 most recent notes
-  const recentNotes = [...notes].slice(0, 5);
+  // Get recent notes (filtered or all)
+  const recentNotes = selectedTag === 'all' 
+    ? [...notes].slice(0, 5)
+    : [...filteredNotes].slice(0, 5);
 
   return (
     <div className="min-h-screen bg-black text-white pt-16 relative overflow-hidden">
@@ -298,7 +300,7 @@ export default function Notes() {
       {/* 2 Column Layout */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Sidebar - Tags + Recent Notes */}
-        <div className="w-80 border-r-2 border-zinc-900/90 bg-gradient-to-b from-zinc-950/60 via-zinc-950/50 to-zinc-950/60 backdrop-blur-xl overflow-y-auto shadow-[inset_-8px_0_24px_rgba(0,0,0,0.4)]">
+        <div className="w-64 md:w-80 border-r-2 border-zinc-900/90 bg-gradient-to-b from-zinc-950/60 via-zinc-950/50 to-zinc-950/60 backdrop-blur-xl overflow-y-auto shadow-[inset_-8px_0_24px_rgba(0,0,0,0.4)]">
           {/* Recent Notes Section */}
           <div className="p-4 border-b-2 border-zinc-900/80">
             <div className="text-xs font-black uppercase tracking-wider text-zinc-500 mb-3 px-1">

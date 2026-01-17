@@ -403,24 +403,28 @@ export default function Habits() {
                           const isToday = day.getTime() === today.getTime();
                           const isLocked = isPast && !isYesterday;
 
-                          // Vérifier si le jour précédent est complété
-                          let previousDayCompleted = true;
-                          if (index > 0) {
-                            const previousDay = addDays(weekStart, index - 1);
-                            const previousDayStr = format(previousDay, 'yyyy-MM-dd');
-                            const previousCompletion = allCompletions?.find(c => 
-                              c.habit_id === habit.id && 
-                              format(new Date(c.date), 'yyyy-MM-dd') === previousDayStr
-                            );
-                            const previousDayScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes([1,2,3,4,5,6,0][index - 1]));
+                          // Vérifier si TOUS les jours précédents sont complétés
+                          let allPreviousDaysCompleted = true;
+                          for (let i = 0; i < index; i++) {
+                            const prevDay = addDays(weekStart, i);
+                            const prevDayNum = [1,2,3,4,5,6,0][i];
+                            const prevDayStr = format(prevDay, 'yyyy-MM-dd');
+                            const prevIsScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(prevDayNum));
 
-                            // Le jour précédent doit être validé si c'est dans le passé
-                            const prevDay = addDays(weekStart, index - 1);
-                            const prevIsPast = prevDay < today;
-                            const prevIsYesterday = prevDay.getTime() === yesterday.getTime();
+                            if (prevIsScheduled) {
+                              const prevCompletion = allCompletions?.find(c => 
+                                c.habit_id === habit.id && 
+                                format(new Date(c.date), 'yyyy-MM-dd') === prevDayStr
+                              );
 
-                            if (previousDayScheduled && prevIsPast && !prevIsYesterday) {
-                              previousDayCompleted = !!previousCompletion;
+                              const prevIsPast = prevDay < today;
+                              const prevIsYesterday = prevDay.getTime() === yesterday.getTime();
+
+                              // Si le jour précédent est locked et n'a pas de completion, on bloque
+                              if (prevIsPast && !prevIsYesterday && !prevCompletion) {
+                                allPreviousDaysCompleted = false;
+                                break;
+                              }
                             }
                           }
 
@@ -428,15 +432,15 @@ export default function Habits() {
                           const isMissed = completion?.state === 'missed';
                           const notValidatedAndLocked = isLocked && isScheduled && !completion;
 
-                          // Ne pas afficher si jour précédent non complété et que c'est un jour passé
-                          const shouldShow = previousDayCompleted || !isPast || isYesterday || isToday;
+                          // Afficher seulement si tous les jours précédents sont complétés OU si c'est aujourd'hui/hier/futur
+                          const canShow = allPreviousDaysCompleted || !isPast || isYesterday || isToday;
 
                           return (
                             <td key={index} className="text-center py-3 px-2">
                               {!isScheduled ? (
                                 <span className="text-zinc-900">·</span>
-                              ) : !shouldShow ? (
-                                <div className="w-5 h-5 rounded-full border-2 border-zinc-900 inline-block opacity-30" />
+                              ) : !canShow ? (
+                                <div className="w-5 h-5 rounded-full border-2 border-zinc-900 inline-block opacity-20" />
                               ) : isCompleted ? (
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
