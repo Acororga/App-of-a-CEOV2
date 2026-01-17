@@ -305,7 +305,7 @@ export default function Habits() {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-6 pt-20 pb-6 relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 text-white p-4 sm:p-6 pt-16 sm:pt-20 pb-4 sm:pb-6 relative overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
