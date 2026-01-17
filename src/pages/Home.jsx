@@ -370,14 +370,6 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Streak */}
-          <Link to={createPageUrl('WinStreak')} className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] hover:scale-105 active:scale-100 transition-transform duration-150">
-            <span className="text-base drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
-            <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
-              {streakData?.current_streak || 0}
-            </span>
-          </Link>
-          
           {/* Focus Mode Quick Button */}
           <button
             onClick={() => setShowFocusModal(true)}
@@ -391,6 +383,24 @@ export default function Home() {
             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
             <Zap className="w-6 h-6 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
           </button>
+
+          {/* Notes Quick Button */}
+          <Link
+            to={createPageUrl('Notes')}
+            className="w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 shadow-[0_8px_32px_rgba(99,102,241,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.6)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            <FileText className="w-6 h-6 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+          </Link>
+          
+          {/* Streak */}
+          <Link to={createPageUrl('WinStreak')} className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] hover:scale-105 active:scale-100 transition-transform duration-150">
+            <span className="text-base drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
+            <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
+              {streakData?.current_streak || 0}
+            </span>
+          </Link>
         </div>
       </div>
 
