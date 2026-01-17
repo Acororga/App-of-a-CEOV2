@@ -12,7 +12,7 @@ export default function Notes() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [expandedTags, setExpandedTags] = useState(new Set(['all']));
+  const [expandedTags, setExpandedTags] = useState(new Set(['all', 'recent']));
   const editorRef = useRef(null);
   const saveTimeoutRef = useRef(null);
   const queryClient = useQueryClient();
@@ -337,45 +337,62 @@ export default function Notes() {
       {/* 2 Column Layout */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Sidebar - Tags + Recent Notes */}
-        <div className="w-24 sm:w-64 md:w-80 border-r-2 border-zinc-900/90 bg-gradient-to-b from-zinc-950/60 via-zinc-950/50 to-zinc-950/60 backdrop-blur-xl overflow-y-auto shadow-[inset_-8px_0_24px_rgba(0,0,0,0.4)]">
-          {/* Recent Notes Section */}
-          <div className="p-4 border-b-2 border-zinc-900/80">
-            <div className="text-xs font-black uppercase tracking-wider text-zinc-500 mb-3 px-1">
-              Recent
-            </div>
-            <div className="space-y-1.5">
-              {recentNotes.map(note => {
-                const isSelected = selectedNote?.id === note.id;
-                return (
-                  <button
-                    key={note.id}
-                    onClick={() => setSelectedNote(note)}
-                    className={`w-full p-3 rounded-2xl transition-all duration-150 text-left relative group overflow-hidden ${
-                      isSelected 
-                        ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
-                        : 'bg-zinc-900/40 border-2 border-zinc-800/40 hover:border-zinc-700/50 hover:bg-zinc-900/60'
-                    }`}
-                  >
-                    {isSelected && (
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
-                    )}
-                    <div className="relative">
-                      <div className={`font-bold text-xs mb-1 truncate ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
-                        {getNoteTitle(note.content)}
-                      </div>
-                      <div className={`text-[10px] ${isSelected ? 'text-indigo-400' : 'text-zinc-600'}`}>
-                        {format(new Date(note.updated_date), 'MMM d')}
-                      </div>
-                    </div>
-                  </button>
-                );
+        <div className="w-28 sm:w-64 md:w-80 border-r-2 border-zinc-900/90 bg-gradient-to-b from-zinc-950/60 via-zinc-950/50 to-zinc-950/60 backdrop-blur-xl overflow-y-auto shadow-[inset_-8px_0_24px_rgba(0,0,0,0.4)]">
+          {/* Recent Notes Section - Collapsible */}
+          <div className="p-3 border-b-2 border-zinc-900/80">
+            <button
+              onClick={() => setExpandedTags(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has('recent')) {
+                  newSet.delete('recent');
+                } else {
+                  newSet.add('recent');
+                }
+                return newSet;
               })}
-              {recentNotes.length === 0 && (
-                <div className="text-center py-6 text-zinc-700 text-xs">
-                  No recent notes
-                </div>
-              )}
-            </div>
+              className="w-full flex items-center justify-between mb-2 px-1"
+            >
+              <div className="text-xs font-black uppercase tracking-wider text-zinc-500">
+                Recent
+              </div>
+              <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform ${expandedTags.has('recent') ? '' : '-rotate-90'}`} />
+            </button>
+
+            {expandedTags.has('recent') && (
+              <div className="space-y-1">
+                {recentNotes.map(note => {
+                  const isSelected = selectedNote?.id === note.id;
+                  return (
+                    <button
+                      key={note.id}
+                      onClick={() => setSelectedNote(note)}
+                      className={`w-full p-2 rounded-xl transition-all duration-150 text-left relative group overflow-hidden ${
+                        isSelected 
+                          ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
+                          : 'bg-zinc-900/40 border-2 border-zinc-800/40 hover:border-zinc-700/50 hover:bg-zinc-900/60'
+                      }`}
+                    >
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
+                      )}
+                      <div className="relative">
+                        <div className={`font-bold text-xs mb-0.5 truncate ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
+                          {getNoteTitle(note.content)}
+                        </div>
+                        <div className={`text-[9px] ${isSelected ? 'text-indigo-400' : 'text-zinc-600'}`}>
+                          {format(new Date(note.updated_date), 'MMM d')}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+                {recentNotes.length === 0 && (
+                  <div className="text-center py-4 text-zinc-700 text-xs">
+                    No recent notes
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Tags Section */}

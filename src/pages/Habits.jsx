@@ -419,62 +419,85 @@ export default function Habits() {
                           const isToday = dayTimestamp === todayTimestamp;
                           const isYesterday = dayTimestamp === yesterdayTimestamp;
                           const isPastDay = dayTimestamp < todayTimestamp;
-                          const isFutureDay = dayTimestamp > todayTimestamp;
 
-                          // Un jour est "locked" si c'est dans le passé et ce n'est pas hier
+                          // Un jour est "locked" si c'est dans le passé ET ce n'est pas hier
                           const isLockedDay = isPastDay && !isYesterday;
 
-                          // RÈGLE DE REMPLISSAGE SÉQUENTIEL
-                          // On ne peut afficher cette colonne complétée que si TOUS les jours précédents prévus sont complétés
-                          let canShowAsCompleted = true;
+                          // Déterminer l'état de cette cellule
+                          const isCompleted = completion?.state === 'completed' || completion?.completed === true;
+                          const isMissed = completion?.state === 'missed';
 
-                          // Parcourir tous les jours avant celui-ci
+                          // Pour un jour LOCKED : TOUJOURS afficher l'état réel
+                          if (isLockedDay) {
+                            return (
+                              <td key={index} className="text-center py-3 px-2">
+                                {isCompleted ? (
+                                  // Jour locked complété - Check vert
+                                  <div className="inline-flex items-center justify-center">
+                                    <div className="relative">
+                                      <div className="absolute inset-0 bg-green-500/30 rounded-full blur-sm" />
+                                      <CheckCircle2 className="relative w-5 h-5 text-green-400" />
+                                    </div>
+                                  </div>
+                                ) : isMissed ? (
+                                  // Jour locked manqué - X rouge
+                                  <div className="inline-flex items-center justify-center">
+                                    <div className="relative">
+                                      <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
+                                      <X className="relative w-5 h-5 text-red-400" />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  // Jour locked sans completion - Cercle rouge vide
+                                  <div className="inline-flex items-center justify-center">
+                                    <div className="relative">
+                                      <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
+                                      <div className="relative w-5 h-5 rounded-full border-2 border-red-400 bg-red-950/50" />
+                                    </div>
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          }
+
+                          // Pour un jour NON-LOCKED (aujourd'hui, hier, futur)
+                          // Vérifier si tous les jours précédents LOCKED sont complétés
+                          let allPreviousLockedCompleted = true;
                           for (let i = 0; i < index; i++) {
                             const prevDay = addDays(weekStart, i);
                             const prevDayNum = [1,2,3,4,5,6,0][i];
                             const prevDayStr = format(prevDay, 'yyyy-MM-dd');
-
-                            // Ce jour précédent est-il prévu pour cette habitude ?
                             const prevIsScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes(prevDayNum));
 
                             if (prevIsScheduled) {
-                              // Récupérer sa completion
-                              const prevCompletion = allCompletions?.find(c => 
-                                c.habit_id === habit.id && 
-                                format(new Date(c.date), 'yyyy-MM-dd') === prevDayStr
-                              );
-
-                              // Déterminer son statut temporel
                               const prevDayTimestamp = prevDay.getTime();
                               const prevIsYesterday = prevDayTimestamp === yesterdayTimestamp;
                               const prevIsPast = prevDayTimestamp < todayTimestamp;
                               const prevIsLocked = prevIsPast && !prevIsYesterday;
 
-                              // Si ce jour précédent est locked, il DOIT être complété
+                              // Seuls les jours LOCKED doivent être vérifiés
                               if (prevIsLocked) {
+                                const prevCompletion = allCompletions?.find(c => 
+                                  c.habit_id === habit.id && 
+                                  format(new Date(c.date), 'yyyy-MM-dd') === prevDayStr
+                                );
                                 const prevIsCompleted = prevCompletion?.state === 'completed' || prevCompletion?.completed === true;
+
                                 if (!prevIsCompleted) {
-                                  canShowAsCompleted = false;
+                                  allPreviousLockedCompleted = false;
                                   break;
                                 }
                               }
                             }
                           }
 
-                          // Déterminer l'état visuel de cette cellule
-                          const isCompleted = completion?.state === 'completed' || completion?.completed === true;
-                          const isMissed = completion?.state === 'missed';
-
-                          // Si locked et pas de completion, c'est un cercle rouge vide
-                          const isLockedEmpty = isLockedDay && !completion;
-
                           return (
                             <td key={index} className="text-center py-3 px-2">
-                              {!canShowAsCompleted && isLockedDay ? (
-                                // Jour bloqué car un jour précédent n'est pas complété
+                              {!allPreviousLockedCompleted ? (
+                                // Jour bloqué car un jour locked précédent n'est pas complété
                                 <div className="w-5 h-5 rounded-full border-2 border-zinc-900 inline-block opacity-20" />
                               ) : isCompleted ? (
-                                // Jour complété - Check vert
+                                // Jour complété
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
                                     <div className="absolute inset-0 bg-green-500/30 rounded-full blur-sm" />
@@ -482,23 +505,15 @@ export default function Habits() {
                                   </div>
                                 </div>
                               ) : isMissed ? (
-                                // Jour manqué - X rouge
+                                // Jour manqué
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">
                                     <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
                                     <X className="relative w-5 h-5 text-red-400" />
                                   </div>
                                 </div>
-                              ) : isLockedEmpty ? (
-                                // Jour locked non validé - Cercle rouge vide
-                                <div className="inline-flex items-center justify-center">
-                                  <div className="relative">
-                                    <div className="absolute inset-0 bg-red-500/30 rounded-full blur-sm" />
-                                    <div className="relative w-5 h-5 rounded-full border-2 border-red-400 bg-red-950/50" />
-                                  </div>
-                                </div>
                               ) : (
-                                // Jour futur/aujourd'hui/hier - Cercle gris vide
+                                // Jour non complété (hier, aujourd'hui, futur)
                                 <div className="w-5 h-5 rounded-full border-2 border-zinc-800 inline-block" />
                               )}
                             </td>
