@@ -361,11 +361,10 @@ export default function Home() {
           </span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* Rank */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
-            <div className="text-[9px] text-zinc-600 font-bold tracking-wider uppercase">Rank</div>
-            <div className="text-sm font-bold bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)]">
+            <div className="text-xs font-bold bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
               {rankData?.rank_name || 'Panda'}
             </div>
           </div>
@@ -373,7 +372,7 @@ export default function Home() {
           {/* Focus Mode Quick Button */}
           <button
             onClick={() => setShowFocusModal(true)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group ${
               isCEO 
                 ? 'bg-gradient-to-br from-yellow-500 via-yellow-600 to-amber-600 shadow-[0_8px_32px_rgba(234,179,8,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(234,179,8,0.6)]'
                 : 'bg-gradient-to-br from-orange-500 via-red-500 to-red-600 shadow-[0_8px_32px_rgba(239,68,68,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(239,68,68,0.6)]'
@@ -381,23 +380,23 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-            <Zap className="w-6 h-6 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+            <Zap className="w-5 h-5 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
           </button>
 
           {/* Notes Quick Button */}
           <Link
             to={createPageUrl('Notes')}
-            className="w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 shadow-[0_8px_32px_rgba(99,102,241,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.6)]"
+            className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 relative overflow-hidden group bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 shadow-[0_8px_32px_rgba(99,102,241,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.6)]"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-white/0 to-white/25" />
             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-            <FileText className="w-6 h-6 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
+            <FileText className="w-5 h-5 text-white relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
           </Link>
           
           {/* Streak */}
-          <Link to={createPageUrl('WinStreak')} className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] hover:scale-105 active:scale-100 transition-transform duration-150">
-            <span className="text-base drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
-            <span className="text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
+          <Link to={createPageUrl('WinStreak')} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.03)] hover:scale-105 active:scale-100 transition-transform duration-150">
+            <span className="text-sm drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]">🔥</span>
+            <span className="text-xs font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent drop-shadow-sm">
               {streakData?.current_streak || 0}
             </span>
           </Link>

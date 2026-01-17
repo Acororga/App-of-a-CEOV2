@@ -188,29 +188,32 @@ export default function Notes() {
       const isSelected = selectedTag === tag.fullPath;
 
       return (
-        <div key={tag.fullPath}>
+        <div key={tag.fullPath} className="mb-1">
           <button
             onClick={() => {
               setSelectedTag(tag.fullPath);
               if (hasChildren) toggleTag(tag.fullPath);
             }}
-            className={`w-full flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-150 relative group ${
+            className={`w-full flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-150 relative group overflow-hidden ${
               isSelected 
-                ? 'bg-gradient-to-r from-indigo-950/60 to-purple-950/60 text-white border-l-4 border-indigo-500 shadow-[inset_0_0_20px_rgba(99,102,241,0.15)]' 
-                : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-l-4 border-transparent'
+                ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 text-white border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
+                : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-2 border-transparent'
             }`}
-            style={{ paddingLeft: `${level * 16 + 16}px` }}
+            style={{ marginLeft: `${level * 12}px` }}
           >
+            {isSelected && (
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
+            )}
             {hasChildren && (
-              <span className={`w-4 h-4 flex items-center justify-center transition-transform ${isExpanded ? '' : '-rotate-90'}`}>
+              <span className={`w-4 h-4 flex items-center justify-center transition-transform relative ${isExpanded ? '' : '-rotate-90'}`}>
                 <ChevronDown className="w-3 h-3" />
               </span>
             )}
             {!hasChildren && <span className="w-4" />}
-            <span className="flex-1 text-left truncate">{key}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
+            <span className="flex-1 text-left truncate relative">{key}</span>
+            <span className={`text-xs px-2.5 py-1 rounded-full relative ${
               isSelected
-                ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]'
+                ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]'
                 : 'bg-zinc-800/50 text-zinc-600'
             }`}>
               {tag.count}
@@ -239,22 +242,25 @@ export default function Notes() {
     }
   }, [selectedNote]);
 
+  // Get 5 most recent notes
+  const recentNotes = [...notes].slice(0, 5);
+
   return (
     <div className="min-h-screen bg-black text-white pt-16 relative overflow-hidden">
       {/* Texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         backgroundRepeat: 'repeat',
-        backgroundSize: '128px 128px'
+        backgroundSize: '200px 200px'
       }} />
 
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 h-16 bg-black/95 backdrop-blur-xl border-b border-zinc-800/60 shadow-[0_4px_24px_rgba(0,0,0,0.6)] z-50 flex items-center justify-between px-6">
-        <Link to={createPageUrl('Home')} className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:bg-zinc-800/50 hover:border-zinc-700/50 active:scale-95 transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-black/95 backdrop-blur-2xl border-b-2 border-zinc-800/80 shadow-[0_8px_32px_rgba(0,0,0,0.8)] z-50 flex items-center justify-between px-4">
+        <Link to={createPageUrl('Home')} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-900/90 to-zinc-950/90 border-2 border-zinc-800/60 hover:border-zinc-700/60 active:scale-95 transition-all duration-150 shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)]">
           <ArrowLeft className="w-4 h-4 text-zinc-400" />
         </Link>
         
-        <div className="text-base font-black tracking-tight bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-sm">
+        <div className="text-base font-black tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-500 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(99,102,241,0.3)]">
           Notes
         </div>
 
@@ -265,7 +271,7 @@ export default function Notes() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-52 h-10 px-4 bg-zinc-900/80 backdrop-blur-sm border-2 border-zinc-800/80 rounded-xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-700/50 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] transition-colors"
+              className="w-40 h-11 px-3 bg-zinc-900/90 backdrop-blur-sm border-2 border-zinc-800/90 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-700/60 shadow-[inset_0_2px_12px_rgba(0,0,0,0.4)] transition-all"
               autoFocus
               onBlur={() => !searchQuery && setShowSearch(false)}
             />
@@ -273,7 +279,7 @@ export default function Notes() {
           {!showSearch && (
             <button
               onClick={() => setShowSearch(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:bg-zinc-800/50 hover:border-indigo-700/50 active:scale-95 transition-all duration-150 shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+              className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-900/90 to-zinc-950/90 border-2 border-zinc-800/60 hover:border-indigo-700/60 active:scale-95 transition-all duration-150 shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)]"
             >
               <Search className="w-4 h-4 text-zinc-400" />
             </button>
@@ -281,84 +287,93 @@ export default function Notes() {
           <button
             onClick={handleNewNote}
             disabled={createNoteMutation.isPending}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 border-2 border-indigo-500/30 hover:from-indigo-500 hover:via-purple-500 hover:to-indigo-500 active:scale-95 transition-all duration-150 shadow-[0_4px_16px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_6px_24px_rgba(99,102,241,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-11 h-11 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 border-2 border-indigo-500/40 hover:from-indigo-500 hover:via-purple-500 hover:to-indigo-600 active:scale-95 transition-all duration-150 shadow-[0_6px_24px_rgba(99,102,241,0.5),inset_0_2px_0_rgba(255,255,255,0.2)] hover:shadow-[0_8px_32px_rgba(99,102,241,0.7)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Plus className="w-5 h-5 text-white drop-shadow-sm" />
+            <Plus className="w-5 h-5 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
           </button>
         </div>
       </div>
 
-      {/* 3 Column Layout */}
+      {/* 2 Column Layout */}
       <div className="flex h-[calc(100vh-4rem)]">
-        {/* Left Sidebar - Tags */}
-        <div className="w-72 border-r-2 border-zinc-900/80 bg-zinc-950/40 backdrop-blur-sm overflow-y-auto shadow-[inset_-4px_0_16px_rgba(0,0,0,0.3)]">
-          <button
-            onClick={() => setSelectedTag('all')}
-            className={`w-full flex items-center justify-between px-4 py-3 text-sm font-semibold transition-all duration-150 relative group ${
-              selectedTag === 'all' 
-                ? 'bg-gradient-to-r from-indigo-950/60 to-purple-950/60 text-white border-l-4 border-indigo-500 shadow-[inset_0_0_20px_rgba(99,102,241,0.15)]' 
-                : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-l-4 border-transparent'
-            }`}
-          >
-            <span>All Notes</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              selectedTag === 'all'
-                ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]'
-                : 'bg-zinc-800/50 text-zinc-600'
-            }`}>
-              {notes.length}
-            </span>
-          </button>
-          <div className="mt-1">
-            {renderTagTree(tagHierarchy)}
+        {/* Left Sidebar - Tags + Recent Notes */}
+        <div className="w-80 border-r-2 border-zinc-900/90 bg-gradient-to-b from-zinc-950/60 via-zinc-950/50 to-zinc-950/60 backdrop-blur-xl overflow-y-auto shadow-[inset_-8px_0_24px_rgba(0,0,0,0.4)]">
+          {/* Recent Notes Section */}
+          <div className="p-4 border-b-2 border-zinc-900/80">
+            <div className="text-xs font-black uppercase tracking-wider text-zinc-500 mb-3 px-1">
+              Recent
+            </div>
+            <div className="space-y-1.5">
+              {recentNotes.map(note => {
+                const isSelected = selectedNote?.id === note.id;
+                return (
+                  <button
+                    key={note.id}
+                    onClick={() => setSelectedNote(note)}
+                    className={`w-full p-3 rounded-2xl transition-all duration-150 text-left relative group overflow-hidden ${
+                      isSelected 
+                        ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
+                        : 'bg-zinc-900/40 border-2 border-zinc-800/40 hover:border-zinc-700/50 hover:bg-zinc-900/60'
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
+                    )}
+                    <div className="relative">
+                      <div className={`font-bold text-xs mb-1 truncate ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
+                        {getNoteTitle(note.content)}
+                      </div>
+                      <div className={`text-[10px] ${isSelected ? 'text-indigo-400' : 'text-zinc-600'}`}>
+                        {format(new Date(note.updated_date), 'MMM d')}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+              {recentNotes.length === 0 && (
+                <div className="text-center py-6 text-zinc-700 text-xs">
+                  No recent notes
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tags Section */}
+          <div className="p-2">
+            <button
+              onClick={() => setSelectedTag('all')}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-150 relative group overflow-hidden ${
+                selectedTag === 'all' 
+                  ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 text-white border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
+                  : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-2 border-transparent'
+              }`}
+            >
+              {selectedTag === 'all' && (
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
+              )}
+              <span className="relative">All Notes</span>
+              <span className={`text-xs px-2.5 py-1 rounded-full relative ${
+                selectedTag === 'all'
+                  ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]'
+                  : 'bg-zinc-800/50 text-zinc-600'
+              }`}>
+                {notes.length}
+              </span>
+            </button>
+            <div className="mt-1">
+              {renderTagTree(tagHierarchy)}
+            </div>
           </div>
         </div>
 
-        {/* Middle Column - Notes List */}
-        <div className="w-96 border-r-2 border-zinc-900/80 bg-zinc-950/30 backdrop-blur-sm overflow-y-auto shadow-[inset_-4px_0_16px_rgba(0,0,0,0.3)]">
-          {filteredNotes.map(note => {
-            const isSelected = selectedNote?.id === note.id;
-            return (
-              <button
-                key={note.id}
-                onClick={() => setSelectedNote(note)}
-                className={`w-full p-5 border-b border-zinc-900/60 hover:bg-zinc-900/40 transition-all duration-150 text-left relative group ${
-                  isSelected ? 'bg-zinc-900/60 border-l-4 border-indigo-500 shadow-[inset_0_0_20px_rgba(99,102,241,0.1)]' : 'border-l-4 border-transparent'
-                }`}
-              >
-                {isSelected && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/30 to-transparent pointer-events-none" />
-                )}
-                <div className="relative">
-                  <div className={`font-bold text-sm mb-2 truncate ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
-                    {getNoteTitle(note.content)}
-                  </div>
-                  <div className={`text-xs mb-2 ${isSelected ? 'text-indigo-400' : 'text-zinc-600'}`}>
-                    {format(new Date(note.updated_date), 'MMM d, yyyy')}
-                  </div>
-                  <div className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                    {getNotePreview(note.content)}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-          {filteredNotes.length === 0 && (
-            <div className="p-12 text-center">
-              <div className="text-zinc-700 text-6xl mb-4">📝</div>
-              <div className="text-zinc-600 text-sm font-medium">No notes found</div>
-            </div>
-          )}
-        </div>
-
         {/* Right Column - Editor */}
-        <div className="flex-1 overflow-y-auto bg-black/40">
+        <div className="flex-1 overflow-y-auto bg-gradient-to-br from-black/50 via-zinc-950/30 to-black/50">
           {selectedNote ? (
-            <div className="max-w-4xl mx-auto p-12">
-              <div className="flex justify-end mb-6">
+            <div className="max-w-2xl mx-auto p-6">
+              <div className="flex justify-end mb-4">
                 <button
                   onClick={handleDeleteNote}
-                  className="p-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:bg-red-950/40 hover:border-red-800/50 active:scale-95 transition-all duration-150 text-zinc-500 hover:text-red-400 shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                  className="p-3 rounded-2xl bg-gradient-to-br from-zinc-900/90 to-zinc-950/90 border-2 border-zinc-800/60 hover:border-red-800/60 hover:from-red-950/40 hover:to-red-950/40 active:scale-95 transition-all duration-150 text-zinc-500 hover:text-red-400 shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)]"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -368,13 +383,13 @@ export default function Notes() {
                 value={selectedNote.content || ''}
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="Start writing... Use #tag to organize"
-                className="w-full min-h-[calc(100vh-16rem)] bg-transparent border-none focus:ring-0 resize-none text-base leading-loose text-zinc-100 p-0 placeholder:text-zinc-700 font-light tracking-wide"
+                className="w-full min-h-[calc(100vh-12rem)] bg-transparent border-none focus:ring-0 resize-none text-base leading-loose text-zinc-100 p-0 placeholder:text-zinc-700/60 font-light tracking-wide"
                 style={{ outline: 'none', boxShadow: 'none' }}
               />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center">
-              <div className="text-zinc-800 text-8xl mb-6">✏️</div>
+              <div className="text-zinc-800 text-7xl mb-4">✏️</div>
               <div className="text-zinc-600 text-sm font-medium">Select a note or create a new one</div>
             </div>
           )}
