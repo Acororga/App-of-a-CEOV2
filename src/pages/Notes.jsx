@@ -190,20 +190,36 @@ export default function Notes() {
     setExpandedTags(newExpanded);
   };
 
-  // Render tag tree
+  // Get notes for a specific tag
+  const getNotesForTag = (tagPath) => {
+    return notes.filter(note => {
+      const noteTags = extractTags(note.content);
+      return noteTags.some(t => t === tagPath || t.startsWith(tagPath + '/'));
+    });
+  };
+
+  // Render tag tree with notes
   const renderTagTree = (obj, level = 0) => {
     return Object.keys(obj).sort().map(key => {
       const tag = obj[key];
       const hasChildren = Object.keys(tag.children).length > 0;
       const isExpanded = expandedTags.has(tag.fullPath);
       const isSelected = selectedTag === tag.fullPath;
+      const tagNotes = getNotesForTag(tag.fullPath);
+      const hasMultipleNotes = tagNotes.length > 1;
 
       return (
         <div key={tag.fullPath} className="mb-1">
           <button
             onClick={() => {
               setSelectedTag(tag.fullPath);
-              if (hasChildren) toggleTag(tag.fullPath);
+              if (hasChildren || hasMultipleNotes) {
+                toggleTag(tag.fullPath);
+              }
+              // Si une seule note, l'ouvrir directement
+              if (!hasChildren && tagNotes.length === 1) {
+                setSelectedNote(tagNotes[0]);
+              }
             }}
             className={`w-full flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-150 relative group overflow-hidden ${
               isSelected 
@@ -215,12 +231,12 @@ export default function Notes() {
             {isSelected && (
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
             )}
-            {hasChildren && (
+            {(hasChildren || hasMultipleNotes) && (
               <span className={`w-4 h-4 flex items-center justify-center transition-transform relative ${isExpanded ? '' : '-rotate-90'}`}>
                 <ChevronDown className="w-3 h-3" />
               </span>
             )}
-            {!hasChildren && <span className="w-4" />}
+            {!hasChildren && !hasMultipleNotes && <span className="w-4" />}
             <span className="flex-1 text-left truncate relative">{key}</span>
             <span className={`text-xs px-2.5 py-1 rounded-full relative ${
               isSelected
@@ -231,6 +247,29 @@ export default function Notes() {
             </span>
           </button>
           {hasChildren && isExpanded && renderTagTree(tag.children, level + 1)}
+          {!hasChildren && hasMultipleNotes && isExpanded && (
+            <div className="ml-4">
+              {tagNotes.map(note => {
+                const noteTitle = getNoteTitle(note.content);
+                const isNoteSelected = selectedNote?.id === note.id;
+                return (
+                  <button
+                    key={note.id}
+                    onClick={() => setSelectedNote(note)}
+                    className={`w-full flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-all duration-150 mb-1 ${
+                      isNoteSelected
+                        ? 'bg-indigo-950/60 text-indigo-200 border border-indigo-700/40'
+                        : 'text-zinc-500 hover:bg-zinc-900/40 hover:text-zinc-300'
+                    }`}
+                    style={{ marginLeft: `${(level + 1) * 12}px` }}
+                  >
+                    <span className="w-3" />
+                    <span className="flex-1 text-left truncate">{noteTitle}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       );
     });
@@ -243,10 +282,8 @@ export default function Notes() {
     }
   }, [selectedNote]);
 
-  // Get recent notes (filtered or all)
-  const recentNotes = selectedTag === 'all' 
-    ? [...notes].slice(0, 5)
-    : [...filteredNotes].slice(0, 5);
+  // Get 5 most recent notes
+  const recentNotes = [...notes].slice(0, 5);
 
   return (
     <div className="min-h-screen bg-black text-white pt-16 relative overflow-hidden">

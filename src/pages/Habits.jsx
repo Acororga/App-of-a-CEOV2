@@ -403,7 +403,7 @@ export default function Habits() {
                           const isToday = day.getTime() === today.getTime();
                           const isLocked = isPast && !isYesterday;
 
-                          // Vérifier si TOUS les jours précédents sont complétés
+                          // Vérifier si TOUS les jours précédents PRÉVUS sont complétés
                           let allPreviousDaysCompleted = true;
                           for (let i = 0; i < index; i++) {
                             const prevDay = addDays(weekStart, i);
@@ -420,10 +420,13 @@ export default function Habits() {
                               const prevIsPast = prevDay < today;
                               const prevIsYesterday = prevDay.getTime() === yesterday.getTime();
 
-                              // Si le jour précédent est locked et n'a pas de completion, on bloque
-                              if (prevIsPast && !prevIsYesterday && !prevCompletion) {
-                                allPreviousDaysCompleted = false;
-                                break;
+                              // Si le jour précédent est dans le passé (pas hier) et n'est pas complété, on bloque
+                              if (prevIsPast && !prevIsYesterday) {
+                                const prevIsCompleted = prevCompletion?.state === 'completed' || prevCompletion?.completed === true;
+                                if (!prevIsCompleted) {
+                                  allPreviousDaysCompleted = false;
+                                  break;
+                                }
                               }
                             }
                           }
