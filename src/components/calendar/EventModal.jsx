@@ -14,7 +14,18 @@ import { useLanguage } from '../LanguageProvider';
 import { usePremium } from '../PremiumProvider';
 import { canAccessAdvancedCalendar } from '../premiumLimits';
 
-export default function EventModal({ open, onClose, onSubmit, initialData }) {
+const colorMap = {
+  blue: { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-400' },
+  green: { bg: 'bg-green-500', border: 'border-green-500', text: 'text-green-400' },
+  purple: { bg: 'bg-purple-500', border: 'border-purple-500', text: 'text-purple-400' },
+  pink: { bg: 'bg-pink-500', border: 'border-pink-500', text: 'text-pink-400' },
+  orange: { bg: 'bg-orange-500', border: 'border-orange-500', text: 'text-orange-400' },
+  red: { bg: 'bg-red-500', border: 'border-red-500', text: 'text-red-400' },
+  yellow: { bg: 'bg-yellow-500', border: 'border-yellow-500', text: 'text-yellow-400' },
+  teal: { bg: 'bg-teal-500', border: 'border-teal-500', text: 'text-teal-400' }
+};
+
+export default function EventModal({ open, onClose, onSubmit, initialData, eventTypes = [] }) {
   const { t } = useLanguage();
   const { isPremiumUser } = usePremium();
   const [formData, setFormData] = useState({
@@ -26,7 +37,8 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
     is_birthday: false,
     birthday_person_name: '',
     birthday_relationship: '',
-    birthday_notes: ''
+    birthday_notes: '',
+    event_type_id: null
   });
 
   useEffect(() => {
@@ -34,6 +46,24 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
       setFormData(prev => ({ ...prev, ...initialData }));
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        title: '',
+        description: '',
+        event_date: format(new Date(), 'yyyy-MM-dd'),
+        event_time: '09:00',
+        duration_minutes: 60,
+        is_birthday: false,
+        birthday_person_name: '',
+        birthday_relationship: '',
+        birthday_notes: '',
+        event_type_id: null,
+        ...initialData
+      });
+    }
+  }, [open]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -157,6 +187,33 @@ export default function EventModal({ open, onClose, onSubmit, initialData }) {
                 />
               </div>
             </>
+          )}
+
+          {/* Event Type Selection */}
+          {!formData.is_birthday && eventTypes.length > 0 && (
+            <div>
+              <label className="text-sm text-zinc-400 mb-2 block">Event Type (Optional)</label>
+              <div className="flex gap-2 flex-wrap">
+                {eventTypes.slice(0, 3).map(type => {
+                  const colorConfig = colorMap[type.color] || colorMap.blue;
+                  const isSelected = formData.event_type_id === type.id;
+                  return (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, event_type_id: isSelected ? null : type.id })}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 ${
+                        isSelected
+                          ? `${colorConfig.bg} ${colorConfig.border} border-2 shadow-lg scale-105 text-white`
+                          : 'bg-zinc-800/50 border-2 border-zinc-700/50 text-zinc-400 hover:border-zinc-600'
+                      }`}
+                    >
+                      {type.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           <div className={formData.is_birthday ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>

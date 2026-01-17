@@ -33,6 +33,14 @@ export default function Calendar() {
   const [direction, setDirection] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+
+  const { data: eventTypes = [] } = useQuery({
+    queryKey: ['eventTypes'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.EventType.filter({ created_by: user.email });
+    }
+  });
   
   const { data: events } = useQuery({
     queryKey: ['allEvents'],
@@ -138,7 +146,9 @@ export default function Calendar() {
             {t('schedule')}
           </h1>
           
-          <div className="w-20" />
+          <Link to={createPageUrl('EventTypes')} className="text-xs text-zinc-600 hover:text-zinc-400 font-medium transition-colors">
+            Types
+          </Link>
         </div>
 
         <AnimatePresence mode="wait" custom={direction}>
@@ -222,6 +232,7 @@ export default function Calendar() {
           }}
           onSubmit={(data) => createEventMutation.mutate(data)}
           initialData={prefilledEvent}
+          eventTypes={eventTypes}
         />
       </div>
     </div>

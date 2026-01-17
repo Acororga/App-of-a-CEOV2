@@ -23,6 +23,7 @@ import SettingsPermissions from './pages/SettingsPermissions';
 import SettingsPrivacy from './pages/SettingsPrivacy';
 import SettingsTerms from './pages/SettingsTerms';
 import WinStreak from './pages/WinStreak';
+import EventTypes from './pages/EventTypes';
 import __Layout from './Layout.jsx';
 
 
@@ -52,6 +53,7 @@ export const PAGES = {
     "SettingsPrivacy": SettingsPrivacy,
     "SettingsTerms": SettingsTerms,
     "WinStreak": WinStreak,
+    "EventTypes": EventTypes,
 }
 
 export const pagesConfig = {
