@@ -34,26 +34,36 @@ export default function FocusModeBlockingScreen({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-b from-red-500/3 to-transparent rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative max-w-md w-full">
-        {/* Visual Content - Deep work imagery */}
+        {/* Visual Content - Pure Black */}
         <div className="mb-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-700/5 to-zinc-800/5 rounded-[32px] blur-xl" />
-          <div className="relative aspect-[4/3] rounded-[32px] bg-zinc-950/80 border border-zinc-900/50 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.8)]">
-            <img 
-              src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80" 
-              alt="Deep focus"
-              className="w-full h-full object-cover opacity-25"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          <div className="relative aspect-[4/3] rounded-[32px] bg-black border-2 border-zinc-900/80 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.9)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-zinc-950/20" />
           </div>
         </div>
 
         {/* Content */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black mb-3 text-white tracking-tight">
-            You're in Focus Mode.
+            {t('language') === 'fr' ? "Vous êtes en Mode Focus." :
+             t('language') === 'es' ? "Estás en Modo Enfoque." :
+             t('language') === 'zh' ? "您处于专注模式。" :
+             t('language') === 'hi' ? "आप फोकस मोड में हैं।" :
+             t('language') === 'id' ? "Anda dalam Mode Fokus." :
+             t('language') === 'ru' ? "Вы в режиме фокуса." :
+             t('language') === 'pt' ? "Você está no Modo Foco." :
+             t('language') === 'ar' ? "أنت في وضع التركيز." :
+             "You're in Focus Mode."}
           </h1>
           <p className="text-base text-zinc-500 mb-6 font-medium">
-            This app is blocked to protect your momentum.
+            {t('language') === 'fr' ? "Souviens-toi pourquoi tu as commencé cette session." :
+             t('language') === 'es' ? "Recuerda por qué comenzaste esta sesión." :
+             t('language') === 'zh' ? "记住你为什么开始这个会话。" :
+             t('language') === 'hi' ? "याद रखें कि आपने यह सत्र क्यों शुरू किया।" :
+             t('language') === 'id' ? "Ingat mengapa Anda memulai sesi ini." :
+             t('language') === 'ru' ? "Вспомните, зачем вы начали эту сессию." :
+             t('language') === 'pt' ? "Lembre-se por que você começou esta sessão." :
+             t('language') === 'ar' ? "تذكر لماذا بدأت هذه الجلسة." :
+             "Remember why you started this session."}
           </p>
           
           {/* Warning box */}

@@ -397,19 +397,46 @@ export default function Habits() {
                           const today = new Date(new Date().setHours(0, 0, 0, 0));
                           const yesterday = new Date(today);
                           yesterday.setDate(yesterday.getDate() - 1);
-                          
+
                           const isPast = day < today;
                           const isYesterday = day.getTime() === yesterday.getTime();
+                          const isToday = day.getTime() === today.getTime();
                           const isLocked = isPast && !isYesterday;
+
+                          // Vérifier si le jour précédent est complété
+                          let previousDayCompleted = true;
+                          if (index > 0) {
+                            const previousDay = addDays(weekStart, index - 1);
+                            const previousDayStr = format(previousDay, 'yyyy-MM-dd');
+                            const previousCompletion = allCompletions?.find(c => 
+                              c.habit_id === habit.id && 
+                              format(new Date(c.date), 'yyyy-MM-dd') === previousDayStr
+                            );
+                            const previousDayScheduled = habit.is_daily || (habit.specific_days && habit.specific_days.includes([1,2,3,4,5,6,0][index - 1]));
+
+                            // Le jour précédent doit être validé si c'est dans le passé
+                            const prevDay = addDays(weekStart, index - 1);
+                            const prevIsPast = prevDay < today;
+                            const prevIsYesterday = prevDay.getTime() === yesterday.getTime();
+
+                            if (previousDayScheduled && prevIsPast && !prevIsYesterday) {
+                              previousDayCompleted = !!previousCompletion;
+                            }
+                          }
 
                           const isCompleted = completion?.state === 'completed' || completion?.completed === true;
                           const isMissed = completion?.state === 'missed';
                           const notValidatedAndLocked = isLocked && isScheduled && !completion;
 
+                          // Ne pas afficher si jour précédent non complété et que c'est un jour passé
+                          const shouldShow = previousDayCompleted || !isPast || isYesterday || isToday;
+
                           return (
                             <td key={index} className="text-center py-3 px-2">
                               {!isScheduled ? (
                                 <span className="text-zinc-900">·</span>
+                              ) : !shouldShow ? (
+                                <div className="w-5 h-5 rounded-full border-2 border-zinc-900 inline-block opacity-30" />
                               ) : isCompleted ? (
                                 <div className="inline-flex items-center justify-center">
                                   <div className="relative">

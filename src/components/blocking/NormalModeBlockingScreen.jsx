@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
 import { useLanguage } from '../LanguageProvider';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import { X } from 'lucide-react';
 
 export default function NormalModeBlockingScreen({ 
@@ -21,6 +23,15 @@ export default function NormalModeBlockingScreen({
     if (onClose) onClose();
   };
 
+  const { data: objectives } = useQuery({
+    queryKey: ['objectives'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return await base44.entities.Objective.filter({ created_by: user.email, archived: false });
+    },
+    initialData: []
+  });
+
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center p-6 overflow-hidden">
       {/* Noise texture */}
@@ -34,26 +45,49 @@ export default function NormalModeBlockingScreen({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-b from-blue-500/5 via-purple-500/5 to-transparent rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative max-w-md w-full">
-        {/* Visual Content - Aspirational Image */}
+        {/* Visual Content - User Objectives */}
         <div className="mb-8 relative">
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-purple-500/10 rounded-[32px] blur-2xl" />
-          <div className="relative aspect-[4/3] rounded-[32px] bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 border border-zinc-800/50 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)]">
-            <img 
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80" 
-              alt="Focused work"
-              className="w-full h-full object-cover opacity-40"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          <div className="relative aspect-[4/3] rounded-[32px] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 border border-zinc-800/50 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] p-6 flex flex-col justify-center">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+            <div className="relative space-y-3 opacity-70">
+              {objectives && objectives.length > 0 ? (
+                objectives.slice(0, 3).map(obj => (
+                  <div key={obj.id} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/50">
+                    <span className="text-2xl">{obj.icon}</span>
+                    <span className="text-sm font-bold text-white">{obj.title}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-zinc-600 text-sm">Your objectives will appear here</div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black mb-3 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
-            Pause for a second.
+            {t('language') === 'fr' ? "Vous scrollez par réflexe." : 
+             t('language') === 'es' ? "Estás desplazándote por inercia." :
+             t('language') === 'zh' ? "你在自动滚动。" :
+             t('language') === 'hi' ? "आप ऑटोपायलट पर स्क्रॉल कर रहे हैं।" :
+             t('language') === 'id' ? "Anda menggulir secara otomatis." :
+             t('language') === 'ru' ? "Вы скроллите на автопилоте." :
+             t('language') === 'pt' ? "Você está rolando no piloto automático." :
+             t('language') === 'ar' ? "أنت تتصفح على الطيار الآلي." :
+             "You're scrolling on autopilot."}
           </h1>
           <p className="text-base text-zinc-400 mb-6 font-medium">
-            You're scrolling on autopilot.
+            {t('language') === 'fr' ? "N'avez-vous pas quelque chose de plus important à faire ? Vous connaissez déjà la réponse." :
+             t('language') === 'es' ? "¿No tienes algo más importante que hacer? Ya sabes la respuesta." :
+             t('language') === 'zh' ? "你不是有更重要的事情要做吗？你已经知道答案了。" :
+             t('language') === 'hi' ? "क्या आपके पास कुछ अधिक महत्वपूर्ण करने के लिए नहीं है? आप पहले से ही जवाब जानते हैं।" :
+             t('language') === 'id' ? "Tidakkah Anda memiliki sesuatu yang lebih penting untuk dilakukan? Anda sudah tahu jawabannya." :
+             t('language') === 'ru' ? "Разве у вас нет чего-то более важного? Вы уже знаете ответ." :
+             t('language') === 'pt' ? "Você não tem algo mais importante para fazer? Você já sabe a resposta." :
+             t('language') === 'ar' ? "ألا يوجد لديك شيء أكثر أهمية لفعله؟ أنت تعرف الإجابة بالفعل." :
+             "Don't you have something more important to do? You already know the answer."}
           </p>
           
           {/* Awareness line */}

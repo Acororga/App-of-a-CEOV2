@@ -34,6 +34,17 @@ export default function Notes() {
     mutationFn: ({ id, data }) => base44.entities.Note.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['notes']);
+    },
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries(['notes']);
+      const previousNotes = queryClient.getQueryData(['notes']);
+      queryClient.setQueryData(['notes'], old => 
+        old.map(n => n.id === id ? { ...n, ...data } : n)
+      );
+      return { previousNotes };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['notes'], context.previousNotes);
     }
   });
 
@@ -224,16 +235,6 @@ export default function Notes() {
       );
     });
   };
-
-  // Sync selected note with notes list
-  useEffect(() => {
-    if (selectedNote && selectedNote.id) {
-      const updated = notes.find(n => n.id === selectedNote.id);
-      if (updated && updated.content !== selectedNote.content) {
-        setSelectedNote(updated);
-      }
-    }
-  }, [notes, selectedNote]);
 
   // Auto-focus editor when note is selected
   useEffect(() => {
