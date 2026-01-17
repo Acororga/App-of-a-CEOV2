@@ -72,8 +72,7 @@ function LayoutContent({ children, currentPageName }) {
   if (currentPageName === 'Home') {
     return (
       <div className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Barres de pouvoir et cadre selon le rang */}
-        {ambientStyles.powerBars}
+        {/* Cadre selon le rang */}
         {ambientStyles.frame}
         
         {/* User Icon - Top Left */}
