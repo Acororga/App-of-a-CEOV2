@@ -18,15 +18,15 @@ export default function DayIntelligence({
       {/* Overload Warning */}
       {overloadInfo?.overloaded && (
         <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-xl blur-lg" />
-          <div className="relative p-4 rounded-xl bg-gradient-to-br from-orange-950/60 to-red-950/60 border border-orange-700/50 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-zinc-700/15 rounded-xl blur-lg" />
+          <div className="relative p-4 rounded-xl bg-zinc-900/70 border border-zinc-700/50 backdrop-blur-sm">
             <div className="flex items-start gap-3">
               <div className="mt-0.5">
-                <AlertTriangle className="w-5 h-5 text-orange-400" />
+                <AlertTriangle className="w-5 h-5 text-zinc-500" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-bold text-orange-200 mb-1">Overloaded Day</div>
-                <div className="text-xs text-orange-400/80">
+                <div className="text-sm font-bold text-zinc-300 mb-1">Overloaded Day</div>
+                <div className="text-xs text-zinc-500">
                   {overloadInfo.reason === 'too_many_hours' && `${Math.round(overloadInfo.totalMinutes / 60)}h scheduled - consider reducing load`}
                   {overloadInfo.reason === 'no_breaks' && 'Events back-to-back with no breaks'}
                   {overloadInfo.reason === 'too_many_events' && `${overloadInfo.eventCount} events - might be overwhelming`}
@@ -40,16 +40,16 @@ export default function DayIntelligence({
       {/* Focus Suggestion */}
       {focusSuggestion?.suggest && (
         <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-lg" />
-          <div className="relative p-4 rounded-xl bg-gradient-to-br from-blue-950/60 to-purple-950/60 border border-blue-700/50 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-zinc-700/15 rounded-xl blur-lg" />
+          <div className="relative p-4 rounded-xl bg-zinc-900/70 border border-zinc-700/50 backdrop-blur-sm">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-start gap-3 flex-1">
                 <div className="mt-0.5">
-                  <Zap className="w-5 h-5 text-blue-400" />
+                  <Zap className="w-5 h-5 text-zinc-500" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-bold text-blue-200 mb-1">Focus Opportunity</div>
-                  <div className="text-xs text-blue-400/80">
+                  <div className="text-sm font-bold text-zinc-300 mb-1">Focus Opportunity</div>
+                  <div className="text-xs text-zinc-500">
                     {focusSuggestion.reason === 'no_events' && 'Day is free - perfect for deep work'}
                     {focusSuggestion.reason === 'light_schedule' && 'Light schedule - ideal for a focus session'}
                   </div>
@@ -58,7 +58,7 @@ export default function DayIntelligence({
               <Button
                 onClick={onStartFocus}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white h-9 px-4 text-xs font-bold rounded-lg"
+                className="bg-zinc-800 hover:bg-zinc-700 text-white h-9 px-4 text-xs font-bold rounded-lg border border-zinc-700/50"
               >
                 Start {focusSuggestion.recommendedDuration}min
               </Button>
@@ -70,15 +70,15 @@ export default function DayIntelligence({
       {/* Habit-Calendar Conflict */}
       {habitConflict?.conflict && (
         <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-xl blur-lg" />
-          <div className="relative p-4 rounded-xl bg-gradient-to-br from-yellow-950/60 to-amber-950/60 border border-yellow-700/50 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-zinc-700/15 rounded-xl blur-lg" />
+          <div className="relative p-4 rounded-xl bg-zinc-900/70 border border-zinc-700/50 backdrop-blur-sm">
             <div className="flex items-start gap-3">
               <div className="mt-0.5">
-                <CheckCircle2 className="w-5 h-5 text-yellow-400" />
+                <CheckCircle2 className="w-5 h-5 text-zinc-500" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-bold text-yellow-200 mb-1">Habit Conflict</div>
-                <div className="text-xs text-yellow-400/80">
+                <div className="text-sm font-bold text-zinc-300 mb-1">Habit Conflict</div>
+                <div className="text-xs text-zinc-500">
                   {habitConflict.habitCount} habit{habitConflict.habitCount > 1 ? 's' : ''} scheduled + {Math.round(habitConflict.eventMinutes / 60)}h of events - might be challenging
                 </div>
               </div>
