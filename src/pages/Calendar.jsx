@@ -172,6 +172,7 @@ export default function Calendar() {
                   setShowEventModal(true);
                 }}
                 onDateChange={setSelectedDate}
+                eventTypes={eventTypes}
               />
 
               <button
