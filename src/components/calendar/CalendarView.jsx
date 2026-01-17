@@ -24,12 +24,12 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
   const getEventColor = (event) => {
     if (event.is_birthday) {
       return { 
-        bg: 'bg-gradient-to-r from-pink-500/50 via-yellow-400/50 to-purple-500/50', 
+        bg: 'bg-gradient-to-r from-pink-300/40 via-yellow-200/40 to-purple-300/40', 
         text: 'text-white', 
-        border: 'border-yellow-400/60 shadow-[0_0_16px_rgba(251,191,36,0.4),inset_0_1px_4px_rgba(255,255,255,0.3)]', 
-        darkBg: 'bg-gradient-to-r from-pink-600/60 via-yellow-500/60 to-purple-600/60', 
+        border: 'border-yellow-300/50 shadow-[0_0_12px_rgba(253,224,71,0.3),inset_0_1px_4px_rgba(255,255,255,0.2)]', 
+        darkBg: 'bg-gradient-to-r from-pink-400/50 via-yellow-300/50 to-purple-400/50', 
         darkText: 'text-yellow-50 font-bold', 
-        darkBorder: 'border-yellow-400/70 shadow-[0_0_20px_rgba(251,191,36,0.5),inset_0_2px_8px_rgba(255,255,255,0.2)]',
+        darkBorder: 'border-yellow-300/60 shadow-[0_0_16px_rgba(253,224,71,0.4),inset_0_2px_6px_rgba(255,255,255,0.15)]',
         extraClass: 'animate-pulse'
       };
     }
@@ -218,15 +218,15 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
           {birthdayEvents.length > 0 && (
             <div className="p-4 border-b border-zinc-800/50">
               {birthdayEvents.map(event => (
-                <div key={event.id} className="p-4 rounded-xl bg-gradient-to-br from-pink-600/60 via-yellow-500/60 to-purple-600/60 border-2 border-yellow-400/70 shadow-[0_0_32px_rgba(251,191,36,0.6),0_8px_24px_rgba(236,72,153,0.5),inset_0_2px_8px_rgba(255,255,255,0.2)] mb-3 last:mb-0 animate-pulse">
+                <div key={event.id} className="p-4 rounded-xl bg-gradient-to-br from-pink-300/50 via-yellow-200/50 to-purple-300/50 border-2 border-yellow-300/60 shadow-[0_0_24px_rgba(253,224,71,0.4),0_6px_20px_rgba(236,72,153,0.3),inset_0_2px_6px_rgba(255,255,255,0.15)] mb-3 last:mb-0 animate-pulse">
                   <div className="text-center">
                     <div className="text-3xl mb-2">🎂✨🎉</div>
                     <div className="text-lg font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] mb-1">{event.birthday_person_name}</div>
                     {event.birthday_relationship && (
-                      <div className="text-xs text-yellow-100/90 mb-2">{event.birthday_relationship}</div>
+                      <div className="text-xs text-yellow-50/90 mb-2">{event.birthday_relationship}</div>
                     )}
                     {event.birthday_notes && (
-                      <div className="text-xs text-yellow-50/80 mt-2 italic">{event.birthday_notes}</div>
+                      <div className="text-xs text-yellow-50/70 mt-2 italic">{event.birthday_notes}</div>
                     )}
                   </div>
                 </div>
