@@ -42,7 +42,14 @@ export default function Habits() {
     queryKey: ['allHabits'],
     queryFn: async () => {
       const user = await base44.auth.me();
-      return await base44.entities.Habit.filter({ created_by: user.email, archived: false });
+      const habits = await base44.entities.Habit.filter({ created_by: user.email, archived: false });
+      
+      // Sort habits by frequency: daily first (7), then by number of days per week (descending)
+      return habits.sort((a, b) => {
+        const freqA = a.is_daily ? 7 : (a.specific_days?.length || 0);
+        const freqB = b.is_daily ? 7 : (b.specific_days?.length || 0);
+        return freqB - freqA; // Descending order
+      });
     },
     initialData: []
   });
@@ -59,7 +66,8 @@ export default function Habits() {
         return cDate >= weekStart && cDate < addDays(weekStart, 7);
       });
     },
-    initialData: []
+    initialData: [],
+    refetchInterval: 2000 // Refetch every 2 seconds for live updates
   });
 
   const weeklyScore = React.useMemo(() => {
