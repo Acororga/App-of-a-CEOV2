@@ -229,34 +229,27 @@ export default function Notes() {
                 setSelectedNote(tagNotes[0]);
               }
             }}
-            className={`w-full flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-150 relative group overflow-hidden ${
+            className={`w-full flex items-center gap-1.5 px-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 relative group overflow-hidden ${
               isSelected 
                 ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 text-white border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
                 : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-2 border-transparent'
             }`}
-            style={{ marginLeft: `${level * 12}px` }}
+            style={{ marginLeft: `${level * 8}px` }}
           >
             {isSelected && (
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
             )}
             {(hasChildren || hasMultipleNotes) && (
-              <span className={`w-4 h-4 flex items-center justify-center transition-transform relative ${isExpanded ? '' : '-rotate-90'}`}>
-                <ChevronDown className="w-3 h-3" />
+              <span className={`w-3 h-3 flex items-center justify-center transition-transform relative flex-shrink-0 ${isExpanded ? '' : '-rotate-90'}`}>
+                <ChevronDown className="w-2.5 h-2.5" />
               </span>
             )}
-            {!hasChildren && !hasMultipleNotes && <span className="w-4" />}
-            <span className="flex-1 text-left truncate relative">{key}</span>
-            <span className={`text-xs px-2.5 py-1 rounded-full relative ${
-              isSelected
-                ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]'
-                : 'bg-zinc-800/50 text-zinc-600'
-            }`}>
-              {tag.count}
-            </span>
+            {!hasChildren && !hasMultipleNotes && <span className="w-3 flex-shrink-0" />}
+            <span className="flex-1 text-left truncate relative block min-w-0">{key}</span>
           </button>
           {hasChildren && isExpanded && renderTagTree(tag.children, level + 1)}
           {!hasChildren && hasMultipleNotes && isExpanded && (
-            <div className="ml-4">
+            <div className="ml-2 mt-1">
               {tagNotes.map(note => {
                 const noteTitle = getNoteTitle(note.content);
                 const isNoteSelected = selectedNote?.id === note.id;
@@ -264,15 +257,15 @@ export default function Notes() {
                   <button
                     key={note.id}
                     onClick={() => setSelectedNote(note)}
-                    className={`w-full flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-all duration-150 mb-1 ${
+                    className={`w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] transition-all duration-150 mb-0.5 ${
                       isNoteSelected
                         ? 'bg-indigo-950/60 text-indigo-200 border border-indigo-700/40'
                         : 'text-zinc-500 hover:bg-zinc-900/40 hover:text-zinc-300'
                     }`}
-                    style={{ marginLeft: `${(level + 1) * 12}px` }}
+                    style={{ marginLeft: `${(level + 1) * 8}px` }}
                   >
-                    <span className="w-3" />
-                    <span className="flex-1 text-left truncate">{noteTitle}</span>
+                    <span className="w-2 flex-shrink-0" />
+                    <span className="flex-1 text-left truncate block min-w-0">{noteTitle}</span>
                   </button>
                 );
               })}
@@ -407,7 +400,7 @@ export default function Notes() {
           <div className="p-2">
             <button
               onClick={() => setSelectedTag('all')}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-150 relative group overflow-hidden ${
+              className={`w-full flex items-center justify-between px-2 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 relative group overflow-hidden ${
                 selectedTag === 'all' 
                   ? 'bg-gradient-to-br from-indigo-950/80 to-purple-950/80 text-white border-2 border-indigo-600/50 shadow-[0_4px_20px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]' 
                   : 'text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200 border-2 border-transparent'
@@ -416,8 +409,8 @@ export default function Notes() {
               {selectedTag === 'all' && (
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
               )}
-              <span className="relative">All Notes</span>
-              <span className={`text-xs px-2.5 py-1 rounded-full relative ${
+              <span className="relative truncate block min-w-0 flex-1 text-left">All Notes</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full relative flex-shrink-0 ml-1 ${
                 selectedTag === 'all'
                   ? 'bg-indigo-900/60 text-indigo-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]'
                   : 'bg-zinc-800/50 text-zinc-600'
