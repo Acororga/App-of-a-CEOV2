@@ -492,7 +492,7 @@ export default function Habits() {
                           }
 
                           return (
-                            <td key={index} className="text-center py-3 px-2">
+                            <td key={index} className="text-center py-3 px-2 group relative">
                               {!allPreviousLockedCompleted ? (
                                 // Jour bloqué car un jour locked précédent n'est pas complété
                                 <div className="w-5 h-5 rounded-full border-2 border-zinc-900 inline-block opacity-20" />
@@ -513,8 +513,14 @@ export default function Habits() {
                                   </div>
                                 </div>
                               ) : (
-                                // Jour non complété (hier, aujourd'hui, futur)
-                                <div className="w-5 h-5 rounded-full border-2 border-zinc-800 inline-block" />
+                                // Jour non complété (hier, aujourd'hui, futur) - montrer l'habitude au hover
+                                <div className="relative">
+                                  <div className="w-5 h-5 rounded-full border-2 border-zinc-800 inline-block" />
+                                  {/* Tooltip on hover showing habit name */}
+                                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-900 border border-zinc-700 rounded-lg text-[9px] text-zinc-400 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                    {habit.title}
+                                  </div>
+                                </div>
                               )}
                             </td>
                           );
