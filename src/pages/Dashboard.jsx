@@ -271,37 +271,37 @@ export default function Dashboard() {
           <span className="text-sm font-medium">{t('home')}</span>
         </Link>
 
-        <div className="mb-10 relative">
-          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
+        <div className="mb-6 relative">
+          <h1 className="text-2xl font-black mb-2 bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent tracking-tight">
             {t('controlCenter')}
           </h1>
         </div>
 
         {/* ACTION ZONE - Layered visual hierarchy */}
-        <div className="space-y-8 mb-16">
+        <div className="space-y-5 mb-12">
           {/* Yesterday Habits Validation Card - MANDATORY BLOCKING */}
           {yesterdayVisible && needsYesterdayValidation && (
             <div className="relative animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-red-500/40 rounded-[32px] blur-3xl opacity-80 animate-pulse" />
-              <div className="relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.5),0_0_0_1px_rgba(249,115,22,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <div className="mb-6">
-                  <h2 className="text-xl font-black text-orange-200 mb-1 tracking-tight">Habits from yesterday</h2>
-                  <div className="text-xs text-orange-400/60 font-medium">Complete validation to continue</div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-red-500/40 rounded-[28px] blur-3xl opacity-80 animate-pulse" />
+              <div className="relative p-5 rounded-[28px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-orange-500/60 shadow-[0_24px_96px_rgba(249,115,22,0.5),0_0_0_1px_rgba(249,115,22,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div className="mb-4">
+                  <h2 className="text-lg font-black text-orange-200 mb-1 tracking-tight">Habits from yesterday</h2>
+                  <div className="text-[10px] text-orange-400/60 font-medium">Complete validation to continue</div>
                 </div>
-                <div className="space-y-2 mb-6">
+                <div className="space-y-1.5 mb-4">
                   {pendingYesterdayHabits.map(item => (
                     <button
                       key={item.completionId}
                       onClick={() => toggleYesterdayHabit(item.habitId)}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 active:scale-[0.98] transition-all duration-150"
+                      className="w-full flex items-center gap-3 p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80 active:scale-[0.98] transition-all duration-150"
                     >
                       {tempYesterdayStates[item.habitId] ? (
                         <div className="relative">
                           <div className="absolute inset-0 bg-green-500/30 rounded-full blur-md" />
-                          <CheckCircle2 className="relative w-6 h-6 text-green-400 flex-shrink-0" />
+                          <CheckCircle2 className="relative w-5 h-5 text-green-400 flex-shrink-0" />
                         </div>
                       ) : (
-                        <Circle className="w-6 h-6 text-zinc-600 flex-shrink-0" />
+                        <Circle className="w-5 h-5 text-zinc-600 flex-shrink-0" />
                       )}
                       <span className={`text-sm font-medium ${tempYesterdayStates[item.habitId] ? 'text-zinc-500 line-through' : 'text-white'}`}>
                         {item.habitTitle}
@@ -312,9 +312,9 @@ export default function Dashboard() {
                 <Button
                   onClick={() => validateYesterdayMutation.mutate()}
                   disabled={validateYesterdayMutation.isPending}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 h-14 text-base font-bold rounded-2xl shadow-[0_8px_24px_rgba(59,130,246,0.4)] hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] active:scale-[0.98] transition-all duration-150"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 h-11 text-sm font-bold rounded-xl shadow-[0_8px_24px_rgba(59,130,246,0.4)] hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] active:scale-[0.98] transition-all duration-150"
                 >
-                  <Check className="w-5 h-5 mr-2" />
+                  <Check className="w-4 h-4 mr-2" />
                   {validateYesterdayMutation.isPending ? 'Confirming...' : 'Confirm'}
                 </Button>
               </div>
@@ -323,18 +323,18 @@ export default function Dashboard() {
 
           {/* Today's Habits Status Card - AWARENESS ONLY */}
           <div className="relative animate-in fade-in zoom-in-95 duration-300">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[32px] blur-2xl opacity-60" />
-            <div className="relative p-8 rounded-[32px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/50 shadow-[0_24px_96px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-black text-zinc-200 tracking-tight">Habits for today</h2>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[28px] blur-2xl opacity-60" />
+            <div className="relative p-5 rounded-[28px] bg-gradient-to-br from-zinc-900/95 via-zinc-850/95 to-zinc-900/95 backdrop-blur-xl border-2 border-zinc-700/50 shadow-[0_24px_96px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-black text-zinc-200 tracking-tight">Habits for today</h2>
                 <Link 
                   to={createPageUrl('Habits')}
-                  className="p-2.5 hover:bg-zinc-800/50 rounded-xl transition-all duration-150 active:scale-95"
+                  className="p-2 hover:bg-zinc-800/50 rounded-lg transition-all duration-150 active:scale-95"
                 >
-                  <Plus className="w-5 h-5 text-zinc-400" />
+                  <Plus className="w-4 h-4 text-zinc-400" />
                 </Link>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {isLoading ? (
                   <div className="text-center py-12 text-zinc-600 text-sm font-medium">
                     {t('loading')}...
@@ -349,7 +349,7 @@ export default function Dashboard() {
                         onClick={() => toggleTodayMarked(habit.id)}
                         className="w-full group relative"
                       >
-                        <div className={`relative flex items-center gap-4 p-4 rounded-2xl border transition-all duration-150 ${
+                        <div className={`relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-150 ${
                           isMarked
                             ? 'bg-zinc-900/40 border-zinc-800/40' 
                             : 'bg-zinc-900/60 border-zinc-800/60 hover:border-zinc-700/60 hover:bg-zinc-900/80'
@@ -361,7 +361,7 @@ export default function Dashboard() {
                           }`}>
                             {habit.title}
                           </span>
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black transition-all ${
+                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[9px] font-black transition-all ${
                             isMarked
                               ? 'bg-zinc-850/60 text-zinc-700'
                               : 'bg-zinc-800/60 text-zinc-600'
@@ -373,7 +373,7 @@ export default function Dashboard() {
                     );
                   })
                 ) : (
-                  <div className="text-center py-12 text-zinc-600 text-sm font-medium">
+                  <div className="text-center py-8 text-zinc-600 text-sm font-medium">
                     {t('noHabitsToday')}
                   </div>
                 )}
@@ -384,30 +384,30 @@ export default function Dashboard() {
           {/* Upcoming Events - SECONDARY FOCUS */}
           {upcomingEvents && upcomingEvents.length > 0 && (
             <div className="relative animate-in fade-in zoom-in-95 duration-300 delay-75">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-[28px] blur-2xl opacity-60" />
-              <div className="relative p-7 rounded-[28px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">{t('schedule')}</h2>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-[24px] blur-2xl opacity-60" />
+              <div className="relative p-4 rounded-[24px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-base font-black text-zinc-300 tracking-tight">{t('schedule')}</h2>
                   <Link 
                     to={createPageUrl('Calendar')}
-                    className="text-xs text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
+                    className="text-[10px] text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
                   >
                     {t('viewAll')} →
                   </Link>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {upcomingEvents.slice(0, 3).map((event) => (
                     <div
                       key={event.id}
-                      className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50"
                     >
-                      <div className="w-8 h-8 rounded-xl bg-zinc-800/60 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
-                        <span className="text-xs font-bold text-zinc-400">{event.event_time.substring(0, 5)}</span>
+                      <div className="w-7 h-7 rounded-lg bg-zinc-800/60 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                        <span className="text-[10px] font-bold text-zinc-400">{event.event_time.substring(0, 5)}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-white truncate">{event.title}</div>
                         {event.description && (
-                          <div className="text-xs text-zinc-500 truncate">{event.description}</div>
+                          <div className="text-[10px] text-zinc-500 truncate">{event.description}</div>
                         )}
                       </div>
                     </div>
@@ -420,18 +420,18 @@ export default function Dashboard() {
           {/* Priority Tasks - SECONDARY FOCUS */}
           {topTasks && topTasks.length > 0 && (
             <div className="relative animate-in fade-in zoom-in-95 duration-300 delay-75">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[28px] blur-2xl opacity-60" />
-              <div className="relative p-7 rounded-[28px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-black text-zinc-300 tracking-tight">{t('priorities')}</h2>
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-[24px] blur-2xl opacity-60" />
+              <div className="relative p-4 rounded-[24px] bg-gradient-to-br from-zinc-900/90 via-zinc-850/90 to-zinc-900/90 backdrop-blur-xl border border-zinc-700/50 shadow-[0_16px_64px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-base font-black text-zinc-300 tracking-tight">{t('priorities')}</h2>
                   <Link 
                     to={createPageUrl('Pareto')}
-                    className="text-xs text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
+                    className="text-[10px] text-zinc-500 hover:text-zinc-300 font-semibold uppercase tracking-wider transition-colors duration-150"
                   >
                     {t('viewAll')} →
                   </Link>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {topTasks.map((task, index) => {
                     const importanceBadge = {
                       crucial: { text: 'CRITICAL', color: 'text-red-300 bg-red-950/60 border-red-800/60' },
@@ -447,14 +447,14 @@ export default function Dashboard() {
                         onClick={() => completeTaskMutation.mutate(task.id)}
                         className="w-full group text-left relative"
                       >
-                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/50 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
-                          <div className="w-8 h-8 rounded-xl bg-zinc-800/60 flex items-center justify-center text-sm font-black text-zinc-600 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-green-500/50 hover:bg-zinc-900/70 active:scale-[0.98] transition-all duration-150">
+                          <div className="w-6 h-6 rounded-lg bg-zinc-800/60 flex items-center justify-center text-xs font-black text-zinc-600 shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
                             {index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-white mb-1 truncate">{task.title}</div>
                             <div className="flex items-center gap-2">
-                              <span className={`text-[9px] px-2 py-1 rounded-lg font-black border uppercase tracking-wider ${badge.color}`}>
+                              <span className={`text-[8px] px-1.5 py-0.5 rounded font-black border uppercase tracking-wider ${badge.color}`}>
                                 {badge.text}
                               </span>
                               <span className="text-[9px] text-zinc-700 font-medium">
