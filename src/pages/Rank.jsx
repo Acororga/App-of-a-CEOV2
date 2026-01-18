@@ -629,13 +629,13 @@ export default function Rank() {
     <div className="min-h-screen bg-black text-white p-6 pt-20 relative overflow-hidden">
       <div className="max-w-md mx-auto mb-8">
         <div className="flex items-center justify-between">
-          <Link to={createPageUrl('ScreenTimeManager')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
+          <Link to={createPageUrl('ScreenTimeManager')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors active:scale-95">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Screen Time</span>
+            <span className="text-sm font-medium">{t('back')}</span>
           </Link>
-          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors">
-            <Crown className="w-4 h-4" />
-            <span className="text-sm font-medium">Home</span>
+          <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 transition-colors active:scale-95">
+            <Home className="w-4 h-4" />
+            <span className="text-sm font-medium">{t('home')}</span>
           </Link>
         </div>
       </div>
