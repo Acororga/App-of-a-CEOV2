@@ -64,6 +64,14 @@ export default function Notes() {
     return [...new Set(matches.map(tag => tag.slice(1)))]; // Remove #
   };
 
+  // Helper function to avoid duplication
+  const extractTagsFromContent = (content) => {
+    if (!content) return [];
+    const tagRegex = /#[\w\u00C0-\u024F\u1E00-\u1EFF\/]+/g;
+    const matches = content.match(tagRegex) || [];
+    return [...new Set(matches.map(tag => tag.slice(1)))]; // Remove #
+  };
+
   // Build tag hierarchy
   const buildTagHierarchy = () => {
     const allTags = new Set();
@@ -440,8 +448,8 @@ export default function Notes() {
                 value={selectedNote.content || ''}
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="Start writing... Use #tag to organize"
-                className="w-full min-h-[calc(100vh-12rem)] bg-transparent border-none focus:ring-0 resize-none text-base leading-loose text-zinc-100 p-0 placeholder:text-zinc-700/60 font-light tracking-wide"
-                style={{ outline: 'none', boxShadow: 'none' }}
+                className="w-full min-h-[calc(100vh-12rem)] bg-transparent border-none focus:ring-0 resize-none text-sm leading-loose text-zinc-100 p-0 placeholder:text-zinc-700/60 font-light tracking-wide caret-zinc-400"
+                style={{ outline: 'none', boxShadow: 'none', caretColor: '#9ca3af' }}
               />
             </div>
           ) : (
