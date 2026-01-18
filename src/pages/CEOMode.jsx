@@ -282,28 +282,28 @@ export default function CEOMode() {
       }} />
 
       <div className="max-w-md mx-auto relative">
-        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-8 transition-colors duration-150 active:scale-95">
+        <Link to={createPageUrl('Home')} className="inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-300 mb-6 transition-colors duration-150 active:scale-95">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">{t('home')}</span>
+          <span className="text-xs font-medium">{t('home')}</span>
         </Link>
 
-        <div className="text-center mb-16">
-          <div className="relative inline-block mb-8">
+        <div className="text-center mb-10">
+          <div className="relative inline-block mb-6">
             <div className="absolute inset-0 bg-white/5 rounded-full blur-[80px]" />
-            <Circle className="relative w-20 h-20 text-zinc-700" strokeWidth={1} />
+            <Circle className="relative w-16 h-16 text-zinc-700" strokeWidth={1} />
           </div>
-          <h1 className="text-5xl font-black mb-4 tracking-tighter bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-black mb-3 tracking-tighter bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
             {t('ceoMode')}
           </h1>
-          <p className="text-zinc-600 font-medium text-sm max-w-xs mx-auto leading-relaxed">
+          <p className="text-zinc-600 font-medium text-xs max-w-xs mx-auto leading-relaxed">
             {t('maximumFocus')}. {t('onceActivatedCannotExit')}
           </p>
         </div>
 
         {/* Duration Selection - Clear, decisive */}
-        <div className="mb-12">
-          <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">{t('duration')}</div>
-          <div className="grid grid-cols-3 gap-3">
+        <div className="mb-8">
+          <div className="text-[10px] text-zinc-700 font-black mb-4 uppercase tracking-widest text-center">{t('duration')}</div>
+          <div className="grid grid-cols-3 gap-2">
             {[30, 60, 90, 120, 180, 240].map(mins => {
               const isDisabled = !isPremiumUser && mins > PREMIUM_LIMITS.CEO_MAX_DURATION_MINUTES;
               
@@ -312,7 +312,7 @@ export default function CEOMode() {
                   key={mins}
                   onClick={() => !isDisabled && setDuration(mins)}
                   disabled={isDisabled}
-                  className={`p-5 rounded-2xl font-black text-lg transition-all duration-150 shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
+                  className={`p-4 rounded-xl font-black text-base transition-all duration-150 shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
                     duration === mins
                       ? 'bg-white text-black scale-105 shadow-[0_12px_32px_rgba(255,255,255,0.15)]'
                       : isDisabled
@@ -327,26 +327,26 @@ export default function CEOMode() {
           </div>
         </div>
 
-        <div className="mb-12">
-          <div className="text-xs text-zinc-700 font-black mb-5 uppercase tracking-widest text-center">
+        <div className="mb-8">
+          <div className="text-[10px] text-zinc-700 font-black mb-4 uppercase tracking-widest text-center">
             {t('approvedApps')} (3)
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {[
               { icon: Phone, label: t('phone') },
               { icon: MessageSquare, label: t('messages') },
               { icon: CalendarIcon, label: t('calendar') }
             ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
-                <Icon className="w-5 h-5 text-zinc-600" strokeWidth={2} />
-                <span className="text-sm font-medium text-zinc-400">{label}</span>
+              <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/50 border border-zinc-800/50">
+                <Icon className="w-4 h-4 text-zinc-600" strokeWidth={2} />
+                <span className="text-xs font-medium text-zinc-400">{label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-zinc-950/80 border border-zinc-900/60 rounded-2xl p-5 mb-10 shadow-[inset_0_2px_12px_rgba(0,0,0,0.6)]">
-          <div className="text-xs text-zinc-600 font-medium leading-relaxed">
+        <div className="bg-zinc-950/80 border border-zinc-900/60 rounded-xl p-4 mb-8 shadow-[inset_0_2px_12px_rgba(0,0,0,0.6)]">
+          <div className="text-[10px] text-zinc-600 font-medium leading-relaxed">
             <span className="font-black text-zinc-500">⚠</span> {t('onceActivatedCannotExit')}
           </div>
         </div>
@@ -354,7 +354,7 @@ export default function CEOMode() {
         <Button
           onClick={() => startMutation.mutate()}
           disabled={startMutation.isPending}
-          className="w-full bg-white text-black hover:bg-zinc-200 h-14 text-base font-black rounded-2xl shadow-[0_12px_48px_rgba(255,255,255,0.12)] hover:shadow-[0_16px_64px_rgba(255,255,255,0.18)] active:scale-[0.97] transition-all duration-150"
+          className="w-full bg-white text-black hover:bg-zinc-200 h-12 text-sm font-black rounded-xl shadow-[0_12px_48px_rgba(255,255,255,0.12)] hover:shadow-[0_16px_64px_rgba(255,255,255,0.18)] active:scale-[0.97] transition-all duration-150"
         >
           {startMutation.isPending ? t('activating') : `${t('activate')} ${formatTime(duration)}`}
         </Button>

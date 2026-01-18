@@ -124,7 +124,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
               setView('daily');
               onDateChange?.(clickDay);
             }}
-            className={`relative min-h-24 p-3 border transition-all duration-150 text-left ${
+            className={`relative min-h-20 p-1.5 border transition-all duration-150 text-left ${
               !isCurrentMonth 
                 ? 'bg-zinc-950/30 border-zinc-900/30 opacity-30' 
                 : isCurrentDay
@@ -135,7 +135,7 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
             {isCurrentDay && (
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded" />
             )}
-            <div className={`relative text-sm font-bold mb-2 ${
+            <div className={`relative text-xs font-bold mb-1 ${
               isCurrentDay 
                 ? 'text-blue-300' 
                 : isCurrentMonth 
@@ -148,19 +148,19 @@ export default function CalendarView({ events, onEventClick, onNewEvent, onTimeC
               {dayEvents.slice(0, 2).map(event => {
                 const eventColor = getEventColor(event);
                 return (
-                  <div key={event.id} className={`text-[7px] px-1 py-0.5 rounded font-medium transition-all border leading-tight ${
+                  <div key={event.id} className={`text-[6px] px-0.5 py-0.5 rounded font-medium transition-all border leading-tight ${
                     isCurrentDay
                       ? `${event.is_birthday ? eventColor.bg : eventColor.bg} ${eventColor.text} ${eventColor.border} shadow-[0_0_8px_rgba(59,130,246,0.3)]`
                       : `${event.is_birthday ? eventColor.darkBg : eventColor.darkBg} ${eventColor.darkText} ${eventColor.darkBorder}`
                   }`}>
                     <div className="truncate">
-                      {event.is_birthday ? '🎂 ' : event.event_time.substring(0,5) + ' '}{event.is_birthday ? event.birthday_person_name : event.title}
+                      {event.is_birthday ? '🎂' : event.title}
                     </div>
                   </div>
                 );
               })}
               {dayEvents.length > 2 && (
-                <div className={`text-[7px] font-semibold ${isCurrentDay ? 'text-blue-400' : 'text-zinc-600'}`}>
+                <div className={`text-[6px] font-semibold ${isCurrentDay ? 'text-blue-400' : 'text-zinc-600'}`}>
                   +{dayEvents.length - 2}
                 </div>
               )}
