@@ -9,14 +9,14 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '../components/LanguageProvider';
 
 const colorOptions = [
-  { value: 'blue', label: 'Blue', bg: 'bg-blue-500', border: 'border-blue-500' },
-  { value: 'green', label: 'Green', bg: 'bg-green-500', border: 'border-green-500' },
-  { value: 'purple', label: 'Purple', bg: 'bg-purple-500', border: 'border-purple-500' },
-  { value: 'pink', label: 'Pink', bg: 'bg-pink-500', border: 'border-pink-500' },
-  { value: 'orange', label: 'Orange', bg: 'bg-orange-500', border: 'border-orange-500' },
-  { value: 'red', label: 'Red', bg: 'bg-red-500', border: 'border-red-500' },
-  { value: 'yellow', label: 'Yellow', bg: 'bg-yellow-500', border: 'border-yellow-500' },
-  { value: 'teal', label: 'Teal', bg: 'bg-teal-500', border: 'border-teal-500' }
+  { value: 'blue', label: 'Blue', bg: 'bg-blue-200', border: 'border-blue-300' },
+  { value: 'green', label: 'Green', bg: 'bg-green-200', border: 'border-green-300' },
+  { value: 'purple', label: 'Purple', bg: 'bg-purple-200', border: 'border-purple-300' },
+  { value: 'pink', label: 'Pink', bg: 'bg-pink-200', border: 'border-pink-300' },
+  { value: 'orange', label: 'Orange', bg: 'bg-orange-200', border: 'border-orange-300' },
+  { value: 'red', label: 'Red', bg: 'bg-red-200', border: 'border-red-300' },
+  { value: 'yellow', label: 'Yellow', bg: 'bg-yellow-200', border: 'border-yellow-300' },
+  { value: 'teal', label: 'Teal', bg: 'bg-teal-200', border: 'border-teal-300' }
 ];
 
 export default function EventTypes() {
@@ -89,7 +89,7 @@ export default function EventTypes() {
         <div className="mb-6">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="w-full py-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 border-2 border-indigo-500/40 hover:from-indigo-500 hover:via-purple-500 hover:to-indigo-600 active:scale-[0.98] transition-all duration-150 shadow-[0_8px_32px_rgba(99,102,241,0.5),inset_0_2px_0_rgba(255,255,255,0.2)] font-bold text-white flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-white text-black border-2 border-zinc-200 hover:bg-zinc-100 active:scale-[0.98] transition-all duration-150 shadow-[0_8px_24px_rgba(255,255,255,0.15)] font-bold flex items-center justify-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Add Event Type
