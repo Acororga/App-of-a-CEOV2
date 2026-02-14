@@ -9,6 +9,13 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
+// Variant Imports
+import V1Home from '@/pages/variants/v1/Home';
+import V2Home from '@/pages/variants/v2/Home';
+import V3Home from '@/pages/variants/v3/Home';
+import V4Home from '@/pages/variants/v4/Home';
+import V5Home from '@/pages/variants/v5/Home';
+
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
@@ -48,6 +55,14 @@ const AuthenticatedApp = () => {
           <MainPage />
         </LayoutWrapper>
       } />
+      
+      {/* 5 Distinct Design Variants - No Layout Wrapper for purity */}
+      <Route path="/1" element={<V1Home />} />
+      <Route path="/2" element={<V2Home />} />
+      <Route path="/3" element={<V3Home />} />
+      <Route path="/4" element={<V4Home />} />
+      <Route path="/5" element={<V5Home />} />
+
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}

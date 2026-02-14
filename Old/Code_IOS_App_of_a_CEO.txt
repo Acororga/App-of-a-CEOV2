@@ -1,0 +1,676 @@
+# #Yursen
+
+📦 ARCHITECTURE GLOBALE iOS
+ScreenTime/
+ ├─ Core/
+ │   ├─ ScreenTimeAuthorization.swift
+ │   ├─ ScreenTimeStore.swift
+ │
+ ├─ Blocking/
+ │   ├─ AppLimit.swift
+ │   ├─ BlockingManager.swift
+ │   ├─ BlockingShield.swift
+ │
+ ├─ FocusMode/
+ │   ├─ FocusState.swift
+ │   ├─ FocusManager.swift
+ │
+ ├─ CEOMode/
+ │   ├─ CEOState.swift
+ │   ├─ CEOManager.swift
+ │   ├─ CEOExitViewController.swift
+ │
+ ├─ Persistence/
+ │   ├─ SecureStorage.swift
+
+🔐 1. AUTORISATIONS SCREEN TIME (OBLIGATOIRE)
+import FamilyControls
+import ManagedSettings
+
+final class ScreenTimeAuthorization {
+
+    static func request() async throws {
+        try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+    }
+}
+
+📦 2. STORE CENTRAL SCREEN TIME
+import ManagedSettings
+
+final class ScreenTimeStore {
+    static let shared = ManagedSettingsStore()
+}
+
+---
+1️⃣ Modèle de données — App / Site + quota
+import Foundation
+import FamilyControls
+
+struct AppLimit: Codable, Identifiable {
+    let id: UUID
+    let application: ApplicationToken?
+    let webDomain: WebDomain?
+    let dailyLimitMinutes: Int
+    var usedMinutesToday: Int
+}
+2️⃣ Persistance sécurisée (UserDefaults chiffré simple)
+final class SecureStorage {
+
+    static let shared = SecureStorage()
+    private let key = "app_limits"
+
+    func save(_ limits: [AppLimit]) {
+        let data = try? JSONEncoder().encode(limits)
+        UserDefaults.standard.set(data, forKey: key)
+    }
+
+    func load() -> [AppLimit] {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let limits = try? JSONDecoder().decode([AppLimit].self, from: data) else {
+            return []
+        }
+        return limits
+    }
+}
+
+3️⃣ BlockingManager — cœur logique
+
+import ManagedSettings
+
+final class BlockingManager {
+
+    static let shared = BlockingManager()
+    private let store = ScreenTimeStore.shared
+
+    private(set) var limits: [AppLimit] = []
+
+    private init() {
+        limits = SecureStorage.shared.load()
+    }
+
+    func applyLimits() {
+        store.shield.applications = Set(
+            limits.compactMap { $0.application }
+                .filter { limitExceeded(for: $0) }
+        )
+
+        store.shield.webDomains = Set(
+            limits.compactMap { $0.webDomain }
+                .filter { limitExceeded(for: $0) }
+        )
+    }
+
+    private func limitExceeded(for token: ApplicationToken) -> Bool {
+        limits.first(where: { $0.application == token })?.usedMinutesToday ?? 0
+        >= limits.first(where: { $0.application == token })?.dailyLimitMinutes ?? 0
+    }
+
+    private func limitExceeded(for domain: WebDomain) -> Bool {
+        limits.first(where: { $0.webDomain == domain })?.usedMinutesToday ?? 0
+        >= limits.first(where: { $0.webDomain == domain })?.dailyLimitMinutes ?? 0
+    }
+}
+
+4️⃣ Écran de blocage personnalisé (Shield)
+import ManagedSettings
+import SwiftUI
+
+struct BlockingShieldView: View {
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("Temps écoulé")
+                .font(.largeTitle)
+                .bold()
+
+            Text("Pour continuer, ajoute du temps dans App of a CEO.")
+                .multilineTextAlignment(.center)
+
+            Text("+10 minutes uniquement")
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .padding()
+    }
+}
+
+**5️⃣ Ajout de temps — UNIQUEMENT +10 min + countdown 1 min**
+**Countdown réutilisable (important)**
+
+import SwiftUI
+
+struct ConfirmationCountdownView: View {
+
+    let duration: Int
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
+
+    @State private var remaining: Int
+    @State private var isCompleted = false
+
+    init(duration: Int,
+         onConfirm: @escaping () -> Void,
+         onCancel: @escaping () -> Void) {
+        self.duration = duration
+        self.onConfirm = onConfirm
+        self.onCancel = onCancel
+        _remaining = State(initialValue: duration)
+    }
+
+    var body: some View {
+        VStack(spacing: 32) {
+            Text("\(remaining)")
+                .font(.system(size: 64, weight: .bold))
+
+            if isCompleted {
+                Button("Valider") {
+                    onConfirm()
+                }
+            } else {
+                Button("Annuler") {
+                    onCancel()
+                }
+            }
+        }
+        .onAppear {
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                remaining -= 1
+                if remaining <= 0 {
+                    timer.invalidate()
+                    isCompleted = true
+                }
+            }
+        }
+    }
+}
+
+Ajout effectif du temps
+
+func addTenMinutes(to limitID: UUID) {
+    guard let index = limits.firstIndex(where: { $0.id == limitID }) else { return }
+    limits[index].dailyLimitMinutes += 10
+    SecureStorage.shared.save(limits)
+    applyLimits()
+}
+
+---
+1️⃣ Modèle de données — FocusSession
+import Foundation
+
+struct FocusSession: Codable {
+    let startDate: Date
+    let plannedEndDate: Date
+    var isActive: Bool
+}
+
+2️⃣ FocusManager — cœur logique du mode Focus
+import ManagedSettings
+import FamilyControls
+
+final class FocusManager {
+
+    static let shared = FocusManager()
+    private let store = ScreenTimeStore.shared
+    private let storageKey = "focus_session"
+
+    private init() {}
+
+    // MARK: - Session State
+
+    var currentSession: FocusSession? {
+        guard let data = UserDefaults.standard.data(forKey: storageKey),
+              let session = try? JSONDecoder().decode(FocusSession.self, from: data),
+              session.isActive else {
+            return nil
+        }
+        return session
+    }
+
+    // MARK: - Start Focus
+
+    func startFocus(durationMinutes: Int) {
+        let session = FocusSession(
+            startDate: Date(),
+            plannedEndDate: Date().addingTimeInterval(TimeInterval(durationMinutes * 60)),
+            isActive: true
+        )
+
+        save(session)
+        applyFocusBlocking()
+    }
+
+    // MARK: - End Focus
+
+    func endFocus() {
+        clearSession()
+        removeFocusBlocking()
+        StreakManager.shared.reset()
+    }
+
+    // MARK: - Persistence
+
+    private func save(_ session: FocusSession) {
+        let data = try? JSONEncoder().encode(session)
+        UserDefaults.standard.set(data, forKey: storageKey)
+    }
+
+    private func clearSession() {
+        UserDefaults.standard.removeObject(forKey: storageKey)
+    }
+}
+
+# 3️⃣ Application du blocage Focus (prioritaire)
+👉 On bloque **TOUTES les apps/sites définis dans le blocage classique**, sans exception.
+
+extension FocusManager {
+
+    func applyFocusBlocking() {
+        let limits = BlockingManager.shared.limits
+
+        store.shield.applications = Set(
+            limits.compactMap { $0.application }
+        )
+
+        store.shield.webDomains = Set(
+            limits.compactMap { $0.webDomain }
+        )
+    }
+
+    func removeFocusBlocking() {
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+
+        // Réappliquer le blocage classique après focus
+        BlockingManager.shared.applyLimits()
+    }
+}
+
+4️⃣ Écran Focus actif (UX minimaliste, clair)
+import SwiftUI
+
+struct FocusActiveView: View {
+
+    let session: FocusSession
+
+    var remainingMinutes: Int {
+        max(0, Int(session.plannedEndDate.timeIntervalSinceNow / 60))
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("Mode Focus actif")
+                .font(.title)
+                .bold()
+
+            Text("Temps restant")
+                .font(.caption)
+
+            Text("\(remainingMinutes) min")
+                .font(.system(size: 48, weight: .bold))
+
+            Text("Toutes les distractions sont bloquées.")
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .padding()
+    }
+}
+
+**5️⃣ Quitter le Focus — countdown 1 minute OBLIGATOIRE**
+**Étape 1 — Bouton Quitter (pas de sortie directe)**
+
+Button("Quitter la session Focus") {
+    showExitConfirmation = true
+}
+
+Étape 2 — Écran de confirmation + perte explicite
+
+struct FocusExitWarningView: View {
+
+    let session: FocusSession
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
+
+    var remainingMinutes: Int {
+        max(0, Int(session.plannedEndDate.timeIntervalSinceNow / 60))
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text("Tu avais prévu de rester concentré jusqu’à \(session.plannedEndDate.formatted(date: .omitted, time: .shortened))")
+                .multilineTextAlignment(.center)
+
+            Text("Il te reste \(remainingMinutes) minutes.")
+                .bold()
+
+            Text("Quitter maintenant = streak remise à zéro")
+                .foregroundColor(.red)
+                .bold()
+
+            ConfirmationCountdownView(
+                duration: 60,
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
+        }
+        .padding()
+    }
+}
+
+6️⃣ Validation finale → sortie réelle
+func confirmExitFocus() {
+    FocusManager.shared.endFocus()
+}
+
+7️⃣ Gestion automatique fin de session
+func checkAutoEndFocus() {
+    guard let session = FocusManager.shared.currentSession else { return }
+    if Date() >= session.plannedEndDate {
+        FocusManager.shared.endFocus()
+        StreakManager.shared.increment()
+    }
+}
+
+8️⃣ StreakManager (simplifié mais strict)
+final class StreakManager {
+
+    static let shared = StreakManager()
+    private let key = "focus_streak"
+
+    func increment() {
+        let current = UserDefaults.standard.integer(forKey: key)
+        UserDefaults.standard.set(current + 1, forKey: key)
+    }
+
+    func reset() {
+        UserDefaults.standard.set(0, forKey: key)
+    }
+}
+
+---
+1️⃣ Modèle de données — CEOSession
+import Foundation
+
+struct CEOSession: Codable {
+    let startDate: Date
+    let plannedEndDate: Date
+    let durationMinutes: Int
+    var isActive: Bool
+}
+
+2️⃣ CEOManager — cœur du système
+import ManagedSettings
+import FamilyControls
+import UIKit
+
+final class CEOManager {
+
+    static let shared = CEOManager()
+    private let store = ScreenTimeStore.shared
+    private let key = "ceo_session"
+
+    private init() {}
+
+    var currentSession: CEOSession? {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let session = try? JSONDecoder().decode(CEOSession.self, from: data),
+              session.isActive else { return nil }
+        return session
+    }
+
+    // MARK: - Start CEO Mode
+
+    func start(durationMinutes: Int) {
+        let session = CEOSession(
+            startDate: Date(),
+            plannedEndDate: Date().addingTimeInterval(TimeInterval(durationMinutes * 60)),
+            durationMinutes: durationMinutes,
+            isActive: true
+        )
+
+        save(session)
+        applyCEOLockdown()
+    }
+
+    // MARK: - End CEO Mode
+
+    func end() {
+        clear()
+        removeCEOLockdown()
+        StreakManager.shared.reset()
+    }
+
+    // MARK: - Persistence
+
+    private func save(_ session: CEOSession) {
+        let data = try? JSONEncoder().encode(session)
+        UserDefaults.standard.set(data, forKey: key)
+    }
+
+    private func clear() {
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+}
+
+3️⃣ Lockdown total (apps autorisées UNIQUEMENT)
+extension CEOManager {
+
+    func applyCEOLockdown() {
+
+        let allowedApps: Set<ApplicationToken> = [
+            ApplicationToken(bundleIdentifier: "com.apple.mobilephone"),
+            ApplicationToken(bundleIdentifier: "com.apple.MobileSMS"),
+            ApplicationToken(bundleIdentifier: "com.apple.mobilecal"),
+            ApplicationToken(bundleIdentifier: Bundle.main.bundleIdentifier!)
+        ]
+
+        store.shield.applications = .allExcept(allowedApps)
+        store.shield.webDomains = .all
+    }
+
+    func removeCEOLockdown() {
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+    }
+}
+
+3️⃣ Lockdown total (apps autorisées UNIQUEMENT)
+extension CEOManager {
+
+    func applyCEOLockdown() {
+
+        let allowedApps: Set<ApplicationToken> = [
+            ApplicationToken(bundleIdentifier: "com.apple.mobilephone"),
+            ApplicationToken(bundleIdentifier: "com.apple.MobileSMS"),
+            ApplicationToken(bundleIdentifier: "com.apple.mobilecal"),
+            ApplicationToken(bundleIdentifier: Bundle.main.bundleIdentifier!)
+        ]
+
+        store.shield.applications = .allExcept(allowedApps)
+        store.shield.webDomains = .all
+    }
+
+    func removeCEOLockdown() {
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+    }
+}
+
+4️⃣ Écran CEO actif (minimaliste)
+import SwiftUI
+
+struct CEOActiveView: View {
+
+    let session: CEOSession
+
+    var remainingMinutes: Int {
+        max(0, Int(session.plannedEndDate.timeIntervalSinceNow / 60))
+    }
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Text("CEO Mode")
+                    .foregroundColor(.white)
+                    .font(.title)
+
+                Text("\(remainingMinutes) min restantes")
+                    .foregroundColor(.white)
+                    .font(.system(size: 48, weight: .bold))
+            }
+        }
+    }
+}
+
+5️⃣ Sortie CEO — écran d’avertissement
+struct CEOExitWarningView: View {
+
+    let session: CEOSession
+    let onProceed: () -> Void
+    let onCancel: () -> Void
+
+    var remainingMinutes: Int {
+        max(0, Int(session.plannedEndDate.timeIntervalSinceNow / 60))
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+
+            Text("Tu avais prévu de rester concentré jusqu’à \(session.plannedEndDate.formatted(date: .omitted, time: .shortened))")
+
+            Text("Il te reste \(remainingMinutes) minutes.")
+                .bold()
+
+            Text("Quitter maintenant = streak remise à zéro")
+                .foregroundColor(.red)
+                .bold()
+
+            HStack {
+                Button("Annuler", action: onCancel)
+                Button("Continuer", action: onProceed)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+    }
+}
+
+struct CEOExitWarningView: View {
+
+    let session: CEOSession
+    let onProceed: () -> Void
+    let onCancel: () -> Void
+
+    var remainingMinutes: Int {
+        max(0, Int(session.plannedEndDate.timeIntervalSinceNow / 60))
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+
+            Text("Tu avais prévu de rester concentré jusqu’à \(session.plannedEndDate.formatted(date: .omitted, time: .shortened))")
+
+            Text("Il te reste \(remainingMinutes) minutes.")
+                .bold()
+
+            Text("Quitter maintenant = streak remise à zéro")
+                .foregroundColor(.red)
+                .bold()
+
+            HStack {
+                Button("Annuler", action: onCancel)
+                Button("Continuer", action: onProceed)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+    }
+}
+
+## 6️⃣ Countdown 10 minutes — ÉCRAN BLOQUANT
+### 🔒 Contraintes techniques critiques :
+* UIApplication.shared.isIdleTimerDisabled = true
+* reset si :
+  * app passe en background
+  * écran s’éteint
+  * changement de view
+
+struct CEOExitCountdownView: View {
+
+    @State private var remaining = 10
+    @State private var timer: Timer?
+
+    let onSuccess: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack {
+                Text("\(remaining)")
+                    .foregroundColor(.white)
+                    .font(.system(size: 96, weight: .bold))
+
+                Button("Annuler") {
+                    cancel()
+                }
+                .foregroundColor(.white)
+            }
+        }
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+            start()
+        }
+        .onDisappear {
+            reset()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            reset()
+        }
+    }
+
+    private func start() {
+        remaining = 10
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            remaining -= 1
+            if remaining == 0 {
+                complete()
+            }
+        }
+    }
+
+    private func reset() {
+        timer?.invalidate()
+        timer = nil
+        UIApplication.shared.isIdleTimerDisabled = false
+        remaining = 10
+    }
+
+    private func cancel() {
+        reset()
+        onCancel()
+    }
+
+    private func complete() {
+        reset()
+        onSuccess()
+    }
+}
+
+7️⃣ Sortie réelle CEO
+func confirmCEOExit() {
+    CEOManager.shared.end()
+}
+
+8️⃣ Fin automatique de session CEO
+func checkCEOSessionEnd() {
+    guard let session = CEOManager.shared.currentSession else { return }
+    if Date() >= session.plannedEndDate {
+        CEOManager.shared.end()
+        StreakManager.shared.increment()
+    }
+}
+
