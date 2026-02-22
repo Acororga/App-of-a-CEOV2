@@ -1,10 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+/**
+ * SUPABASE CLIENT ADAPTER
+ * For now, this exports a local storage mock client to run fully local.
+ */
+import { localClient } from './localClient';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables')
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Export the local client as the supabase instance
+export const supabase = localClient;
