@@ -18,7 +18,7 @@ export async function getTodayScreenTime() {
   const today = format(new Date(), 'yyyy-MM-dd');
   
   const logs = await base44.entities.ScreenTimeLog.filter({
-    created_by: user.id,
+    created_by: user.email,
     date: today
   });
   
@@ -31,7 +31,7 @@ export async function getAverageScreenTime(days) {
   const startDate = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
   
   const logs = await base44.entities.ScreenTimeLog.filter({
-    created_by: user.id
+    created_by: user.email
   });
   
   const recentLogs = logs.filter(log => log.date >= startDate);
@@ -58,7 +58,7 @@ export async function logScreenTimeSession(entityType, entityName, startTime, en
   const durationSeconds = differenceInMinutes(end, start) * 60;
   
   const activeFocusSessions = await base44.entities.FocusSession.filter({
-    created_by: user.id,
+    created_by: user.email,
     completed: false,
     early_exit: false
   });
@@ -100,7 +100,7 @@ export async function getOrCreateWinStreak() {
     
     let streaks = [];
     try {
-      streaks = await base44.entities.WinStreak.filter({ created_by: user.id });
+      streaks = await base44.entities.WinStreak.filter({ created_by: user.email });
     } catch (fetchError) {
       console.error('[getOrCreateWinStreak] Error fetching streak:', fetchError);
       streaks = [];
@@ -273,7 +273,7 @@ export async function updateUserRank() {
   
   const calculated = calculateRank(avgScreenTime, streak.current_streak || 0);
   
-  const existingRanks = await base44.entities.UserRank.filter({ created_by: user.id });
+  const existingRanks = await base44.entities.UserRank.filter({ created_by: user.email });
   
   if (existingRanks.length > 0) {
     const currentRank = existingRanks[0];
@@ -318,7 +318,7 @@ export async function getHabitsForDate(date) {
     console.log('✓ User authenticated:', user.email);
     
     const allHabits = await base44.entities.Habit.filter({ 
-      created_by: user.id,
+      created_by: user.email,
       archived: false
     });
     
@@ -393,7 +393,7 @@ export async function getHabitCompletionsForDate(date) {
     const dateStr = format(date, 'yyyy-MM-dd');
     
     const completions = await base44.entities.HabitCompletion.filter({
-      created_by: user.id,
+      created_by: user.email,
       date: dateStr
     });
     
@@ -419,7 +419,7 @@ export async function hasUncheckedHabits(date) {
     console.log(`👤 User: ${user.email}`);
     
     const pendingValidation = await base44.entities.HabitCompletion.filter({
-      created_by: user.id,
+      created_by: user.email,
       date: dateStr,
       state: 'pending_validation'
     });
@@ -480,7 +480,7 @@ export async function ensureHabitsScheduled(date) {
     let allCompletions = [];
     try {
       allCompletions = await base44.entities.HabitCompletion.filter({
-        created_by: user.id,
+        created_by: user.email,
         date: dateStr
       });
       console.log(`✓ Found ${allCompletions.length} existing completions`);
@@ -569,7 +569,7 @@ export async function transitionScheduledToPending(date) {
     let scheduled = [];
     try {
       scheduled = await base44.entities.HabitCompletion.filter({
-        created_by: user.id,
+        created_by: user.email,
         date: dateStr,
         state: 'scheduled'
       });
@@ -622,7 +622,7 @@ export async function checkInHabit(habitId, date, completed) {
   const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd');
   
   const existing = await base44.entities.HabitCompletion.filter({
-    created_by: user.id,
+    created_by: user.email,
     habit_id: habitId,
     date: dateStr
   });
@@ -681,7 +681,7 @@ export async function calculateWeeklyHabitScore(weekStartDate) {
   const thresholdMet = successPercentage >= threshold;
   
   const existingScores = await base44.entities.WeeklyHabitScore.filter({
-    created_by: user.id,
+    created_by: user.email,
     week_start_date: format(weekStart, 'yyyy-MM-dd')
   });
   
@@ -711,7 +711,7 @@ export async function getCurrentWeekContract() {
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
   
   const contracts = await base44.entities.WeeklyContract.filter({
-    created_by: user.id,
+    created_by: user.email,
     week_start_date: weekStartStr
   });
   
@@ -781,7 +781,7 @@ export async function getTopParetoTasks(limit = 5) {
   const user = await base44.auth.me();
   
   const tasks = await base44.entities.ParetoTask.filter({
-    created_by: user.id,
+    created_by: user.email,
     completed: false
   }, 'sort_order');
   
@@ -799,7 +799,7 @@ export async function getNextEvent() {
   const now = new Date();
   
   const events = await base44.entities.CalendarEvent.filter({
-    created_by: user.id
+    created_by: user.email
   });
   
   const upcomingEvents = events.filter(event => {
@@ -820,7 +820,7 @@ export async function getUpcomingEvents(daysAhead = 30) {
   const maxDate = format(addDays(now, daysAhead), 'yyyy-MM-dd');
   
   const events = await base44.entities.CalendarEvent.filter({
-    created_by: user.id
+    created_by: user.email
   });
   
   const upcomingEvents = events.filter(event => {
@@ -860,7 +860,7 @@ export async function checkAndSendEventNotifications() {
   const now = new Date();
   
   const events = await base44.entities.CalendarEvent.filter({
-    created_by: user.id
+    created_by: user.email
   });
   
   for (const event of events) {
@@ -888,7 +888,7 @@ export async function getApprovedApps() {
   const user = await base44.auth.me();
   
   const apps = await base44.entities.ApprovedApp.filter({
-    created_by: user.id,
+    created_by: user.email,
     approved: true
   });
   
@@ -939,7 +939,7 @@ export async function endCEOModeSession(sessionId) {
 export async function syncLeaderboardEntry() {
   const user = await base44.auth.me();
   
-  const rankData = await base44.entities.UserRank.filter({ created_by: user.id });
+  const rankData = await base44.entities.UserRank.filter({ created_by: user.email });
   const streakData = await getOrCreateWinStreak();
   
   if (rankData.length === 0) return;
@@ -954,7 +954,7 @@ export async function syncLeaderboardEntry() {
     : 50;
   
   const existingEntries = await base44.entities.LeaderboardEntry.filter({
-    created_by: user.id
+    created_by: user.email
   });
   
   const entryData = {
@@ -987,7 +987,7 @@ export async function updateFriendStats(friendEmail) {
   
   const user = await base44.auth.me();
   const connections = await base44.entities.FriendConnection.filter({
-    created_by: user.id,
+    created_by: user.email,
     friend_email: friendEmail
   });
   
@@ -1008,7 +1008,7 @@ export async function enforceAppBlocking(appName) {
   const user = await base44.auth.me();
   
   const blockedApps = await base44.entities.BlockedApp.filter({
-    created_by: user.id,
+    created_by: user.email,
     app_name: appName
   });
   
@@ -1043,7 +1043,7 @@ export async function enforceWebsiteBlocking(urlDomain) {
   const user = await base44.auth.me();
   
   const blockedSites = await base44.entities.BlockedWebsite.filter({
-    created_by: user.id,
+    created_by: user.email,
     url_domain: urlDomain
   });
   
